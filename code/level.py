@@ -3,6 +3,7 @@ from settings import *
 from tile import Tiles
 from player import Player
 from support import *
+from enemy import Enemy
 
 
 class Level:
@@ -22,7 +23,7 @@ class Level:
 
     def create_map(self):
         layouts = {
-            'map': import_csv_layout('../levels/0/level_0_Tile_Layer 2.csv')
+            'map': import_csv_layout('levels/0/level_0_Tile_Layer 2.csv')
         }
 
         for style, layout in layouts.items():
@@ -32,12 +33,16 @@ class Level:
                         x = col_index * TILE_SIZE
                         y = row_index * TILE_SIZE
                         if style == 'map':
-                            terrain_tile_list = import_cut_graphic('../graphics/terrain/dungeon_bricks.png')
+                            terrain_tile_list = import_cut_graphic('graphics/terrain/dungeon_bricks.png')
                             map_graphics = terrain_tile_list[int(col)]
                             Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'map', surface=map_graphics)
 
         self.player = Player((700,200), [self.visible_sprites], self.obstacle_sprites)
 
+        #placeholder enemy
+        Enemy((700, 250), [self.visible_sprites], self.player, self.obstacle_sprites)
+        
+        
 
     #Render
     def run(self):
@@ -58,7 +63,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.offset = pygame.math.Vector2()
 
         #Loading a background
-        self.background = pygame.image.load('../graphics/terrain/test_lvl_0.png').convert()
+        self.background = pygame.image.load('graphics/terrain/test_lvl_0.png').convert()
         self.background_rect = self.background.get_rect(topleft=(-100,-100))
 
     def custom_draw(self, player):
