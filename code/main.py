@@ -21,7 +21,11 @@ while running:
 
     level.run()
     pygame.display.update()
-
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_l]:
+        for sprite in level.visible_sprites:
+            if hasattr(sprite, 'take_damage'):
+                sprite.take_damage(1)
 
     dt = clock.tick(60) / 1000
 

@@ -6,7 +6,7 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self, pos, groups, obstacle_sprites):
         super().__init__(groups)
-        self.image = pygame.image.load('../graphics/test_images/charachter2.png').convert_alpha()
+        self.image = pygame.image.load('../graphics/test_images/knight_idle.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
         self.hitbox = self.rect.inflate(0, 0)
 
@@ -16,7 +16,7 @@ class Player(pygame.sprite.Sprite):
         self.on_ground = False
         self.speed = 2
         self.gravity = 0.4
-        self.jump_speed = -8
+        self.jump_speed = -9
         self.coyote_timer = 0.1
 
 
@@ -24,9 +24,15 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_d]:
-            self.direction.x = 1
+            if self.direction.x < 0:
+                self.direction.x = 0
+            elif self.direction.x < 2:
+                self.direction.x += 0.3
         elif keys[pygame.K_a]:
-            self.direction.x = -1
+            if self.direction.x > 0:
+                self.direction.x = 0
+            elif self.direction.x > -2:
+                self.direction.x += -0.3
         else:
             self.direction.x = 0
 
@@ -84,3 +90,4 @@ class Player(pygame.sprite.Sprite):
         self.input()
         self.move_horizontal(self.speed)
         self.apply_gravity()
+

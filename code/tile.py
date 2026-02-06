@@ -9,4 +9,9 @@ class Tiles(pygame.sprite.Sprite):
         self.sprite_type = sprite_type
         self.image = surface
         self.rect = self.image.get_rect(topleft = pos)
-        self.hitbox = self.rect.inflate(0, 0)
+
+        if self.sprite_type == 'surf' or 'b_top':
+            self.hitbox = self.rect.inflate(-30, -30)
+        else:
+            self.hitbox = self.rect.inflate(0,0)
+
