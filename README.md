@@ -1,5 +1,5 @@
 # Game-PO5
-Roguelike game for ICT PO3
+Roguelike game for ICT PO5
 
 Group 4: Luka, Ingmar, Igor, Mika
 
