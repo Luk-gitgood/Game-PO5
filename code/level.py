@@ -40,7 +40,7 @@ class Level:
         self.player = Player((700,200), [self.visible_sprites], self.obstacle_sprites)
 
         #placeholder enemy
-        Enemy((700, 250), [self.visible_sprites], self.player, self.obstacle_sprites)
+        Enemy((700, 200), [self.visible_sprites], self.player, self.obstacle_sprites)
         
         
 
@@ -80,3 +80,7 @@ class YSortCameraGroup(pygame.sprite.Group):
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_pos)
 
+        # Draw healthbars for enemies
+        for sprite in self.sprites():
+            if hasattr(sprite, 'draw_health_bar'):
+                sprite.draw_health_bar(self.display_surface, self.offset)
