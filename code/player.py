@@ -18,7 +18,9 @@ class Player(pygame.sprite.Sprite):
         self.drop_timer = 0
         self.speed = 2
         self.gravity = 0.4
-        self.jump_speed = -9
+        self.jump_speed = -11
+        self.jump_held = False
+        self.jump_cut_multiplier = 0.7
         self.coyote_timer = 0.1
 
 
@@ -39,7 +41,13 @@ class Player(pygame.sprite.Sprite):
             self.direction.x = 0
 
         if keys[pygame.K_SPACE]:
-            self.jump()
+            if not self.jump_held:
+                self.jump()
+            self.jump_held = True
+        else:
+            if self.jump_held:
+                self.cut_jump()
+            self.jump_held = False
 
         if keys[pygame.K_s] and self.on_ground:
             self.drop_timer = 0.2
@@ -60,7 +68,7 @@ class Player(pygame.sprite.Sprite):
             self.coyote_timer -= 1/60
 
         self.on_ground = False
-        self.direction.y += self.gravity
+        self.direction.y += self.gravity * 1.3
         self.hitbox.y += self.direction.y
         self.collision('vertical')
         self.rect.center = self.hitbox.center
@@ -70,6 +78,11 @@ class Player(pygame.sprite.Sprite):
         if self.coyote_timer > 0:
             self.direction.y = self.jump_speed
             self.coyote_timer = 0
+
+
+    def cut_jump(self):
+        if self.direction.y < 0:
+            self.direction.y *= self.jump_cut_multiplier
 
 
     def collision(self, direction):

@@ -76,7 +76,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.half_screen_height = pygame.display.get_window_size()[1] // 2
         self.offset = pygame.math.Vector2()
 
-        #Loading a background (Temporary, needs to be a function)
+        #Loading a background (Temporary, needs to be a function (maybe))
         self.bg_layer_0 = pygame.image.load('../graphics/deepcave_background/DeepCaveBG-Base.png').convert()
         self.bg_layer_1 = pygame.image.load('../graphics/deepcave_background/DeepCaveBG-Layer1.png').convert_alpha()
         self.bg_layer_2 = pygame.image.load('../graphics/deepcave_background/DeepCaveBG-Layer2.png').convert_alpha()
@@ -93,23 +93,18 @@ class YSortCameraGroup(pygame.sprite.Group):
         layer_height = image.get_height()
 
         x = -self.offset.x * factor
-        y = -self.offset.y * factor
+        y = WORLD_HEIGHT - layer_height - self.offset.y - BOTTOM_LAYER
 
-        # Clamp horizontally
+        #Clamp horizontally
         max_x = layer_width - SCREEN_WIDTH
         x = max(-max_x, min(0, x))
 
-        # Clamp vertically
-        max_y = layer_height - SCREEN_HEIGHT
-        y = max(-max_y, min(0, y))
-
         self.display_surface.blit(image, (x, y))
-
 
     def custom_draw(self, player):
 
         #Offset (camera)
-        self.offset.x =player.rect.centerx - self.half_screen_width
+        self.offset.x = player.rect.centerx - self.half_screen_width
         self.offset.x = max(0, min(self.offset.x, WORLD_WIDTH - SCREEN_WIDTH))
         self.offset.y = player.rect.centery - self.half_screen_height
         self.offset.y = max(0, min(self.offset.y, WORLD_HEIGHT - SCREEN_HEIGHT))
