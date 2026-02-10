@@ -1,7 +1,7 @@
 import pygame
 from settings import *
 from spritesheets import SpriteSheet
-from code.entity import Entity
+from entity import Entity
 
 class Player(Entity):
 
