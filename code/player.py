@@ -1,38 +1,87 @@
 import pygame
 from settings import *
+from spritesheets import SpriteSheet
+from entity import Entity
 
-
-class Player(pygame.sprite.Sprite):
+class Player(Entity):
 
     def __init__(self, pos, groups, obstacle_sprites):
         super().__init__(groups)
-        self.image = pygame.image.load('../graphics/test_images/knight_idle.png').convert_alpha()
-        self.rect = self.image.get_rect(topleft = pos)
-        self.hitbox = self.rect.inflate(0, 0)
-        self.prev_hitbox = None
 
         self.obstacle_sprites = obstacle_sprites
 
-        self.direction = pygame.math.Vector2()
-        self.on_ground = False
-        self.drop_timer = 0
         self.speed = 2
         self.gravity = 0.4
         self.jump_speed = -11
-        self.jump_held = False
         self.jump_cut_multiplier = 0.7
         self.coyote_timer = 0.1
+        self.drop_timer = 0
+
+        self.facing_left = False
+        self.is_jumping = False
+        self.on_ground = False
+        self.jump_held = False
+        self.prev_hitbox = None
+
+        self.sheets = {
+            'idle': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_idle.png').convert_alpha()),
+            'walk': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_walk.png').convert_alpha()),
+            'death': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_death.png').convert_alpha()),
+            'gesture': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_gesture.png').convert_alpha()),
+            'attack': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_attack.png').convert_alpha()),
+            'jump': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_jump.png').convert_alpha()),
+        }
+
+        self.animation_steps = {'idle': 10, 'walk': 10, 'death': 10, 'gesture': 10, 'attack': 10, 'jump': 4}  #amount of frames in each animation
+        self.animation_speeds = {'idle': 0.05, 'walk': 0.15, 'death': 0.1, 'gesture': 0.1, 'attack': 0.15, 'jump': 0.08}
+
+        for action, sheet in self.sheets.items():
+            self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_SCALE) for i in range(self.animation_steps[action])] 
+
+        self.image = self.frames[self.action][0]
+        self.rect = self.image.get_rect(topleft = pos)
+        self.hitbox = self.rect.inflate(-16, 0)
+
+    
+    def animate(self):
+        super().animate()
+        image = self.image
+        if self.facing_left:
+            image = pygame.transform.flip(image, True, False)
+        self.image = image
+        
+
+    def update_action(self):
+        keys = pygame.key.get_pressed()
+        
+        #atk
+        if keys[pygame.K_f]:
+            self.action = 'attack'
+            return
+
+        #air
+        if self.is_jumping:
+            self.action = 'jump'
+            return
+
+        #ground
+        if self.direction.x != 0:
+            self.action = 'walk'
+        else:
+            self.action = 'idle'
 
 
     def input(self):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_d]:
+            self.facing_left = False
             if self.direction.x < 0:
                 self.direction.x = 0
             elif self.direction.x < 2:
                 self.direction.x += 0.3
         elif keys[pygame.K_a]:
+            self.facing_left = True
             if self.direction.x > 0:
                 self.direction.x = 0
             elif self.direction.x > -2:
@@ -78,6 +127,7 @@ class Player(pygame.sprite.Sprite):
         if self.coyote_timer > 0:
             self.direction.y = self.jump_speed
             self.coyote_timer = 0
+            self.is_jumping = True
 
 
     def cut_jump(self):
@@ -114,10 +164,12 @@ class Player(pygame.sprite.Sprite):
                                 self.hitbox.bottom = obstacle.hitbox.top
                                 self.direction.y = 0
                                 self.on_ground = True
+                                self.is_jumping = False
                         else:
                             self.hitbox.bottom = obstacle.hitbox.top
                             self.direction.y = 0
                             self.on_ground = True
+                            self.is_jumping = False
 
                     if self.direction.y < 0:
                         if obstacle.sprite_type != 'platform_top':
@@ -126,9 +178,11 @@ class Player(pygame.sprite.Sprite):
 
 
     def update(self):
-        self.prev_hitbox = self.hitbox.copy()  #store old pos
-        self.drop_timer = max(0, self.drop_timer - 1/60)
         self.input()
+        self.update_action()
+        self.animate()
         self.move_horizontal(self.speed)
         self.apply_gravity()
+        self.prev_hitbox = self.hitbox.copy()
+        self.drop_timer = max(0, self.drop_timer - 1/60)
 

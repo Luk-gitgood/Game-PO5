@@ -8,13 +8,13 @@ from flyingenemy import FlyingEnemy
 
 class Level:
 
-    def __init__(self):
+    def __init__(self,surface):
 
         #Get the display surface
-        self.display_surface = pygame.display.get_surface()
+        self.display_surface = surface
 
         #Sprite group setup
-        self.visible_sprites = YSortCameraGroup()
+        self.visible_sprites = YSortCameraGroup(self.display_surface)
         self.obstacle_sprites = pygame.sprite.Group()
 
         #create map
@@ -60,6 +60,7 @@ class Level:
 
         FlyingEnemy((900, 400), [self.visible_sprites], self.player, self.obstacle_sprites)
 
+
     # Render
     def run(self):
         self.visible_sprites.custom_draw(self.player)
@@ -68,10 +69,10 @@ class Level:
 
 class YSortCameraGroup(pygame.sprite.Group):
 
-    def __init__(self):
+    def __init__(self, surface):
         # General
         super().__init__()
-        self.display_surface = pygame.display.get_surface()
+        self.display_surface = surface
         self.half_screen_width = pygame.display.get_window_size()[0] // 2
         self.half_screen_height = pygame.display.get_window_size()[1] // 2
         self.offset = pygame.math.Vector2()
@@ -96,7 +97,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         y = WORLD_HEIGHT - layer_height - self.offset.y - BOTTOM_LAYER
 
         #Clamp horizontally
-        max_x = layer_width - SCREEN_WIDTH
+        max_x = layer_width - BASE_SCREEN_WIDTH
         x = max(-max_x, min(0, x))
 
         self.display_surface.blit(image, (x, y))
@@ -105,9 +106,9 @@ class YSortCameraGroup(pygame.sprite.Group):
 
         #Offset (camera)
         self.offset.x = player.rect.centerx - self.half_screen_width
-        self.offset.x = max(0, min(self.offset.x, WORLD_WIDTH - SCREEN_WIDTH))
+        self.offset.x = max(0, min(self.offset.x, WORLD_WIDTH - BASE_SCREEN_WIDTH))
         self.offset.y = player.rect.centery - self.half_screen_height
-        self.offset.y = max(0, min(self.offset.y, WORLD_HEIGHT - SCREEN_HEIGHT))
+        self.offset.y = max(0, min(self.offset.y, WORLD_HEIGHT - BASE_SCREEN_HEIGHT))
 
         # Parallax layers
         self.draw_parallax_layer(self.bg_layer_00, 1)
