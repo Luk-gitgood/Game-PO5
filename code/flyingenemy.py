@@ -1,7 +1,7 @@
 import pygame
 from spritesheets import SpriteSheet
 from settings import *
-from entity import Entity
+from code.entity import Entity
 
 class FlyingEnemy(Entity):
 
