@@ -5,7 +5,7 @@ from entity import Entity
 
 class Player(Entity):
 
-    def __init__(self, pos, groups, obstacle_sprites):
+    def __init__(self, pos, groups, obstacle_sprites, create_attack):
         super().__init__(groups)
 
         self.obstacle_sprites = obstacle_sprites
@@ -28,12 +28,11 @@ class Player(Entity):
             'walk': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_walk.png').convert_alpha()),
             'death': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_death.png').convert_alpha()),
             'gesture': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_gesture.png').convert_alpha()),
-            'attack': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_attack.png').convert_alpha()),
             'jump': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_jump.png').convert_alpha()),
         }
 
-        self.animation_steps = {'idle': 10, 'walk': 10, 'death': 10, 'gesture': 10, 'attack': 10, 'jump': 4}  #amount of frames in each animation
-        self.animation_speeds = {'idle': 0.05, 'walk': 0.15, 'death': 0.1, 'gesture': 0.1, 'attack': 0.15, 'jump': 0.08}
+        self.animation_steps = {'idle': 10, 'walk': 10, 'death': 10, 'gesture': 10, 'jump': 4}  #amount of frames in each animation
+        self.animation_speeds = {'idle': 0.05, 'walk': 0.15, 'death': 0.1, 'gesture': 0.1, 'jump': 0.08}
 
         for action, sheet in self.sheets.items():
             self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_SCALE) for i in range(self.animation_steps[action])] 
@@ -42,23 +41,16 @@ class Player(Entity):
         self.rect = self.image.get_rect(topleft = pos)
         self.hitbox = self.rect.inflate(-16, 0)
 
-    
+        self.create_attack = create_attack
+
     def animate(self):
         super().animate()
         image = self.image
         if self.facing_left:
             image = pygame.transform.flip(image, True, False)
         self.image = image
-        
 
     def update_action(self):
-        keys = pygame.key.get_pressed()
-        
-        #atk
-        if keys[pygame.K_f]:
-            self.action = 'attack'
-            return
-
         #air
         if self.is_jumping:
             self.action = 'jump'
@@ -69,7 +61,6 @@ class Player(Entity):
             self.action = 'walk'
         else:
             self.action = 'idle'
-
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -102,12 +93,13 @@ class Player(Entity):
             self.drop_timer = 0.2
             self.direction.y = 1
 
+        if keys[pygame.K_k]:
+            self.create_attack()
 
     def move_horizontal(self, speed):
         self.hitbox.x += self.direction.x * speed
         self.collision('horizontal')
         self.rect.center = self.hitbox.center
-
 
     def apply_gravity(self):
 
@@ -122,18 +114,15 @@ class Player(Entity):
         self.collision('vertical')
         self.rect.center = self.hitbox.center
 
-
     def jump(self):
         if self.coyote_timer > 0:
             self.direction.y = self.jump_speed
             self.coyote_timer = 0
             self.is_jumping = True
 
-
     def cut_jump(self):
         if self.direction.y < 0:
             self.direction.y *= self.jump_cut_multiplier
-
 
     def collision(self, direction):
         if direction == 'horizontal':
@@ -175,7 +164,6 @@ class Player(Entity):
                         if obstacle.sprite_type != 'platform_top':
                             self.hitbox.top = obstacle.hitbox.bottom
                             self.direction.y = 0
-
 
     def update(self):
         self.input()

@@ -36,7 +36,6 @@ class FlyingEnemy(Entity):
         self.hitbox = self.rect.inflate(0,0)
         self.dying = False
 
-
     def move_towards_player(self):
         self.direction.x = self.player.rect.centerx - self.rect.centerx
         self.direction.y = self.player.rect.centery - self.rect.centery
@@ -52,7 +51,6 @@ class FlyingEnemy(Entity):
 
         self.rect.center = self.hitbox.center
 
-
     def update_action(self):
         if self.dying:
             return
@@ -66,7 +64,6 @@ class FlyingEnemy(Entity):
                 self.action = 'fly_right'
         else:
             self.action = 'fly_up'
-
 
     def check_collision(self, direction):
         if direction == 'horizontal':
@@ -87,7 +84,6 @@ class FlyingEnemy(Entity):
                     if self.direction.y < 0:
                         self.hitbox.top = obstacle.hitbox.bottom
                         self.direction.y = 0
-
     
     def take_damage(self, amount):
         if self.dying:
@@ -99,7 +95,6 @@ class FlyingEnemy(Entity):
             self.action = 'death'
             self.frame_index = 0
             self.speed = 0
-
 
     def update(self):
         if not self.dying:

@@ -1,4 +1,5 @@
 import pygame
+from weapon import Weapon
 from settings import *
 from tile import Tiles
 from player import Player
@@ -19,7 +20,6 @@ class Level:
 
         #create map
         self.create_map()
-
 
     def create_map(self):
         layouts = {
@@ -56,10 +56,12 @@ class Level:
                             plat_top = graphics['platform_top'][int(col)]
                             Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'platform_top', surface=plat_top)
 
-        self.player = Player((700, 500), [self.visible_sprites], self.obstacle_sprites)
+        self.player = Player((700, 500), [self.visible_sprites], self.obstacle_sprites, self.create_attack)
 
         FlyingEnemy((900, 400), [self.visible_sprites], self.player, self.obstacle_sprites)
 
+    def create_attack(self):
+        Weapon([self.visible_sprites], self.player)
 
     # Render
     def run(self):

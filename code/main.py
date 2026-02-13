@@ -14,9 +14,7 @@ MONITOR_HEIGHT = info.current_h
 #Start in fullscreen (Maybe replace NOFRAME with FULLFRAME later)
 is_fullscreen = True
 screen = pygame.display.set_mode(
-    (MONITOR_WIDTH, MONITOR_HEIGHT),
-    pygame.NOFRAME
-)
+    (MONITOR_WIDTH, MONITOR_HEIGHT), pygame.NOFRAME)
 
 game_surface = pygame.Surface((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT))
 
@@ -39,30 +37,19 @@ while running:
                 is_fullscreen = not is_fullscreen
 
                 if is_fullscreen:
-                    screen = pygame.display.set_mode(
-                        (MONITOR_WIDTH, MONITOR_HEIGHT),
-                        pygame.NOFRAME
-                    )
+                    screen = pygame.display.set_mode((MONITOR_WIDTH, MONITOR_HEIGHT),pygame.NOFRAME)
                 else:
                     screen = pygame.display.set_mode(
-                        (BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT),
-                        pygame.RESIZABLE
-                    )
+                        (BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT),pygame.RESIZABLE)
 
         #Window resizing
         if event.type == pygame.VIDEORESIZE and not is_fullscreen:
-            screen = pygame.display.set_mode(
-                (event.w, event.h),
-                pygame.RESIZABLE
-            )
+            screen = pygame.display.set_mode((event.w, event.h),pygame.RESIZABLE)
 
     game_surface.fill((0, 0, 0))
     level.run()
 
-    scaled_surface = pygame.transform.scale(
-        game_surface,
-        screen.get_size()
-    )
+    scaled_surface = pygame.transform.scale(game_surface, screen.get_size())
 
     screen.blit(scaled_surface, (0, 0))
     pygame.display.update()
