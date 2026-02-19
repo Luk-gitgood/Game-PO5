@@ -4,12 +4,11 @@ from tile import Tiles
 from player import Player
 from support import *
 from flyingenemy import FlyingEnemy
-
+from weapon import *
 
 class Level:
 
     def __init__(self,surface):
-
         #Get the display surface
         self.display_surface = surface
 
@@ -20,6 +19,7 @@ class Level:
         #create map
         self.create_map()
 
+        self.gun = None
 
     def create_map(self):
         layouts = {
@@ -56,10 +56,17 @@ class Level:
                             plat_top = graphics['platform_top'][int(col)]
                             Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'platform_top', surface=plat_top)
 
-        self.player = Player((700, 500), [self.visible_sprites], self.obstacle_sprites)
-
+        self.player = Player((700, 500), [self.visible_sprites], self.obstacle_sprites, self.equip_weapon, self.destroy_weapon)
         FlyingEnemy((900, 400), [self.visible_sprites], self.player, self.obstacle_sprites)
 
+    def equip_weapon(self):
+        if self.gun is None:
+            self.gun = Weapon("gun", [self.visible_sprites], self.player)
+
+    def destroy_weapon(self):
+        if self.gun:
+            self.gun.kill()
+        self.gun = None
 
     # Render
     def run(self):

@@ -5,10 +5,12 @@ from entity import Entity
 
 class Player(Entity):
 
-    def __init__(self, pos, groups, obstacle_sprites):
+    def __init__(self, pos, groups, obstacle_sprites, equip, destroy):
         super().__init__(groups)
 
         self.obstacle_sprites = obstacle_sprites
+        self.equip = equip
+        self.destroy = destroy
 
         self.speed = 2
         self.gravity = 0.4
@@ -42,7 +44,7 @@ class Player(Entity):
         self.rect = self.image.get_rect(topleft = pos)
         self.hitbox = self.rect.inflate(-16, 0)
 
-    
+
     def animate(self):
         super().animate()
         image = self.image
@@ -101,6 +103,12 @@ class Player(Entity):
         if keys[pygame.K_s] and self.on_ground:
             self.drop_timer = 0.2
             self.direction.y = 1
+
+        if keys[pygame.K_1]:
+            self.destroy()
+
+        if keys[pygame.K_2]:
+            self.equip()
 
 
     def move_horizontal(self, speed):

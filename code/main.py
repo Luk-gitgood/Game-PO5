@@ -2,8 +2,7 @@ import pygame
 from settings import *
 from level import Level
 
-
-#General setup
+#General setup2
 pygame.init()
 pygame.display.set_caption('Insolitum')
 
@@ -14,7 +13,7 @@ MONITOR_HEIGHT = info.current_h
 #Start in fullscreen (Maybe replace NOFRAME with FULLFRAME later)
 is_fullscreen = True
 screen = pygame.display.set_mode(
-    (MONITOR_WIDTH, MONITOR_HEIGHT),
+    (1200, 900),
     pygame.NOFRAME
 )
 
@@ -24,7 +23,6 @@ clock = pygame.time.Clock()
 dt = True
 running = True
 level = Level(game_surface)
-
 
 #Main game loop
 while running:
@@ -59,6 +57,7 @@ while running:
     game_surface.fill((0, 0, 0))
     level.run()
 
+
     scaled_surface = pygame.transform.scale(
         game_surface,
         screen.get_size()
@@ -67,12 +66,6 @@ while running:
     screen.blit(scaled_surface, (0, 0))
     pygame.display.update()
 
-    #Test to kill enemy (will be removed)
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_l]:
-        for sprite in level.visible_sprites:
-            if hasattr(sprite, 'take_damage'):
-                sprite.take_damage(1)
 
     dt = clock.tick(60) / 1000
 
