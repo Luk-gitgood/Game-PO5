@@ -5,6 +5,8 @@ from level import Level
 #General setup2
 pygame.init()
 pygame.display.set_caption('Insolitum')
+pygame.display.set_icon(pygame.image.load('graphics/images/icon_insolitum.png'))
+
 
 info = pygame.display.Info()
 MONITOR_WIDTH = info.current_w
