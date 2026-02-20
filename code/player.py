@@ -9,7 +9,7 @@ class Player(Entity):
         super().__init__(groups)
         self.obstacle_sprites = obstacle_sprites
 
-        # Movement & States (unchanged)
+        # Movement & States
         self.speed = 2
         self.gravity = 0.4
         self.jump_speed = -11
@@ -23,23 +23,13 @@ class Player(Entity):
         self.prev_hitbox = None
 
         # Graphics
-        self.player_scale = 1.5
-
         graphics_path = BASE_DIR.parent / 'graphics' / 'animations' / 'rogue_character'
-
-        self.sheets = {
-            'idle': SpriteSheet(pygame.image.load(graphics_path / 'rogue_idle.png').convert_alpha()),
-            'walk': SpriteSheet(pygame.image.load(graphics_path / 'rogue_walk.png').convert_alpha()),
-            'death': SpriteSheet(pygame.image.load(graphics_path / 'rogue_death.png').convert_alpha()),
-            'gesture': SpriteSheet(pygame.image.load(graphics_path / 'rogue_gesture.png').convert_alpha()),
-            'jump': SpriteSheet(pygame.image.load(graphics_path / 'rogue_jump.png').convert_alpha()),
-        }
+        self.player_scale = 1.5
 
         self.animation_steps = {'idle': 10, 'walk': 10, 'death': 10, 'gesture': 10, 'jump': 4}  #amount of frames in each animation
         self.animation_speeds = {'idle': 0.05, 'walk': 0.15, 'death': 0.1, 'gesture': 0.1, 'jump': 0.08}
 
-        for action, sheet in self.sheets.items():
-            self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, self.player_scale) for i in range(self.animation_steps[action])]
+        self.load_animation_frames(graphics_path)
 
         self.image = self.frames[self.action][0]
         self.rect = self.image.get_rect(topleft = pos)
@@ -59,6 +49,20 @@ class Player(Entity):
 
         #Attacking
         self.attacking = False
+
+
+    def load_animation_frames(self, graphics_path):
+        # Preload all animations so they are ready when player shoots
+        sheets = {
+            'idle': SpriteSheet(pygame.image.load(graphics_path / 'rogue_idle.png').convert_alpha()),
+            'walk': SpriteSheet(pygame.image.load(graphics_path / 'rogue_walk.png').convert_alpha()),
+            'death': SpriteSheet(pygame.image.load(graphics_path / 'rogue_death.png').convert_alpha()),
+            'gesture': SpriteSheet(pygame.image.load(graphics_path / 'rogue_gesture.png').convert_alpha()),
+            'jump': SpriteSheet(pygame.image.load(graphics_path / 'rogue_jump.png').convert_alpha()),
+        }
+
+        for action, sheet in sheets.items():
+            self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, self.player_scale) for i in range(self.animation_steps[action])]
 
     def animate(self):
         super().animate()
@@ -118,6 +122,7 @@ class Player(Entity):
                 self.destroy_weapon()
             self.weapon_index = 0
             self.weapon = list(weapon_data.keys())[self.weapon_index]
+            self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
             self.equip_weapon()
 
         if keys[pygame.K_3]:
@@ -125,6 +130,7 @@ class Player(Entity):
                 self.destroy_weapon()
             self.weapon_index = 1
             self.weapon = list(weapon_data.keys())[self.weapon_index]
+            self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
             self.equip_weapon()
 
         # Detect Mouse Click

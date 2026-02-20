@@ -8,24 +8,16 @@ class FlyingEnemy(Entity):
 
     def __init__(self, pos, groups, player, obstacle_sprites):
         super().__init__(groups)
-        self.enemy_scale = 1.5
 
+        # Animations
         graphics_path = BASE_DIR.parent / 'graphics' / 'animations' / 'bat_character'
-
-        self.sheets = {
-            'idle': SpriteSheet(pygame.image.load(graphics_path / 'bat_idle.png').convert_alpha()),
-            'fly_left': SpriteSheet(pygame.image.load(graphics_path / 'flying_left.png').convert_alpha()),
-            'fly_up': SpriteSheet(pygame.image.load(graphics_path / 'flying_up.png').convert_alpha()),
-            'fly_right': SpriteSheet(pygame.image.load(graphics_path / 'flying_right.png').convert_alpha()),
-            'death': SpriteSheet(pygame.image.load(graphics_path / 'bat_death.png').convert_alpha())
-            
-        }
-
-        self.animation_steps = {'idle': 4, 'fly_left': 4, 'fly_up': 4, 'fly_right': 4, 'death': 11}  #amount of frames in each animation
+        self.enemy_scale = 1.5
+        self.animation_steps = {'idle': 4, 'fly_left': 4, 'fly_up': 4, 'fly_right': 4,
+                                'death': 11}  # amount of frames in each animation
         self.animation_speeds = {'idle': 0.15, 'fly_left': 0.15, 'fly_up': 0.15, 'fly_right': 0.15, 'death': 0.25}
 
-        for action, sheet in self.sheets.items():
-            self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, self.enemy_scale) for i in range(self.animation_steps[action])]
+        # Load frames immediately
+        self.load_animation_frames(graphics_path)
 
         self.image = self.frames[self.action][0]
         self.rect = self.frames[self.action][0].get_rect(topleft = pos)
@@ -39,6 +31,22 @@ class FlyingEnemy(Entity):
         self.obstacle_sprites = obstacle_sprites
         self.hitbox = self.rect.inflate(0,0)
         self.dying = False
+
+
+
+    def load_animation_frames(self, graphics_path):
+        # Preload all animations so they are ready when player shoots
+        sheets = {
+            'idle': SpriteSheet(pygame.image.load(graphics_path / 'bat_idle.png').convert_alpha()),
+            'fly_left': SpriteSheet(pygame.image.load(graphics_path / 'flying_left.png').convert_alpha()),
+            'fly_up': SpriteSheet(pygame.image.load(graphics_path / 'flying_up.png').convert_alpha()),
+            'fly_right': SpriteSheet(pygame.image.load(graphics_path / 'flying_right.png').convert_alpha()),
+            'death': SpriteSheet(pygame.image.load(graphics_path / 'bat_death.png').convert_alpha())
+
+        }
+
+        for action, sheet in sheets.items():
+            self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, self.enemy_scale) for i in range(self.animation_steps[action])]
 
     def move_towards_player(self):
         self.direction.x = self.player.rect.centerx - self.rect.centerx

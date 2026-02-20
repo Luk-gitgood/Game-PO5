@@ -17,14 +17,14 @@ IMAGE_HEIGHT = 32
 
 #Weapons
 weapon_data = {
-    'Gun-1': {
+    'revolver': {
         'speed': 12,
         'bullet_count': 1,
         'spread': 0,
         'lifetime': 1000,
         'cooldown': 400
     },
-    'Shotgun-1': {
+    'shotgun': {
         'speed': 10,
         'bullet_count': 5,
         'spread': 15,

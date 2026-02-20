@@ -7,9 +7,14 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, pos, angle, groups, obstacle_sprites, speed, lifetime):
         super().__init__(groups)
 
-        # Graphics (You can replace this with an image load)
-        self.image = pygame.Surface((10, 4))
-        self.image.fill('yellow')
+        # Graphics
+        self.image = pygame.Surface((12, 6), pygame.SRCALPHA)
+
+        #Gives outer color
+        pygame.draw.ellipse(self.image, (255, 100, 0), [0, 0, 12, 6])
+        #Gives inner color
+        pygame.draw.ellipse(self.image, (255, 255, 150), [2, 1, 8, 4])
+
         self.image = pygame.transform.rotate(self.image, -angle)
 
         self.rect = self.image.get_rect(center=pos)
