@@ -1,37 +1,41 @@
 import pygame
+from pathlib import Path
 from settings import *
 from spritesheets import SpriteSheet
 from entity import Entity
 
-class Player(Entity):
+BASE_DIR = Path(__file__).resolve().parent
 
+
+class Player(Entity):
     def __init__(self, pos, groups, obstacle_sprites, equip_weapon, destroy_weapon):
         super().__init__(groups)
         self.obstacle_sprites = obstacle_sprites
 
-        # Movement
+        # Movement & States (unchanged)
         self.speed = 2
         self.gravity = 0.4
         self.jump_speed = -11
         self.jump_cut_multiplier = 0.7
         self.coyote_timer = 0.1
         self.drop_timer = 0
-
-        #States
         self.facing_left = False
         self.is_jumping = False
         self.on_ground = False
         self.jump_held = False
         self.prev_hitbox = None
 
-        #Graphics
+        # Graphics
         self.player_scale = 1.5
+
+        graphics_path = BASE_DIR.parent / 'graphics' / 'animations' / 'rogue_character'
+
         self.sheets = {
-            'idle': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_idle.png').convert_alpha()),
-            'walk': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_walk.png').convert_alpha()),
-            'death': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_death.png').convert_alpha()),
-            'gesture': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_gesture.png').convert_alpha()),
-            'jump': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_jump.png').convert_alpha()),
+            'idle': SpriteSheet(pygame.image.load(graphics_path / 'rogue_idle.png').convert_alpha()),
+            'walk': SpriteSheet(pygame.image.load(graphics_path / 'rogue_walk.png').convert_alpha()),
+            'death': SpriteSheet(pygame.image.load(graphics_path / 'rogue_death.png').convert_alpha()),
+            'gesture': SpriteSheet(pygame.image.load(graphics_path / 'rogue_gesture.png').convert_alpha()),
+            'jump': SpriteSheet(pygame.image.load(graphics_path / 'rogue_jump.png').convert_alpha()),
         }
 
         self.animation_steps = {'idle': 10, 'walk': 10, 'death': 10, 'gesture': 10, 'jump': 4}  #amount of frames in each animation

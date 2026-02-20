@@ -2,10 +2,14 @@ import pygame
 from weapon import Weapon
 from settings import *
 from tile import Tiles
+from pathlib import Path
 from player import Player
 from support import *
 from flyingenemy import FlyingEnemy
 from weapon import *
+
+
+BASE_DIR = Path(__file__).resolve().parent
 
 class Level:
 
@@ -24,18 +28,22 @@ class Level:
         self.create_map()
 
     def create_map(self):
+        layouts_path = BASE_DIR.parent / 'levels' / '0'
+
         layouts = {
-            'surface': import_csv_layout('../levels/0/lvl_mvp_surface.csv'),
-            'dirt': import_csv_layout('../levels/0/lvl_mvp_dirt.csv'),
-            'platform_side': import_csv_layout('../levels/0/lvl_mvp_bridge_side.csv'),
-            'platform_top': import_csv_layout('../levels/0/lvl_mvp_bridge_top.csv')
+            'surface': import_csv_layout(layouts_path / 'lvl_mvp_surface.csv'),
+            'dirt': import_csv_layout(layouts_path / 'lvl_mvp_dirt.csv'),
+            'platform_side': import_csv_layout(layouts_path / 'lvl_mvp_bridge_side.csv'),
+            'platform_top': import_csv_layout(layouts_path / 'lvl_mvp_bridge_top.csv')
         }
 
+        graphics_path = BASE_DIR.parent / 'graphics' / 'deepcave_single_tiles'
+
         graphics = {
-            'surface': import_folder('../graphics/deepcave_single_tiles/surface'),
-            'dirt': import_folder('../graphics/deepcave_single_tiles/dirt'),
-            'platform_side': import_folder('../graphics/deepcave_single_tiles/platform_side'),
-            'platform_top': import_folder('../graphics/deepcave_single_tiles/platform_top'),
+            'surface': import_folder(graphics_path / 'surface'),
+            'dirt': import_folder(graphics_path / 'dirt'),
+            'platform_side': import_folder(graphics_path / 'platform_side'),
+            'platform_top': import_folder(graphics_path / 'platform_top'),
         }
 
         for style, layout in layouts.items():
@@ -87,11 +95,13 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.half_screen_height = pygame.display.get_window_size()[1] // 2
         self.offset = pygame.math.Vector2()
 
+        bg_path = BASE_DIR.parent / 'graphics' / 'deepcave_background'
+
         #Loading a background (Temporary, needs to be a function (maybe))
-        self.bg_layer_0 = pygame.image.load('../graphics/deepcave_background/DeepCaveBG-Base.png').convert()
-        self.bg_layer_1 = pygame.image.load('../graphics/deepcave_background/DeepCaveBG-Layer1.png').convert_alpha()
-        self.bg_layer_2 = pygame.image.load('../graphics/deepcave_background/DeepCaveBG-Layer2.png').convert_alpha()
-        self.bg_layer_3 = pygame.image.load('../graphics/deepcave_background/DeepCaveBG-Layer3.png').convert_alpha()
+        self.bg_layer_0 = pygame.image.load(bg_path / 'DeepCaveBG-Base.png').convert()
+        self.bg_layer_1 = pygame.image.load(bg_path / 'DeepCaveBG-Layer1.png').convert_alpha()
+        self.bg_layer_2 = pygame.image.load(bg_path / 'DeepCaveBG-Layer2.png').convert_alpha()
+        self.bg_layer_3 = pygame.image.load(bg_path / 'DeepCaveBG-Layer3.png').convert_alpha()
 
         self.bg_layer_00 = pygame.transform.scale_by(self.bg_layer_0, 3)
         self.bg_layer_01 = pygame.transform.scale_by(self.bg_layer_1, 3)

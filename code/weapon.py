@@ -1,14 +1,19 @@
 import pygame
 import math
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
 
 class Weapon(pygame.sprite.Sprite):
     def __init__(self, groups, player):
         super().__init__(groups)
 
+        graphics_path = BASE_DIR.parent / 'graphics' / 'weapons'
+
         self.groups = groups
         self.player = player
 
-        full_path = f"../graphics/weapons/{self.player.weapon}.png"
+        full_path = f"{graphics_path}/{self.player.weapon}.png"
         self.original_image = pygame.image.load(full_path).convert_alpha()
         self.flipped_image = pygame.transform.flip(self.original_image, False, True)
         self.image = self.original_image

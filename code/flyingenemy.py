@@ -2,18 +2,24 @@ import pygame
 from spritesheets import SpriteSheet
 from settings import *
 from entity import Entity
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
 
 class FlyingEnemy(Entity):
 
     def __init__(self, pos, groups, player, obstacle_sprites):
         super().__init__(groups)
         self.enemy_scale = 1.5
+
+        graphics_path = BASE_DIR.parent / 'graphics' / 'animations' / 'bat_character'
+
         self.sheets = {
-            'idle': SpriteSheet(pygame.image.load('../graphics/animations/bat_character/bat_idle.png').convert_alpha()),
-            'fly_left': SpriteSheet(pygame.image.load('../graphics/animations/bat_character/flying_left.png').convert_alpha()),
-            'fly_up': SpriteSheet(pygame.image.load('../graphics/animations/bat_character/flying_up.png').convert_alpha()),
-            'fly_right': SpriteSheet(pygame.image.load('../graphics/animations/bat_character/flying_right.png').convert_alpha()),
-            'death': SpriteSheet(pygame.image.load('../graphics/animations/bat_character/bat_death.png').convert_alpha())
+            'idle': SpriteSheet(pygame.image.load(graphics_path / 'bat_idle.png').convert_alpha()),
+            'fly_left': SpriteSheet(pygame.image.load(graphics_path / 'flying_left.png').convert_alpha()),
+            'fly_up': SpriteSheet(pygame.image.load(graphics_path / 'flying_up.png').convert_alpha()),
+            'fly_right': SpriteSheet(pygame.image.load(graphics_path / 'flying_right.png').convert_alpha()),
+            'death': SpriteSheet(pygame.image.load(graphics_path / 'bat_death.png').convert_alpha())
             
         }
 
