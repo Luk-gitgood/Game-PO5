@@ -5,12 +5,11 @@ from tile import Tiles
 from player import Player
 from support import *
 from flyingenemy import FlyingEnemy
-
+from weapon import *
 
 class Level:
 
     def __init__(self,surface):
-
         #Get the display surface
         self.display_surface = surface
 
@@ -64,7 +63,8 @@ class Level:
         FlyingEnemy((900, 400), [self.visible_sprites], self.player, self.obstacle_sprites)
 
     def equip_weapon(self):
-        self.current_weapon = Weapon([self.visible_sprites], self.player)
+        if self.current_weapon is None:
+            self.current_weapon = Weapon([self.visible_sprites], self.player)
 
     def destroy_weapon(self):
         if self.current_weapon:

@@ -2,8 +2,7 @@ import pygame
 from settings import *
 from level import Level
 
-
-#General setup
+#General setup2
 pygame.init()
 pygame.display.set_caption('Insolitum')
 
@@ -22,7 +21,6 @@ clock = pygame.time.Clock()
 dt = True
 running = True
 level = Level(game_surface)
-
 
 #Main game loop
 while running:
@@ -60,6 +58,7 @@ while running:
         for sprite in level.visible_sprites:
             if hasattr(sprite, 'take_damage'):
                 sprite.take_damage(1)
+
 
     dt = clock.tick(60) / 1000
 

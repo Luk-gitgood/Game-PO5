@@ -8,7 +8,8 @@ class Player(Entity):
     def __init__(self, pos, groups, obstacle_sprites, equip_weapon, destroy_weapon):
         super().__init__(groups)
         self.obstacle_sprites = obstacle_sprites
-        #Movement
+
+        # Movement
         self.speed = 2
         self.gravity = 0.4
         self.jump_speed = -11
@@ -52,7 +53,6 @@ class Player(Entity):
 
         #Attacking
         self.attacking = False
-
 
     def animate(self):
         super().animate()
@@ -105,11 +105,21 @@ class Player(Entity):
             self.direction.y = 1
 
         if keys[pygame.K_1]:
-            self.equip_weapon()
-            self.attacking = True
-
-        if keys[pygame.K_g]:
             self.destroy_weapon()
+
+        if keys[pygame.K_2]:
+            if self.weapon_index != 0:
+                self.destroy_weapon()
+            self.weapon_index = 0
+            self.weapon = list(weapon_data.keys())[self.weapon_index]
+            self.equip_weapon()
+
+        if keys[pygame.K_3]:
+            if self.weapon_index != 1:
+                self.destroy_weapon()
+            self.weapon_index = 1
+            self.weapon = list(weapon_data.keys())[self.weapon_index]
+            self.equip_weapon()
 
     def move_horizontal(self, speed):
         self.hitbox.x += self.direction.x * speed

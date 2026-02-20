@@ -13,5 +13,6 @@ IMAGE_HEIGHT = 32
 
 #Weapons
 weapon_data = {
-    'test_gun': {'cooldown': 50, 'damage': '5', 'graphic': '../graphics/test_images/test_gun.png'},
+    'Gun-1': {'cooldown': 50, 'damage': '5', 'graphic': '../graphics/weapons/Gun-1.png'},
+    "Shotgun-1": {'cooldown': 200, 'damage': '4', 'graphic': '../graphics/weapons/Gun-1.png'}
 }
