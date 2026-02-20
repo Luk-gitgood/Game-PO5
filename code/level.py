@@ -62,18 +62,23 @@ class Level:
                             plat_top = graphics['platform_top'][int(col)]
                             Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'platform_top', surface=plat_top)
 
-        self.player = Player((700, 500), [self.visible_sprites], self.obstacle_sprites, self.equip_weapon, self.destroy_weapon)
+        self.player = Player((700, 500), [self.visible_sprites], self.obstacle_sprites, self.equip_weapon, self.destroy_weapon, self.fire_weapon)
 
         FlyingEnemy((900, 400), [self.visible_sprites], self.player, self.obstacle_sprites)
 
     def equip_weapon(self):
         if self.current_weapon is None:
-            self.current_weapon = Weapon([self.visible_sprites], self.player)
+            self.current_weapon = Weapon([self.visible_sprites], self.player, self.obstacle_sprites)
 
     def destroy_weapon(self):
         if self.current_weapon:
             self.current_weapon.kill()
         self.current_weapon = None
+
+    def fire_weapon(self):
+        # 2. This checks if a weapon exists before trying to shoot
+        if self.current_weapon:
+            self.current_weapon.shoot()
 
     # Render
     def run(self):

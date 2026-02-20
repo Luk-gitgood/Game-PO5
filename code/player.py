@@ -5,7 +5,7 @@ from entity import Entity
 
 
 class Player(Entity):
-    def __init__(self, pos, groups, obstacle_sprites, equip_weapon, destroy_weapon):
+    def __init__(self, pos, groups, obstacle_sprites, equip_weapon, destroy_weapon, fire_weapon):
         super().__init__(groups)
         self.obstacle_sprites = obstacle_sprites
 
@@ -48,9 +48,14 @@ class Player(Entity):
         #Weapons
         self.equip_weapon = equip_weapon
         self.destroy_weapon = destroy_weapon
+        self.fire_weapon = fire_weapon
 
         self.weapon_index = 0
         self.weapon = list(weapon_data.keys())[self.weapon_index]
+
+        self.can_shoot = True
+        self.shoot_time = None
+        self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
 
         #Attacking
         self.attacking = False
@@ -122,6 +127,13 @@ class Player(Entity):
             self.weapon = list(weapon_data.keys())[self.weapon_index]
             self.equip_weapon()
 
+        # Detect Mouse Click
+        if pygame.mouse.get_pressed()[0]:  # Left Click
+            if self.equip_weapon and self.can_shoot:
+                self.fire_weapon()
+                self.can_shoot = False
+                self.shoot_time = pygame.time.get_ticks()
+
     def move_horizontal(self, speed):
         self.hitbox.x += self.direction.x * speed
         self.collision('horizontal')
@@ -191,12 +203,15 @@ class Player(Entity):
                             self.hitbox.top = obstacle.hitbox.bottom
                             self.direction.y = 0
 
-    def attack_cooldowns(self):
-        if self.attacking:
-            pass
+    def cooldowns(self):
+        current_time = pygame.time.get_ticks()
+        if not self.can_shoot:
+            if current_time - self.shoot_time >= self.shoot_cooldown:
+                self.can_shoot = True
 
     def update(self):
         self.input()
+        self.cooldowns()
         self.update_action()
         self.animate()
         self.move_horizontal(self.speed)
