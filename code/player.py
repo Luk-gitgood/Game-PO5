@@ -1,10 +1,7 @@
 import pygame
-from pathlib import Path
 from settings import *
 from spritesheets import SpriteSheet
 from entity import Entity
-
-BASE_DIR = Path(__file__).resolve().parent
 
 
 class Player(Entity):

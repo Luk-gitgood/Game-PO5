@@ -2,10 +2,12 @@ import pygame
 from settings import *
 from level import Level
 
+graphics_path = BASE_DIR.parent / 'graphics' / 'images'
+
 #General setup2
 pygame.init()
 pygame.display.set_caption('Insolitum')
-pygame.display.set_icon(pygame.image.load('graphics/images/icon_insolitum.png'))
+pygame.display.set_icon(pygame.image.load(graphics_path / 'icon_insolitum.png'))
 
 
 info = pygame.display.Info()

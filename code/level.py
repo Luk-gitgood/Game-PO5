@@ -1,15 +1,11 @@
 import pygame
-from weapon import Weapon
-from settings import *
 from tile import Tiles
-from pathlib import Path
 from player import Player
 from support import *
 from flyingenemy import FlyingEnemy
 from weapon import *
+from settings import *
 
-
-BASE_DIR = Path(__file__).resolve().parent
 
 class Level:
 

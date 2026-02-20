@@ -1,10 +1,8 @@
 import pygame
 from spritesheets import SpriteSheet
-from settings import *
 from entity import Entity
-from pathlib import Path
+from settings import *
 
-BASE_DIR = Path(__file__).resolve().parent
 
 class FlyingEnemy(Entity):
 

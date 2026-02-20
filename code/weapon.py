@@ -1,8 +1,6 @@
 import pygame
 import math
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent
+from settings import *
 
 class Weapon(pygame.sprite.Sprite):
     def __init__(self, groups, player):

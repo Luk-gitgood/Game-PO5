@@ -1,3 +1,7 @@
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+
 #Game Setup
 BASE_SCREEN_HEIGHT = 720
 BASE_SCREEN_WIDTH = 1280
