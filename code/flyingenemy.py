@@ -7,7 +7,7 @@ class FlyingEnemy(Entity):
 
     def __init__(self, pos, groups, player, obstacle_sprites):
         super().__init__(groups)
-
+        self.enemy_scale = 1.5
         self.sheets = {
             'idle': SpriteSheet(pygame.image.load('../graphics/animations/bat_character/bat_idle.png').convert_alpha()),
             'fly_left': SpriteSheet(pygame.image.load('../graphics/animations/bat_character/flying_left.png').convert_alpha()),
@@ -21,7 +21,7 @@ class FlyingEnemy(Entity):
         self.animation_speeds = {'idle': 0.15, 'fly_left': 0.15, 'fly_up': 0.15, 'fly_right': 0.15, 'death': 0.25}
 
         for action, sheet in self.sheets.items():
-            self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_SCALE) for i in range(self.animation_steps[action])] 
+            self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, self.enemy_scale) for i in range(self.animation_steps[action])]
 
         self.image = self.frames[self.action][0]
         self.rect = self.frames[self.action][0].get_rect(topleft = pos)

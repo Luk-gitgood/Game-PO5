@@ -6,7 +6,8 @@ class Weapon(pygame.sprite.Sprite):
         super().__init__(groups)
         self.player = player
 
-        self.image = pygame.image.load('../graphics/test_images/test_gun.png').convert_alpha()
+        full_path = f'../graphics/test_images/{self.player.weapon}.png'
+        self.image = pygame.image.load(full_path).convert_alpha()
 
         #Gun direction
         if self.player.facing_left:
@@ -14,4 +15,3 @@ class Weapon(pygame.sprite.Sprite):
         else:
             self.image = pygame.transform.flip(self.image, True, False)
             self.rect = self.image.get_rect(midleft=self.player.hitbox.midright)
-

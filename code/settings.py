@@ -1,3 +1,4 @@
+#Game Setup
 BASE_SCREEN_HEIGHT = 720
 BASE_SCREEN_WIDTH = 1280
 
@@ -9,4 +10,8 @@ BOTTOM_LAYER = 32*3 + 16
 
 IMAGE_WIDTH = 32
 IMAGE_HEIGHT = 32
-IMAGE_SCALE = 1.5
+
+#Weapons
+weapon_data = {
+    'test_gun': {'cooldown': 50, 'damage': '5', 'graphic': '../graphics/test_images/test_gun.png'},
+}

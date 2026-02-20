@@ -18,6 +18,9 @@ class Level:
         self.visible_sprites = YSortCameraGroup(self.display_surface)
         self.obstacle_sprites = pygame.sprite.Group()
 
+        #Attack sprites
+        self.current_weapon = None
+
         #create map
         self.create_map()
 
@@ -56,12 +59,17 @@ class Level:
                             plat_top = graphics['platform_top'][int(col)]
                             Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'platform_top', surface=plat_top)
 
-        self.player = Player((700, 500), [self.visible_sprites], self.obstacle_sprites, self.create_attack)
+        self.player = Player((700, 500), [self.visible_sprites], self.obstacle_sprites, self.equip_weapon, self.destroy_weapon)
 
         FlyingEnemy((900, 400), [self.visible_sprites], self.player, self.obstacle_sprites)
 
-    def create_attack(self):
-        Weapon([self.visible_sprites], self.player)
+    def equip_weapon(self):
+        self.current_weapon = Weapon([self.visible_sprites], self.player)
+
+    def destroy_weapon(self):
+        if self.current_weapon:
+            self.current_weapon.kill()
+        self.current_weapon = None
 
     # Render
     def run(self):

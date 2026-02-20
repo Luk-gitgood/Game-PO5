@@ -5,11 +5,10 @@ from entity import Entity
 
 class Player(Entity):
 
-    def __init__(self, pos, groups, obstacle_sprites, create_attack):
+    def __init__(self, pos, groups, obstacle_sprites, equip_weapon, destroy_weapon):
         super().__init__(groups)
-
         self.obstacle_sprites = obstacle_sprites
-
+        #Movement
         self.speed = 2
         self.gravity = 0.4
         self.jump_speed = -11
@@ -17,12 +16,15 @@ class Player(Entity):
         self.coyote_timer = 0.1
         self.drop_timer = 0
 
+        #States
         self.facing_left = False
         self.is_jumping = False
         self.on_ground = False
         self.jump_held = False
         self.prev_hitbox = None
 
+        #Graphics
+        self.player_scale = 1.5
         self.sheets = {
             'idle': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_idle.png').convert_alpha()),
             'walk': SpriteSheet(pygame.image.load('../graphics/animations/rogue_character/rogue_walk.png').convert_alpha()),
@@ -35,13 +37,22 @@ class Player(Entity):
         self.animation_speeds = {'idle': 0.05, 'walk': 0.15, 'death': 0.1, 'gesture': 0.1, 'jump': 0.08}
 
         for action, sheet in self.sheets.items():
-            self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_SCALE) for i in range(self.animation_steps[action])] 
+            self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, self.player_scale) for i in range(self.animation_steps[action])]
 
         self.image = self.frames[self.action][0]
         self.rect = self.image.get_rect(topleft = pos)
         self.hitbox = self.rect.inflate(-16, 0)
 
-        self.create_attack = create_attack
+        #Weapons
+        self.equip_weapon = equip_weapon
+        self.destroy_weapon = destroy_weapon
+
+        self.weapon_index = 0
+        self.weapon = list(weapon_data.keys())[self.weapon_index]
+
+        #Attacking
+        self.attacking = False
+
 
     def animate(self):
         super().animate()
@@ -93,8 +104,12 @@ class Player(Entity):
             self.drop_timer = 0.2
             self.direction.y = 1
 
-        if keys[pygame.K_k]:
-            self.create_attack()
+        if keys[pygame.K_1]:
+            self.equip_weapon()
+            self.attacking = True
+
+        if keys[pygame.K_g]:
+            self.destroy_weapon()
 
     def move_horizontal(self, speed):
         self.hitbox.x += self.direction.x * speed
@@ -164,6 +179,10 @@ class Player(Entity):
                         if obstacle.sprite_type != 'platform_top':
                             self.hitbox.top = obstacle.hitbox.bottom
                             self.direction.y = 0
+
+    def attack_cooldowns(self):
+        if self.attacking:
+            pass
 
     def update(self):
         self.input()
