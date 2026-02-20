@@ -9,6 +9,8 @@ pygame.init()
 pygame.display.set_caption('Insolitum')
 pygame.display.set_icon(pygame.image.load(graphics_path / 'icon_insolitum.png'))
 
+#Cursor change
+pygame.mouse.set_cursor(pygame.cursors.diamond)
 
 info = pygame.display.Info()
 MONITOR_WIDTH = info.current_w
