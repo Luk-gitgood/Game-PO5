@@ -7,13 +7,14 @@ import random
 
 
 class Weapon(pygame.sprite.Sprite):
-    def __init__(self, groups, player, obstacle_sprites):
+    def __init__(self, groups, player, obstacle_sprites, attackable_sprites):
         super().__init__(groups)
 
         graphics_path = BASE_DIR.parent / 'graphics' / 'weapons'
         self.groups = groups
         self.player = player
         self.obstacle_sprites = obstacle_sprites
+        self.attackable_sprites = attackable_sprites
 
         #Static Setup
         full_path = f"{graphics_path}/{self.player.weapon}.png"
@@ -37,6 +38,7 @@ class Weapon(pygame.sprite.Sprite):
         #Load frames immediately
         self.load_animation_frames(graphics_path)
 
+
     def load_animation_frames(self, path):
         # Preload all animations so they are ready when player shoots
         sheets = {
@@ -59,8 +61,8 @@ class Weapon(pygame.sprite.Sprite):
             weapon_stats = weapon_data[self.player.weapon]
             for _ in range(weapon_stats['bullet_count']):
                 spread = random.uniform(-weapon_stats['spread'], weapon_stats['spread'])
-                Bullet(self.rect.center, self.angle + spread, self.groups, self.obstacle_sprites, weapon_stats['speed'],
-                       weapon_stats['lifetime'])
+                Bullet(self.rect.center, self.angle + spread, self.groups, self.obstacle_sprites, self.attackable_sprites, weapon_stats['speed'],
+                       weapon_stats['lifetime'], weapon_stats['damage'])
 
             if self.player.weapon == 'shotgun':
                 if self.direction.length() != 0:
@@ -77,8 +79,22 @@ class Weapon(pygame.sprite.Sprite):
 
     def update(self):
         #Position and direction logic
+        info = pygame.display.Info()
+        MONITOR_WIDTH = info.current_w
+        MONITOR_HEIGHT = info.current_h
+        scale_x = BASE_SCREEN_WIDTH / MONITOR_WIDTH
+        scale_y = BASE_SCREEN_HEIGHT / MONITOR_HEIGHT
+
         mouse_pos = pygame.mouse.get_pos()
-        mouse_world = mouse_pos + self.player.groups()[0].offset
+        # Convert mouse from real screen resolution → base resolution
+        mouse_scaled = pygame.math.Vector2(
+            mouse_pos[0] * scale_x,
+            mouse_pos[1] * scale_y
+        )
+
+        mouse_world = mouse_scaled + self.player.groups()[0].offset
+
+
         self.direction = pygame.math.Vector2(mouse_world) - pygame.math.Vector2(self.player.rect.center)
 
         if self.direction.length() != 0:

@@ -22,6 +22,7 @@ weapon_data = {
         'bullet_count': 1,
         'spread': 0,
         'lifetime': 1000,
+        'damage': 10,
         'cooldown': 400
     },
     'shotgun': {
@@ -29,6 +30,7 @@ weapon_data = {
         'bullet_count': 5,
         'spread': 15,
         'lifetime': 400,
+        'damage': 6,
         'cooldown': 800
     }
 }

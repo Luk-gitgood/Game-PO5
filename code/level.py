@@ -17,6 +17,9 @@ class Level:
         self.visible_sprites = YSortCameraGroup(self.display_surface)
         self.obstacle_sprites = pygame.sprite.Group()
 
+        self.attack_sprites = pygame.sprite.Group()
+        self.attackable_sprites = pygame.sprite.Group()
+
         #Attack sprites
         self.current_weapon = None
 
@@ -64,11 +67,12 @@ class Level:
 
         self.player = Player((700, 500), [self.visible_sprites], self.obstacle_sprites, self.equip_weapon, self.destroy_weapon, self.fire_weapon)
 
-        FlyingEnemy((900, 400), [self.visible_sprites], self.player, self.obstacle_sprites)
+        FlyingEnemy((900, 400), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
+        FlyingEnemy((900, 800), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
 
     def equip_weapon(self):
         if self.current_weapon is None:
-            self.current_weapon = Weapon([self.visible_sprites], self.player, self.obstacle_sprites)
+            self.current_weapon = Weapon([self.visible_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
 
     def destroy_weapon(self):
         if self.current_weapon:

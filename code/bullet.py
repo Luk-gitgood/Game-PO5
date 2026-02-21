@@ -4,7 +4,7 @@ from settings import *
 
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, pos, angle, groups, obstacle_sprites, speed, lifetime):
+    def __init__(self, pos, angle, groups, obstacle_sprites, attackable_sprites, speed, lifetime, damage):
         super().__init__(groups)
 
         # Graphics
@@ -20,6 +20,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=pos)
         self.pos = pygame.math.Vector2(pos)
         self.obstacle_sprites = obstacle_sprites
+        self.attackable_sprites = attackable_sprites
 
         # Movement
         # Convert angle to a direction vector
@@ -31,10 +32,19 @@ class Bullet(pygame.sprite.Sprite):
         self.spawn_time = pygame.time.get_ticks()
         self.lifetime = lifetime
 
+        # Damage
+        self.damage = damage
+
     def check_collision(self):
         for sprite in self.obstacle_sprites:
             if sprite.hitbox.colliderect(self.rect):
                 self.kill()  # Destroy bullet on impact
+
+    def deal_damage(self):
+        for sprite in self.attackable_sprites:
+            if sprite.hitbox.colliderect(self.rect):
+                sprite.take_damage(self.damage)
+                self.kill()
 
     def update(self):
         # Move using high precision floats
@@ -42,6 +52,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.center = self.pos
 
         self.check_collision()
+        self.deal_damage()
 
         # Despawn after lifetime (ms) expires
         if pygame.time.get_ticks() - self.spawn_time >= self.lifetime:

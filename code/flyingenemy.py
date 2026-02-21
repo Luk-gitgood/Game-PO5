@@ -6,7 +6,7 @@ from settings import *
 
 class FlyingEnemy(Entity):
 
-    def __init__(self, pos, groups, player, obstacle_sprites):
+    def __init__(self, pos, groups, player, obstacle_sprites, attackable_sprites):
         super().__init__(groups)
 
         # Animations
@@ -29,6 +29,7 @@ class FlyingEnemy(Entity):
 
         # collision
         self.obstacle_sprites = obstacle_sprites
+        self.attackable_sprites = attackable_sprites
         self.hitbox = self.rect.inflate(0,0)
         self.dying = False
 
@@ -105,6 +106,7 @@ class FlyingEnemy(Entity):
         if self.health <= 0:
             self.dying = True
             self.action = 'death'
+            self.remove(self.attackable_sprites)
             self.frame_index = 0
             self.speed = 0
 
