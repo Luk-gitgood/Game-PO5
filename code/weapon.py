@@ -31,7 +31,7 @@ class Weapon(pygame.sprite.Sprite):
         self.frame_index = 0
         self.frames = {}
 
-        self.weapon_sizes = {'revolver': [38, 20], 'shotgun': [52, 14]}
+        self.weapon_sizes = {'revolver': [38, 20], 'shotgun': [52, 14]} #sets weapon size at amount of pixels in spritesheet for animations
         self.animation_steps = {'revolver': 7, 'shotgun': 16}
         self.animation_speeds = {'revolver': 0.5, 'shotgun': 0.7}
 
@@ -86,7 +86,7 @@ class Weapon(pygame.sprite.Sprite):
         scale_y = BASE_SCREEN_HEIGHT / MONITOR_HEIGHT
 
         mouse_pos = pygame.mouse.get_pos()
-        # Convert mouse from real screen resolution → base resolution
+        #convert mouse from real screen resolution to base resolution
         mouse_scaled = pygame.math.Vector2(
             mouse_pos[0] * scale_x,
             mouse_pos[1] * scale_y
@@ -103,7 +103,7 @@ class Weapon(pygame.sprite.Sprite):
         self.angle = math.degrees(math.atan2(self.direction.y, self.direction.x))
         weapon_pos = pygame.math.Vector2(self.player.rect.center) + self.direction * 40
 
-        #Run animation logic
+        #run animation logic
         self.animate()
 
         #Select the base image BEFORE rotating
@@ -116,7 +116,7 @@ class Weapon(pygame.sprite.Sprite):
             base_img = self.frames[self.action][int(self.frame_index)]
             flipped_base = pygame.transform.flip(base_img, False, True)
 
-        #Rotate the correct base image (Animation frame or Static)
+        #Rotate the correct base image (animation frame / static)
         if 90 > self.angle > -90:
             self.image = pygame.transform.rotate(base_img, -self.angle)
         else:

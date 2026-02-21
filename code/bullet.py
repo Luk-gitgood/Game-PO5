@@ -7,12 +7,12 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, pos, angle, groups, obstacle_sprites, attackable_sprites, speed, lifetime, damage):
         super().__init__(groups)
 
-        # Graphics
+        #graphics
         self.image = pygame.Surface((12, 6), pygame.SRCALPHA)
 
-        #Gives outer color
+        #gives outer color
         pygame.draw.ellipse(self.image, (255, 100, 0), [0, 0, 12, 6])
-        #Gives inner color
+        #gives inner color
         pygame.draw.ellipse(self.image, (255, 255, 150), [2, 1, 8, 4])
 
         self.image = pygame.transform.rotate(self.image, -angle)
@@ -22,17 +22,17 @@ class Bullet(pygame.sprite.Sprite):
         self.obstacle_sprites = obstacle_sprites
         self.attackable_sprites = attackable_sprites
 
-        # Movement
-        # Convert angle to a direction vector
+        #covement
+        #convert angle to a direction vector
         rad = math.radians(angle)
         self.direction = pygame.math.Vector2(math.cos(rad), math.sin(rad))
         self.speed = speed
 
-        # Lifespan (to prevent bullets traveling forever)
+        #lifespan (to prevent bullets traveling forever)
         self.spawn_time = pygame.time.get_ticks()
         self.lifetime = lifetime
 
-        # Damage
+        #damage
         self.damage = damage
 
     def check_collision(self):
@@ -47,13 +47,13 @@ class Bullet(pygame.sprite.Sprite):
                 self.kill()
 
     def update(self):
-        # Move using high precision floats
+        #move using high precision floats
         self.pos += self.direction * self.speed
         self.rect.center = self.pos
 
         self.check_collision()
         self.deal_damage()
 
-        # Despawn after lifetime (ms) expires
+        #despawn after lifetime (ms) expires
         if pygame.time.get_ticks() - self.spawn_time >= self.lifetime:
             self.kill()
