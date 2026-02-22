@@ -36,7 +36,7 @@ class Level:
             'platform_top': import_csv_layout(layouts_path / 'lvl_mvp_bridge_top.csv')
         }
 
-        graphics_path = BASE_DIR.parent / 'graphics' / 'deepcave_single_tiles'
+        graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'deepcave_single_tiles'
 
         graphics = {
             'surface': import_folder(graphics_path / 'surface'),
@@ -100,7 +100,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.half_screen_height = pygame.display.get_window_size()[1] // 2
         self.offset = pygame.math.Vector2()
 
-        bg_path = BASE_DIR.parent / 'graphics' / 'deepcave_background'
+        bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /'deepcave_background'
 
         #Loading a background (Temporary, needs to be a function (maybe))
         self.bg_layer_0 = pygame.image.load(bg_path / 'DeepCaveBG-Base.png').convert()

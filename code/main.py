@@ -2,7 +2,7 @@ import pygame
 from settings import *
 from level import Level
 
-graphics_path = BASE_DIR.parent / 'graphics' / 'images'
+graphics_path = BASE_DIR.parent / 'graphics' / 'other_images'
 
 #General setup2
 pygame.init()

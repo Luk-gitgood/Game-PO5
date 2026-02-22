@@ -10,7 +10,7 @@ class FlyingEnemy(Entity):
         super().__init__(groups)
 
         # Animations
-        graphics_path = BASE_DIR.parent / 'graphics' / 'animations' / 'bat_character'
+        graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / 'bat_character'
         self.enemy_scale = 1.5
         self.animation_steps = {'idle': 4, 'fly_left': 4, 'fly_up': 4, 'fly_right': 4,
                                 'death': 11}  # amount of frames in each animation

@@ -23,7 +23,7 @@ class Player(Entity):
         self.prev_hitbox = None
 
         # Graphics
-        graphics_path = BASE_DIR.parent / 'graphics' / 'animations' / 'rogue_character'
+        graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / 'rogue_character'
         self.player_scale = 1.5
 
         self.animation_steps = {'idle': 10, 'walk': 10, 'death': 10, 'gesture': 10, 'jump': 4}  #amount of frames in each animation

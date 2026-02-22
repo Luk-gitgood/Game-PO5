@@ -18,7 +18,7 @@ IMAGE_HEIGHT = 32
 #Weapons
 weapon_data = {
     'revolver': {
-        'speed': 12,
+        'speed': 32,
         'bullet_count': 1,
         'spread': 0,
         'lifetime': 1000,
