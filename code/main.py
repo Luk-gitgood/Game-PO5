@@ -16,7 +16,7 @@ info = pygame.display.Info()
 MONITOR_WIDTH = info.current_w
 MONITOR_HEIGHT = info.current_h
 
-#Start in fullscreen (Maybe replace NOFRAME with FULLFRAME later)
+#Start in fullscreen (Maybe replace NOFRAME with FULLSCREEN later)
 is_fullscreen = True
 screen = pygame.display.set_mode(
     (MONITOR_WIDTH, MONITOR_HEIGHT), pygame.NOFRAME)
