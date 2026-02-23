@@ -1,11 +1,12 @@
 import pygame
 from settings import *
 from level import Level
+from main_menu import *
 
 graphics_path = BASE_DIR.parent / 'graphics' / 'other_images'
 
 #General setup2
-pygame.init()
+#pygame.init()
 pygame.display.set_caption('Insolitum')
 pygame.display.set_icon(pygame.image.load(graphics_path / 'icon_insolitum.png'))
 
@@ -16,16 +17,17 @@ info = pygame.display.Info()
 MONITOR_WIDTH = info.current_w
 MONITOR_HEIGHT = info.current_h
 
+sizes = pygame.display.get_desktop_sizes()
+
 #Start in fullscreen (Maybe replace NOFRAME with FULLSCREEN later)
 is_fullscreen = True
 screen = pygame.display.set_mode(
-    (1400, 900), pygame.NOFRAME)
+    (sizes[screen_ratio]), pygame.NOFRAME)
 
 game_surface = pygame.Surface((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT))
 
 clock = pygame.time.Clock()
 dt = True
-running = True
 level = Level(game_surface)
 
 #Main game loop
@@ -51,6 +53,7 @@ while running:
             screen = pygame.display.set_mode((event.w, event.h),pygame.RESIZABLE)
 
     game_surface.fill((0, 0, 0))
+
     level.run()
 
     scaled_surface = pygame.transform.scale(game_surface, screen.get_size())
