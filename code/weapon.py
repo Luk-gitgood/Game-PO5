@@ -67,6 +67,11 @@ class Weapon(pygame.sprite.Sprite):
             if self.player.weapon == 'shotgun':
                 if self.direction.length() != 0:
                     self.player.direction = self.direction.normalize() * -7
+                shotgun_shot = pygame.mixer.Sound('sounds/shotgun_shot.ogg')
+                pygame.mixer.Sound.play(shotgun_shot)
+            elif self.player.weapon == 'revolver':
+                revolver_shot = pygame.mixer.Sound('sounds/revolver_shot.ogg')
+                pygame.mixer.Sound.play(revolver_shot)
 
     def animate(self):
         # Only use if in a shooting state

@@ -19,7 +19,7 @@ MONITOR_HEIGHT = info.current_h
 #Start in fullscreen (Maybe replace NOFRAME with FULLSCREEN later)
 is_fullscreen = True
 screen = pygame.display.set_mode(
-    (MONITOR_WIDTH, MONITOR_HEIGHT), pygame.NOFRAME)
+    (1400, 900), pygame.NOFRAME)
 
 game_surface = pygame.Surface((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT))
 
@@ -27,6 +27,8 @@ clock = pygame.time.Clock()
 dt = True
 running = True
 level = Level(game_surface)
+
+bg_music = pygame.mixer.Sound('sounds/BG_music_test1.mp3')
 
 #Main game loop
 while running:
