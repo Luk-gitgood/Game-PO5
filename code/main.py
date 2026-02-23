@@ -28,8 +28,6 @@ dt = True
 running = True
 level = Level(game_surface)
 
-bg_music = pygame.mixer.Sound('sounds/BG_music_test1.mp3')
-
 #Main game loop
 while running:
     for event in pygame.event.get():
