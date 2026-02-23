@@ -21,13 +21,24 @@ class Player(Entity):
         self.on_ground = False
         self.jump_held = False
         self.prev_hitbox = None
+        self.dying = False
+
+        #i-frames
+        self.invincible = False
+        self.i_frame_time = 400
+        self.hit_time = 0
+
+        #stats
+        self.max_health = 100
+        self.health = 100
+
 
         # Graphics
         graphics_path = BASE_DIR.parent / 'graphics' / 'animations' / 'rogue_character'
         self.player_scale = 1.5
 
-        self.animation_steps = {'idle': 10, 'walk': 10, 'death': 10, 'gesture': 10, 'jump': 4}  #amount of frames in each animation
-        self.animation_speeds = {'idle': 0.05, 'walk': 0.15, 'death': 0.1, 'gesture': 0.1, 'jump': 0.08}
+        self.animation_steps = {'idle': 10, 'walk': 10, 'death': 10, 'gesture': 10, 'jump': 4, 'hit': 5}  #amount of frames in each animation
+        self.animation_speeds = {'idle': 0.05, 'walk': 0.15, 'death': 0.1, 'gesture': 0.1, 'jump': 0.08, 'hit': 0.2} #time for each animation (in ms*1000)
 
         self.load_animation_frames(graphics_path)
 
@@ -59,6 +70,7 @@ class Player(Entity):
             'death': SpriteSheet(pygame.image.load(graphics_path / 'rogue_death.png').convert_alpha()),
             'gesture': SpriteSheet(pygame.image.load(graphics_path / 'rogue_gesture.png').convert_alpha()),
             'jump': SpriteSheet(pygame.image.load(graphics_path / 'rogue_jump.png').convert_alpha()),
+            'hit': SpriteSheet(pygame.image.load(graphics_path / 'rogue_hit.png').convert_alpha()),
         }
 
         for action, sheet in sheets.items():
@@ -66,23 +78,38 @@ class Player(Entity):
 
     def animate(self):
         super().animate()
+        if self.action == 'hit':
+            if self.frame_index == 0: 
+                self.action = 'idle'
+                
         image = self.image
         if self.facing_left:
             image = pygame.transform.flip(image, True, False)
         self.image = image
+        
+
 
     def update_action(self):
-        #air
+    # lock animations
+        if self.dying:
+            self.action = 'death'
+            return
+
+        if self.action == 'hit':
+            return
+
+        # air
         if self.is_jumping:
             self.action = 'jump'
             return
 
-        #ground
+        # ground
         if self.direction.x != 0:
             self.action = 'walk'
         else:
             self.action = 'idle'
-
+        
+    
     def input(self):
         keys = pygame.key.get_pressed()
 
@@ -209,11 +236,42 @@ class Player(Entity):
                             self.hitbox.top = obstacle.hitbox.bottom
                             self.direction.y = 0
 
+     #TODO this damage function for player when in contact with enemy hitbox. 
+     #Gonna check for collisions in enemy class, but might put in entity class                        
+    
+    def take_damage(self, amount):
+        if self.dying or self.invincible:
+            return
+
+        self.health -= amount
+        #temp print to check health depletion
+        if self.health <= self.max_health:
+            print ('player health is:', self.health)
+            if self.health <= 0:
+                print ('you died')
+            
+        self.invincible = True
+        self.hit_time = pygame.time.get_ticks()
+        self.action = 'hit'
+        self.frame_index = 0
+
+        if self.health <= 0:
+            self.health = 0
+            self.dying = True
+            self.action = 'death'
+            self.frame_index = 0
+            self.speed = 0
+
+
     def cooldowns(self):
         current_time = pygame.time.get_ticks()
         if not self.can_shoot:
             if current_time - self.shoot_time >= self.shoot_cooldown:
                 self.can_shoot = True
+
+        if self.invincible:     #i-frame cooldown checker
+            if current_time - self.hit_time >= self.i_frame_time:
+                self.invincible = False
 
     def update(self):
         self.input()
