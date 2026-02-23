@@ -7,7 +7,7 @@ graphics_path = BASE_DIR.parent / 'graphics' / 'images'
 #General setup2
 pygame.init()
 pygame.display.set_caption('Insolitum')
-pygame.display.set_icon(pygame.image.load(graphics_path / 'icon_insolitum.png'))
+pygame.display.set_icon(pygame.image.load(BASE_DIR.parent / 'graphics' / 'other_images' / 'icon_insolitum.png'))
 
 #Cursor change
 pygame.mouse.set_cursor(pygame.cursors.diamond)
