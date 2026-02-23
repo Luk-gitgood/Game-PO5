@@ -36,7 +36,7 @@ class Level:
             'platform_top': import_csv_layout(layouts_path / 'lvl_mvp_bridge_top.csv')
         }
 
-        graphics_path = BASE_DIR.parent / 'graphics' / 'deepcave_single_tiles'
+        graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'deepcave_single_tiles'
 
         graphics = {
             'surface': import_folder(graphics_path / 'surface'),
@@ -57,7 +57,7 @@ class Level:
                             Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'surface', surface=surf)
                         if style == 'dirt':
                             dirt = graphics['dirt'][int(col)]
-                            Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'dirt', surface=dirt)
+                            Tiles((x,y), [self.visible_sprites], 'dirt', surface=dirt)
                         if style == 'platform_side':
                             plat_side = graphics['platform_side'][int(col)]
                             Tiles((x,y), [self.visible_sprites], 'platform_side', surface=plat_side)
@@ -65,7 +65,7 @@ class Level:
                             plat_top = graphics['platform_top'][int(col)]
                             Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'platform_top', surface=plat_top)
 
-        self.player = Player((700, 500), [self.visible_sprites], self.obstacle_sprites, self.equip_weapon, self.destroy_weapon, self.fire_weapon)
+        self.player = Player((700, 400), [self.visible_sprites], self.obstacle_sprites, self.equip_weapon, self.destroy_weapon, self.fire_weapon)
 
         FlyingEnemy((900, 400), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
         FlyingEnemy((900, 800), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
@@ -100,7 +100,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.half_screen_height = pygame.display.get_window_size()[1] // 2
         self.offset = pygame.math.Vector2()
 
-        bg_path = BASE_DIR.parent / 'graphics' / 'deepcave_background'
+        bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /'deepcave_background'
 
         #Loading a background (Temporary, needs to be a function (maybe))
         self.bg_layer_0 = pygame.image.load(bg_path / 'DeepCaveBG-Base.png').convert()
