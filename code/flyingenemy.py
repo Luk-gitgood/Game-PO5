@@ -33,6 +33,11 @@ class FlyingEnemy(Entity):
         self.hitbox = self.rect.inflate(0,0)
         self.dying = False
 
+        #enemy stats
+        self.damage = 10
+        self.attack_cooldown = 500  
+        self.last_attack_time = 0
+
 
 
     def load_animation_frames(self, graphics_path):
@@ -98,6 +103,16 @@ class FlyingEnemy(Entity):
                         self.hitbox.top = obstacle.hitbox.bottom
                         self.direction.y = 0
     
+    def attack_player(self):
+        current_time = pygame.time.get_ticks()
+
+        if self.hitbox.colliderect(self.player.hitbox):
+            if current_time - self.last_attack_time >= self.attack_cooldown:
+                self.player.take_damage(self.damage)
+                self.last_attack_time = current_time
+
+
+
     def take_damage(self, amount):
         if self.dying:
             return
@@ -114,4 +129,5 @@ class FlyingEnemy(Entity):
         if not self.dying:
             self.move_towards_player()
             self.update_action()
+            self.attack_player()
         self.animate()

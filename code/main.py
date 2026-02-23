@@ -2,12 +2,12 @@ import pygame
 from settings import *
 from level import Level
 
-graphics_path = BASE_DIR.parent / 'graphics' / 'other_images'
+graphics_path = BASE_DIR.parent / 'graphics' / 'images'
 
 #General setup2
 pygame.init()
 pygame.display.set_caption('Insolitum')
-pygame.display.set_icon(pygame.image.load(graphics_path / 'icon_insolitum.png'))
+pygame.display.set_icon(pygame.image.load(BASE_DIR.parent / 'graphics' / 'other_images' / 'icon_insolitum.png'))
 
 #Cursor change
 pygame.mouse.set_cursor(pygame.cursors.diamond)
@@ -57,7 +57,6 @@ while running:
 
     screen.blit(scaled_surface, (0, 0))
     pygame.display.update()
-    
 
     dt = clock.tick(60) / 1000
 
