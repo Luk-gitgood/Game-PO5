@@ -71,6 +71,7 @@ class Weapon(pygame.sprite.Sprite):
                 pygame.mixer.Sound.play(shotgun_shot)
             elif self.player.weapon == 'revolver':
                 revolver_shot = pygame.mixer.Sound('sounds/revolver_shot.ogg')
+                pygame.mixer.Sound.set_volume(revolver_shot, 0.4)
                 pygame.mixer.Sound.play(revolver_shot)
 
     def animate(self):
