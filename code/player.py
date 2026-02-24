@@ -9,13 +9,15 @@ class Player(Entity):
         super().__init__(groups)
         self.obstacle_sprites = obstacle_sprites
 
-        # Movement & States
-        self.speed = 2
+        #Physics
         self.gravity = 0.4
-        self.jump_speed = -11
         self.jump_cut_multiplier = 0.7
+
+        #Timers
         self.coyote_timer = 0.1
         self.drop_timer = 0
+
+        #States
         self.facing_left = False
         self.is_jumping = False
         self.on_ground = False
@@ -28,9 +30,11 @@ class Player(Entity):
         self.i_frame_time = 400
         self.hit_time = 0
 
-        #stats
-        self.max_health = 100
-        self.health = 100
+        #Stats
+        self.stats = {'health': 100, 'speed': 2, 'jump_speed': -11,}
+        self.health = self.stats['health']
+        self.speed = self.stats['speed']
+        self.jump_speed = self.stats['jump_speed']
 
 
         # Graphics
@@ -87,8 +91,6 @@ class Player(Entity):
             image = pygame.transform.flip(image, True, False)
         self.image = image
         
-
-
     def update_action(self):
     # lock animations
         if self.dying:
@@ -109,7 +111,6 @@ class Player(Entity):
         else:
             self.action = 'idle'
         
-    
     def input(self):
         keys = pygame.key.get_pressed()
 
@@ -244,11 +245,6 @@ class Player(Entity):
             return
 
         self.health -= amount
-        #temp print to check health depletion
-        if self.health <= self.max_health:
-            print ('player health is:', self.health)
-            if self.health <= 0:
-                print ('you died')
             
         self.invincible = True
         self.hit_time = pygame.time.get_ticks()

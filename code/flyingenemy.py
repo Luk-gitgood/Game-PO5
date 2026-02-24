@@ -23,9 +23,7 @@ class FlyingEnemy(Entity):
         self.rect = self.frames[self.action][0].get_rect(topleft = pos)
         self.player = player
         self.speed = 2
-        
-        # hp
-        self.health = 50
+                
 
         # collision
         self.obstacle_sprites = obstacle_sprites
@@ -34,8 +32,10 @@ class FlyingEnemy(Entity):
         self.dying = False
 
         #enemy stats
-        self.damage = 10
-        self.attack_cooldown = 500  
+        self.stats = {"health": 50, 'damage': 10, 'attack_cooldown': 500}
+        self.health = self.stats['health']
+        self.damage = self.stats['damage']
+        self.attack_cooldown = self.stats['attack_cooldown']
         self.last_attack_time = 0
 
 
@@ -111,8 +111,6 @@ class FlyingEnemy(Entity):
                 self.player.take_damage(self.damage)
                 self.last_attack_time = current_time
 
-
-
     def take_damage(self, amount):
         if self.dying:
             return
@@ -125,9 +123,31 @@ class FlyingEnemy(Entity):
             self.frame_index = 0
             self.speed = 0
 
+    def draw_health_bar(self,surface,offset):
+        if self.health >= self.stats['health']:
+            return
+
+        #Convert world position to screen position
+        bar_x = self.rect.centerx - ENEMY_BAR_WIDTH // 2 - offset.x
+        bar_y = self.rect.top - BAR_OFFSET_Y - offset.y
+
+        #Bg bar
+        bg_rect = pygame.Rect(bar_x, bar_y, ENEMY_BAR_WIDTH, ENEMY_BAR_HEIGHT)
+        pygame.draw.rect(surface, UI_BG_COLOR, bg_rect)
+
+        #converting stats to pixels
+        ratio = self.health / self.stats['health']
+        current_width = bg_rect.width * ratio
+        current_rect = bg_rect.copy()
+        current_rect.width = current_width
+
+        #drawng bar
+        pygame.draw.rect(surface, HEALTH_COLOR, current_rect)
+
     def update(self):
         if not self.dying:
             self.move_towards_player()
             self.update_action()
             self.attack_player()
         self.animate()
+

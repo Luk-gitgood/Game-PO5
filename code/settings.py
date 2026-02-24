@@ -1,6 +1,8 @@
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
+SOUNDS_PATH = BASE_DIR.parent / 'sounds'
+
 
 #Game Setup
 BASE_SCREEN_HEIGHT = 720
@@ -14,6 +16,20 @@ BOTTOM_LAYER = 32*3 + 16
 
 IMAGE_WIDTH = 32
 IMAGE_HEIGHT = 32
+
+#UI
+PLAYER_BAR_HEIGHT = 20
+PLAYER_HEALTH_BAR_WIDTH = 200
+UI_FONT_SIZE = 18
+UI_FONT = None
+
+ENEMY_BAR_HEIGHT = 5
+ENEMY_BAR_WIDTH = 30
+BAR_OFFSET_Y = 10
+
+UI_BG_COLOR = '#222222'
+UI_BORDER_COLOR = "#e8b923"
+HEALTH_COLOR = 'red'
 
 #Weapons
 weapon_data = {

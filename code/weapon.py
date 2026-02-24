@@ -65,8 +65,20 @@ class Weapon(pygame.sprite.Sprite):
                        weapon_stats['lifetime'], weapon_stats['damage'])
 
             if self.player.weapon == 'shotgun':
+                #Knockback
                 if self.direction.length() != 0:
                     self.player.direction = self.direction.normalize() * -7
+
+                #Sound
+                shotgun_shot = pygame.mixer.Sound(SOUNDS_PATH / 'shotgun_shot.ogg')
+                pygame.mixer.Sound.set_volume(shotgun_shot, 0.5)
+                pygame.mixer.Sound.play(shotgun_shot)
+
+            elif self.player.weapon == 'revolver':
+                #Sound
+                revolver_shot = pygame.mixer.Sound(SOUNDS_PATH / 'revolver_shot.ogg')
+                pygame.mixer.Sound.set_volume(revolver_shot, 0.1)
+                pygame.mixer.Sound.play(revolver_shot)
 
     def animate(self):
         # Only use if in a shooting state
@@ -123,3 +135,4 @@ class Weapon(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(flipped_base, -self.angle)
 
         self.rect = self.image.get_rect(center=weapon_pos)
+

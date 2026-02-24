@@ -5,6 +5,7 @@ from support import *
 from flyingenemy import FlyingEnemy
 from weapon import *
 from settings import *
+from ui import UI
 
 
 class Level:
@@ -16,15 +17,16 @@ class Level:
         #Sprite group setup
         self.visible_sprites = YSortCameraGroup(self.display_surface)
         self.obstacle_sprites = pygame.sprite.Group()
-
-        self.attack_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
 
-        #Attack sprites
+        #Weapon
         self.current_weapon = None
 
         #create map
         self.create_map()
+
+        #user interface
+        self.ui = UI(self.display_surface)
 
     def create_map(self):
         layouts_path = BASE_DIR.parent / 'levels' / '0'
@@ -57,7 +59,7 @@ class Level:
                             Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'surface', surface=surf)
                         if style == 'dirt':
                             dirt = graphics['dirt'][int(col)]
-                            Tiles((x,y), [self.visible_sprites], 'dirt', surface=dirt)
+                            Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'dirt', surface=dirt)
                         if style == 'platform_side':
                             plat_side = graphics['platform_side'][int(col)]
                             Tiles((x,y), [self.visible_sprites], 'platform_side', surface=plat_side)
@@ -69,6 +71,9 @@ class Level:
 
         FlyingEnemy((900, 400), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
         FlyingEnemy((900, 800), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
+        FlyingEnemy((700, 800), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
+
+        self.play_song()
 
     def equip_weapon(self):
         if self.current_weapon is None:
@@ -84,11 +89,22 @@ class Level:
         if self.current_weapon:
             self.current_weapon.shoot()
 
+    def play_song(self):
+
+        # initializes the mixer, which is used to play sounds and music
+        pygame.mixer.init()
+        pygame.mixer.music.set_volume(0.1)
+        #loads the background music to the mixer on level start
+        pygame.mixer.music.load(SOUNDS_PATH / 'Insolitum_music1.ogg')
+        pygame.mixer.music.play(loops = -1)
+
     # Render
     def run(self):
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
-
+        self.ui.display(self.player)
+        for enemy in self.attackable_sprites:
+            enemy.draw_health_bar(self.display_surface, self.visible_sprites.offset)
 
 class YSortCameraGroup(pygame.sprite.Group):
 
