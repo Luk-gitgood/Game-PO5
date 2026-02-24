@@ -70,9 +70,6 @@ class Level:
         FlyingEnemy((900, 400), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
         FlyingEnemy((900, 800), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
 
-        # initializes the mixer, which is used to play sounds and music
-        pygame.mixer.init()
-        pygame.mixer.music.set_volume(0.3)
         #loads the background music to the mixer on level start
         pygame.mixer.music.load('sounds/Insolitum_music1.ogg')
         pygame.mixer.music.play(loops = -1)

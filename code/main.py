@@ -60,7 +60,6 @@ while running:
 
     screen.blit(scaled_surface, (0, 0))
     pygame.display.update()
-    
 
     dt = clock.tick(60) / 1000
 
