@@ -258,7 +258,6 @@ class Player(Entity):
             self.frame_index = 0
             self.speed = 0
 
-
     def cooldowns(self):
         current_time = pygame.time.get_ticks()
         if not self.can_shoot:

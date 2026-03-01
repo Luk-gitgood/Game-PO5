@@ -23,8 +23,27 @@ class Weapon(pygame.sprite.Sprite):
 
         self.image = self.original_image
         self.angle = 0
-        self.direction = pygame.math.Vector2()
-        self.rect = self.image.get_rect(center=self.player.rect.center)
+
+        #User screen size
+        info = pygame.display.Info()
+        MONITOR_WIDTH = info.current_w
+        MONITOR_HEIGHT = info.current_h
+
+
+        #Changed weapon spawn so that it spawns with correct direction (moved parts of update to init)
+        #Position and direction logic
+        scale_x = BASE_SCREEN_WIDTH / MONITOR_WIDTH
+        scale_y = BASE_SCREEN_HEIGHT / MONITOR_HEIGHT
+        mouse_pos = pygame.mouse.get_pos()
+
+        #convert mouse from real screen resolution to base resolution
+        mouse_scaled = pygame.math.Vector2(mouse_pos[0] * scale_x,mouse_pos[1] * scale_y)
+        mouse_world = mouse_scaled + self.player.groups()[0].offset
+
+        self.direction = pygame.math.Vector2(mouse_world) - pygame.math.Vector2(self.player.rect.center)
+        self.weapon_pos = pygame.math.Vector2(self.player.rect.center) + self.direction * 40
+
+        self.rect = self.image.get_rect(center=self.weapon_pos)
 
         #Animation Setup
         self.action = 'idle'
@@ -90,14 +109,17 @@ class Weapon(pygame.sprite.Sprite):
                 self.action = 'idle'  # Back to static image
 
     def update(self):
-        #Position and direction logic
+        #User screen size
         info = pygame.display.Info()
         MONITOR_WIDTH = info.current_w
         MONITOR_HEIGHT = info.current_h
+
+        #Position and direction logic
         scale_x = BASE_SCREEN_WIDTH / MONITOR_WIDTH
         scale_y = BASE_SCREEN_HEIGHT / MONITOR_HEIGHT
 
         mouse_pos = pygame.mouse.get_pos()
+
         #convert mouse from real screen resolution to base resolution
         mouse_scaled = pygame.math.Vector2(
             mouse_pos[0] * scale_x,
@@ -113,7 +135,7 @@ class Weapon(pygame.sprite.Sprite):
             self.direction = self.direction.normalize()
 
         self.angle = math.degrees(math.atan2(self.direction.y, self.direction.x))
-        weapon_pos = pygame.math.Vector2(self.player.rect.center) + self.direction * 40
+        self.weapon_pos = pygame.math.Vector2(self.player.rect.center) + self.direction * 40
 
         #run animation logic
         self.animate()
@@ -134,5 +156,5 @@ class Weapon(pygame.sprite.Sprite):
         else:
             self.image = pygame.transform.rotate(flipped_base, -self.angle)
 
-        self.rect = self.image.get_rect(center=weapon_pos)
+        self.rect = self.image.get_rect(center=self.weapon_pos)
 

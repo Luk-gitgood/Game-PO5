@@ -82,10 +82,10 @@ class Level:
     def destroy_weapon(self):
         if self.current_weapon:
             self.current_weapon.kill()
-        self.current_weapon = None
+            self.current_weapon = None
 
     def fire_weapon(self):
-        # 2. This checks if a weapon exists before trying to shoot
+        #This checks if a weapon exists before trying to shoot
         if self.current_weapon:
             self.current_weapon.shoot()
 
