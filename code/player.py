@@ -42,7 +42,7 @@ class Player(Entity):
         self.player_scale = 1.5
 
         self.animation_steps = {'idle': 10, 'walk': 10, 'death': 10, 'gesture': 10, 'jump': 4, 'hit': 5}  #amount of frames in each animation
-        self.animation_speeds = {'idle': 0.05, 'walk': 0.15, 'death': 0.1, 'gesture': 0.1, 'jump': 0.08, 'hit': 0.2} #time for each animation (in ms*1000)
+        self.animation_speeds = {'idle': 0.05, 'walk': 0.2, 'death': 0.1, 'gesture': 0.1, 'jump': 0.08, 'hit': 0.2} #time for each animation (in ms*1000)
 
         self.load_animation_frames(graphics_path)
 
