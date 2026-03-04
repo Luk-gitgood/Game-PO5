@@ -2,6 +2,7 @@ import pygame
 from spritesheets import SpriteSheet
 from entity import Entity
 from settings import *
+import random
 
 
 class FlyingEnemy(Entity):
@@ -22,7 +23,7 @@ class FlyingEnemy(Entity):
         self.image = self.frames[self.action][0]
         self.rect = self.frames[self.action][0].get_rect(topleft = pos)
         self.player = player
-        self.speed = 2
+        self.speed = random.uniform(2,3) #this makes the speed randomized between 2&3 to prevent enemies from getting stuck in eachother
                 
 
         # collision
@@ -38,6 +39,10 @@ class FlyingEnemy(Entity):
         self.attack_cooldown = self.stats['attack_cooldown']
         self.last_attack_time = 0
 
+        #player detection
+        self.detection_radius = 350
+        self.disengage_radius = 450
+        self.player_detected = False
 
 
     def load_animation_frames(self, graphics_path):
@@ -76,7 +81,7 @@ class FlyingEnemy(Entity):
         if self.direction.length() == 0:
             self.action = 'idle'
         elif abs(self.direction.x) > abs(self.direction.y):
-            if self.direction.x > 0:
+            if self.direction.x < 0:
                 self.action = 'fly_left'
             else:
                 self.action = 'fly_right'
@@ -102,6 +107,15 @@ class FlyingEnemy(Entity):
                     if self.direction.y < 0:
                         self.hitbox.top = obstacle.hitbox.bottom
                         self.direction.y = 0
+
+    def detect_player(self):
+        distance = pygame.math.Vector2(self.player.rect.center).distance_to(self.rect.center)
+        if not self.player_detected:
+            if distance <= self.detection_radius:
+                self.player_detected = True
+        else:
+            if distance >= self.disengage_radius:
+                self.player_detected = False
     
     def attack_player(self):
         current_time = pygame.time.get_ticks()
@@ -146,8 +160,14 @@ class FlyingEnemy(Entity):
 
     def update(self):
         if not self.dying:
-            self.move_towards_player()
-            self.update_action()
-            self.attack_player()
-        self.animate()
+            self.detect_player()
 
+            if self.player_detected:
+                self.move_towards_player()
+                self.attack_player()
+            else:
+                self.direction.update(0, 0)
+
+            self.update_action()
+
+        self.animate()

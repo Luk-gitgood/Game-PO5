@@ -32,10 +32,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
         #Toggle fullscreen with F11
         if event.type == pygame.KEYDOWN:
-
+                
             if event.key == pygame.K_BACKSLASH:
                 is_fullscreen = not is_fullscreen
 
@@ -58,7 +57,5 @@ while running:
     pygame.display.update()
 
     dt = clock.tick(60) / 1000
-
-
 
 pygame.quit()

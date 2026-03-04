@@ -100,7 +100,7 @@ class Weapon(pygame.sprite.Sprite):
                 pygame.mixer.Sound.play(revolver_shot)
 
     def animate(self):
-        # Only use if in a shooting state
+        #Only use if in a shooting state
         if self.action != 'idle':
             self.frame_index += self.animation_speeds[self.action]
 
