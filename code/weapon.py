@@ -86,7 +86,7 @@ class Weapon(pygame.sprite.Sprite):
             if self.player.weapon == 'shotgun':
                 #Knockback
                 if self.direction.length() != 0:
-                    self.player.direction = self.direction.normalize() * -7
+                    self.player.direction += self.direction.normalize() * -3
 
                 #Sound
                 shotgun_shot = pygame.mixer.Sound(SOUNDS_PATH / 'shotgun_shot.ogg')

@@ -80,6 +80,7 @@ class Level:
 
                         else:
                             print(f"Warning: '{style}' index {index} out of range at row {row_index}, col {col_index}") #debugging thingy to check if the csv files are correct
+                            print("collision_surface tiles:", len(graphics['collision_surface']))
 
         # Create the player
         self.player = Player(
@@ -92,7 +93,7 @@ class Level:
         )
 
         # Spawn enemies
-        positions = [(1900, 400), (1800, 500), (1900, 600)]
+        positions = [(400, 1000), (1000, 1100), (1600, 600)]
         for pos in positions:
             FlyingEnemy(pos, [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
 
