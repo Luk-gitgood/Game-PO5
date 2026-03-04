@@ -2,6 +2,7 @@ import pygame
 from spritesheets import SpriteSheet
 from entity import Entity
 from settings import *
+from random import uniform
 
 
 class FlyingEnemy(Entity):
@@ -22,7 +23,7 @@ class FlyingEnemy(Entity):
         self.image = self.frames[self.action][0]
         self.rect = self.frames[self.action][0].get_rect(topleft = pos)
         self.player = player
-        self.speed = 2
+        self.speed = uniform(1.5,2.5)
                 
 
         # collision
