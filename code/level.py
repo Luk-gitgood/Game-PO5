@@ -18,9 +18,13 @@ class Level:
         self.visible_sprites = YSortCameraGroup(self.display_surface)
         self.obstacle_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
+    
 
         #Weapon
         self.current_weapon = None
+
+        #parallax yes/no
+        self.use_parallax = False
 
         #create map
         self.create_map()
@@ -29,49 +33,68 @@ class Level:
         self.ui = UI(self.display_surface)
 
     def create_map(self):
-        layouts_path = BASE_DIR.parent / 'levels' / '0'
+        layouts_path = BASE_DIR.parent / 'levels' / '1'
 
         layouts = {
-            'surface': import_csv_layout(layouts_path / 'lvl_mvp_surface.csv'),
-            'dirt': import_csv_layout(layouts_path / 'lvl_mvp_dirt.csv'),
-            'platform_side': import_csv_layout(layouts_path / 'lvl_mvp_bridge_side.csv'),
-            'platform_top': import_csv_layout(layouts_path / 'lvl_mvp_bridge_top.csv')
+            'collision_surface': import_csv_layout(layouts_path / 'lvl_1_test1_collision_surface.csv'),
+            'platform_top': import_csv_layout(layouts_path / 'lvl_1_test1_platform_top.csv'),
+            'damage_tiles': import_csv_layout(layouts_path / 'lvl_1_test1_damage_tiles.csv'),
+            'background1': import_csv_layout(layouts_path / 'lvl_1_test1_background1.csv'),
+            'doorways': import_csv_layout(layouts_path / 'lvl_1_test1_doorways.csv'),
         }
-
-        graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'deepcave_single_tiles'
+        
+        graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'castle_single_tiles'
 
         graphics = {
-            'surface': import_folder(graphics_path / 'surface'),
-            'dirt': import_folder(graphics_path / 'dirt'),
-            'platform_side': import_folder(graphics_path / 'platform_side'),
+            'collision_surface': import_folder(graphics_path / 'collision_surface'),
+            'damage_tiles': import_folder(graphics_path / 'damage_tiles'),
+            'background1': import_folder(graphics_path / 'non_collision_surface'),
             'platform_top': import_folder(graphics_path / 'platform_top'),
+            'doorways': import_folder(graphics_path / 'doorways'),
         }
 
+        # Loop over all styles
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout):
                 for col_index, col in enumerate(row):
                     if col != '-1':
+                        index = int(col)
                         x = col_index * TILE_SIZE
                         y = row_index * TILE_SIZE
 
-                        if style == 'surface':
-                            surf = graphics['surface'][int(col)]
-                            Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'surface', surface=surf)
-                        if style == 'dirt':
-                            dirt = graphics['dirt'][int(col)]
-                            Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'dirt', surface=dirt)
-                        if style == 'platform_side':
-                            plat_side = graphics['platform_side'][int(col)]
-                            Tiles((x,y), [self.visible_sprites], 'platform_side', surface=plat_side)
-                        if style == 'platform_top':
-                            plat_top = graphics['platform_top'][int(col)]
-                            Tiles((x,y), [self.visible_sprites, self.obstacle_sprites], 'platform_top', surface=plat_top)
+                        # Check if the index is valid
+                        if 0 <= index < len(graphics[style]):
+                            surf = graphics[style][index]
 
-        self.player = Player((700, 400), [self.visible_sprites], self.obstacle_sprites, self.equip_weapon, self.destroy_weapon, self.fire_weapon)
+                            if style == 'collision_surface':
+                                Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'solid', surf)
+                            
+                            elif style == 'platform_top':
+                                Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'platform_top', surf)
 
-        FlyingEnemy((900, 400), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
-        FlyingEnemy((900, 800), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
-        FlyingEnemy((700, 800), [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
+                            elif style == 'damage_tiles':
+                                Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'damage', surf)
+                            
+                            elif style == 'doorways':
+                                Tiles((x, y), [self.visible_sprites], 'door', surf)
+
+                        else:
+                            print(f"Warning: '{style}' index {index} out of range at row {row_index}, col {col_index}") #debugging thingy to check if the csv files are correct
+
+        # Create the player
+        self.player = Player(
+            (150, 1000),
+            [self.visible_sprites],
+            self.obstacle_sprites,
+            self.equip_weapon,
+            self.destroy_weapon,
+            self.fire_weapon
+        )
+
+        # Spawn enemies
+        positions = [(1900, 400), (1800, 500), (1900, 600)]
+        for pos in positions:
+            FlyingEnemy(pos, [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
 
         self.play_song()
 
@@ -93,7 +116,7 @@ class Level:
 
         # initializes the mixer, which is used to play sounds and music
         pygame.mixer.init()
-        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.set_volume(0)
         #loads the background music to the mixer on level start
         pygame.mixer.music.load(SOUNDS_PATH / 'Insolitum_music1.ogg')
         pygame.mixer.music.play(loops = -1)
@@ -112,9 +135,10 @@ class YSortCameraGroup(pygame.sprite.Group):
         # General
         super().__init__()
         self.display_surface = surface
-        self.half_screen_width = pygame.display.get_window_size()[0] // 2
-        self.half_screen_height = pygame.display.get_window_size()[1] // 2
+        self.half_screen_width = BASE_SCREEN_WIDTH // 2
+        self.half_screen_height = BASE_SCREEN_HEIGHT // 2
         self.offset = pygame.math.Vector2()
+        
 
         bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /'deepcave_background'
 
@@ -152,11 +176,15 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.offset.y = max(0, min(self.offset.y, WORLD_HEIGHT - BASE_SCREEN_HEIGHT))
 
         # Parallax layers
-        self.draw_parallax_layer(self.bg_layer_00, 1)
-        self.draw_parallax_layer(self.bg_layer_01, 0.1)
-        self.draw_parallax_layer(self.bg_layer_02, 0.3)
-        self.draw_parallax_layer(self.bg_layer_03, 0.6)
+        if getattr(self, 'use_parallax', False):
+            self.draw_parallax_layer(self.bg_layer_00, 1)
+            self.draw_parallax_layer(self.bg_layer_01, 0.1)
+            self.draw_parallax_layer(self.bg_layer_02, 0.3)
+            self.draw_parallax_layer(self.bg_layer_03, 0.6)
+        else:
+            self.display_surface.fill((15,15,0))
 
+        
 
         for sprite in self.sprites():
             offset_pos = sprite.rect.topleft - self.offset

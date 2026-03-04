@@ -11,14 +11,15 @@ class Tiles(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = pos)
 
         if self.sprite_type == 'surface':
-
             #Changing hitbox using inflate(BAD:<)
-            self.hitbox = self.rect.inflate(-30, -30)
-        elif self.sprite_type == 'platform_top':
+            self.hitbox = self.rect.inflate(0, 0)
 
-            #Changing hitbox using Rect(GOOD:>)
-            self.hitbox = pygame.Rect(self.rect.left, self.rect.bottom - 16, 32, 16).inflate(-24,0)
-            
+        elif self.sprite_type == 'platform_top':
+            self.hitbox = self.rect.inflate(0, 0)
+        
+        elif self.sprite_type == 'damage':
+            self.hitbox = pygame.Rect(self.rect.left, self.rect.bottom - 16, 32, 16)
+
         else:
             self.hitbox = self.rect
 

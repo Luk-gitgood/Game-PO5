@@ -27,7 +27,7 @@ class Player(Entity):
 
         #i-frames
         self.invincible = False
-        self.i_frame_time = 400
+        self.i_frame_time = 600
         self.hit_time = 0
 
         #Stats
@@ -205,6 +205,9 @@ class Player(Entity):
                     continue
 
                 if obstacle.hitbox.colliderect(self.hitbox):
+                    if obstacle.sprite_type == 'damage':
+                        self.take_damage(10)
+                        
                     if self.direction.x > 0 : #moving right
                         self.hitbox.right = obstacle.hitbox.left
                     if self.direction.x < 0: #moving left
@@ -213,6 +216,8 @@ class Player(Entity):
         if direction == 'vertical':
             for obstacle in self.obstacle_sprites:
                 if obstacle.hitbox.colliderect(self.hitbox):
+                    if obstacle.sprite_type == 'damage':
+                        self.take_damage(10)
 
                     if self.direction.y > 0:
 
