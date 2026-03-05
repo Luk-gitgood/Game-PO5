@@ -31,7 +31,7 @@ level = Level(game_surface)
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            running = False 
         #Toggle fullscreen with F11
         if event.type == pygame.KEYDOWN:
                 

@@ -117,7 +117,7 @@ class Level:
 
         # initializes the mixer, which is used to play sounds and music
         pygame.mixer.init()
-        pygame.mixer.music.set_volume(0)
+        pygame.mixer.music.set_volume(0.1)
         #loads the background music to the mixer on level start
         pygame.mixer.music.load(SOUNDS_PATH / 'Insolitum_music1.ogg')
         pygame.mixer.music.play(loops = -1)
