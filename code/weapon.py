@@ -86,7 +86,7 @@ class Weapon(pygame.sprite.Sprite):
             if self.player.weapon == 'shotgun':
                 #Knockback
                 if self.direction.length() != 0:
-                    self.player.direction += self.direction.normalize() * -3
+                    self.player.direction += self.direction.normalize() * -5
 
                 #Sound
                 shotgun_shot = pygame.mixer.Sound(SOUNDS_PATH / 'shotgun_shot.ogg')
@@ -104,7 +104,7 @@ class Weapon(pygame.sprite.Sprite):
         if self.action != 'idle':
             self.frame_index += self.animation_speeds[self.action]
 
-            if self.frame_index >= len(self.frames[self.action]):
+            if self.frame_index >= len(self.frames[self.action]): #back to starting frame (index 0) after animation finishes
                 self.frame_index = 0
                 self.action = 'idle'  # Back to static image
 

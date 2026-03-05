@@ -129,6 +129,10 @@ class Level:
         self.ui.display(self.player)
         for enemy in self.attackable_sprites:
             enemy.draw_health_bar(self.display_surface, self.visible_sprites.offset)
+        if self.player.dead:
+            font = pygame.font.Font(None, 74)
+            text = font.render("Game Over", True, (255, 255, 255))
+            self.display_surface.blit(text, (BASE_SCREEN_WIDTH // 2 - text.get_width() // 2, BASE_SCREEN_HEIGHT // 2 - text.get_height() // 2))
 
 class YSortCameraGroup(pygame.sprite.Group):
 
@@ -171,13 +175,18 @@ class YSortCameraGroup(pygame.sprite.Group):
     def custom_draw(self, player):
 
         #Offset (camera)
+        # Camera (float)
         self.offset.x = player.rect.centerx - self.half_screen_width
         self.offset.x = max(0, min(self.offset.x, WORLD_WIDTH - BASE_SCREEN_WIDTH))
         self.offset.y = player.rect.centery - self.half_screen_height
         self.offset.y = max(0, min(self.offset.y, WORLD_HEIGHT - BASE_SCREEN_HEIGHT))
 
+        # Integer camera for rendering
+        render_offset_x = int(self.offset.x)
+        render_offset_y = int(self.offset.y)
+
         # Parallax layers
-        if getattr(self, 'use_parallax', False):
+        if getattr(self, 'use_parallax', True):
             self.draw_parallax_layer(self.bg_layer_00, 1)
             self.draw_parallax_layer(self.bg_layer_01, 0.1)
             self.draw_parallax_layer(self.bg_layer_02, 0.3)
@@ -185,9 +194,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         else:
             self.display_surface.fill((15,15,0))
 
-        
-
         for sprite in self.sprites():
-            offset_pos = sprite.rect.topleft - self.offset
-            self.display_surface.blit(sprite.image, offset_pos)
-
+            draw_x = sprite.rect.left - render_offset_x
+            draw_y = sprite.rect.top  - render_offset_y
+            self.display_surface.blit(sprite.image, (draw_x, draw_y))

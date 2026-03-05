@@ -24,6 +24,7 @@ class Player(Entity):
         self.jump_held = False
         self.prev_hitbox = None
         self.dying = False
+        self.dead = False
 
         #i-frames
         self.invincible = False
@@ -274,12 +275,15 @@ class Player(Entity):
                 self.invincible = False
 
     def update(self):
+        if self.dead:
+            return
+        self.prev_hitbox = self.hitbox.copy()
         self.input()
         self.cooldowns()
         self.update_action()
         self.animate()
         self.move_horizontal(self.speed)
         self.apply_gravity()
-        self.prev_hitbox = self.hitbox.copy()
+        
         self.drop_timer = max(0, self.drop_timer - 1/60)
 
