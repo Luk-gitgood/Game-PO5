@@ -41,6 +41,7 @@ class Player(Entity):
         # Graphics
         graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / 'rogue_character'
         self.player_scale = 1.5
+        
 
         self.animation_steps = {'idle': 10, 'walk': 10, 'death': 10, 'gesture': 10, 'jump': 4, 'hit': 5}  #amount of frames in each animation
         self.animation_speeds = {'idle': 0.05, 'walk': 0.2, 'death': 0.3, 'gesture': 0.1, 'jump': 0.08, 'hit': 0.2} #time for each animation (in ms*1000)
@@ -55,6 +56,7 @@ class Player(Entity):
         self.equip_weapon = equip_weapon
         self.destroy_weapon = destroy_weapon
         self.fire_weapon = fire_weapon
+        self.weapon_equipped = False
 
         self.weapon_index = 0
         self.weapon = list(weapon_data.keys())[self.weapon_index]
@@ -128,7 +130,9 @@ class Player(Entity):
             elif self.direction.x > -2:
                 self.direction.x += -0.3
         else:
-            self.direction.x = 0
+            self.direction.x *= 0.8
+            if abs(self.direction.x) < 0.1:
+                self.direction.x = 0
 
         if keys[pygame.K_SPACE]:
             if not self.jump_held:
@@ -145,6 +149,7 @@ class Player(Entity):
 
         if keys[pygame.K_1]:
             self.destroy_weapon()
+            self.weapon_equipped = False
 
         if keys[pygame.K_2]:
             if self.weapon_index != 0:
@@ -153,6 +158,7 @@ class Player(Entity):
             self.weapon = list(weapon_data.keys())[self.weapon_index]
             self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
             self.equip_weapon()
+            self.weapon_equipped = True
 
         if keys[pygame.K_3]:
             if self.weapon_index != 1:
@@ -161,10 +167,11 @@ class Player(Entity):
             self.weapon = list(weapon_data.keys())[self.weapon_index]
             self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
             self.equip_weapon()
+            self.weapon_equipped = True
 
-        # Detect Mouse Click
+        #mouse detection for shooting. Only shoots if weapon is equipped and cooldown is ready.
         if pygame.mouse.get_pressed()[0]:  # Left Click
-            if self.equip_weapon and self.can_shoot:
+            if self.weapon_equipped and self.can_shoot:
                 self.fire_weapon()
                 self.can_shoot = False
                 self.shoot_time = pygame.time.get_ticks()

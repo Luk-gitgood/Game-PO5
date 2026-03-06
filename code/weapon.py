@@ -89,7 +89,7 @@ class Weapon(pygame.sprite.Sprite):
                     self.player.direction += self.direction.normalize() * -5
 
                 #Sound
-                shotgun_shot = pygame.mixer.Sound(SOUNDS_PATH / 'shotgun_shot.ogg')
+                shotgun_shot = pygame.mixer.Sound(SOUNDS_PATH / 'shotgun_shot2.ogg')
                 pygame.mixer.Sound.set_volume(shotgun_shot, 0.5)
                 pygame.mixer.Sound.play(shotgun_shot)
 

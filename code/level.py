@@ -22,6 +22,7 @@ class Level:
 
         #Weapon
         self.current_weapon = None
+        self.weapon_destroyed_on_death = False
 
         #parallax yes/no
         self.use_parallax = False
@@ -36,11 +37,12 @@ class Level:
         layouts_path = BASE_DIR.parent / 'levels' / '1'
 
         layouts = {
-            'collision_surface': import_csv_layout(layouts_path / 'lvl_1_test1_collision_surface.csv'),
-            'platform_top': import_csv_layout(layouts_path / 'lvl_1_test1_platform_top.csv'),
-            'damage_tiles': import_csv_layout(layouts_path / 'lvl_1_test1_damage_tiles.csv'),
-            'background1': import_csv_layout(layouts_path / 'lvl_1_test1_background1.csv'),
-            'doorways': import_csv_layout(layouts_path / 'lvl_1_test1_doorways.csv'),
+            'collision_surface': import_csv_layout(layouts_path / 'lvl_1_finalroom_collision_surface.csv'),
+            'platform_top': import_csv_layout(layouts_path / 'lvl_1_finalroom_platform_top.csv'),
+            'damage_tiles': import_csv_layout(layouts_path / 'lvl_1_finalroom_damage_tiles.csv'),
+            'background1': import_csv_layout(layouts_path / 'lvl_1_finalroom_background1.csv'),
+            'doorways': import_csv_layout(layouts_path / 'lvl_1_finalroom_doorways.csv'),
+            'decorations': import_csv_layout(layouts_path / 'lvl_1_finalroom_decorations.csv')
         }
         
         graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'castle_single_tiles'
@@ -51,6 +53,7 @@ class Level:
             'background1': import_folder(graphics_path / 'non_collision_surface'),
             'platform_top': import_folder(graphics_path / 'platform_top'),
             'doorways': import_folder(graphics_path / 'doorways'),
+            'decorations': import_folder(graphics_path / 'decorations')
         }
 
         # Loop over all styles
@@ -58,7 +61,7 @@ class Level:
             for row_index, row in enumerate(layout):
                 for col_index, col in enumerate(row):
                     if col != '-1':
-                        index = int(col)
+                        index = int(col) 
                         x = col_index * TILE_SIZE
                         y = row_index * TILE_SIZE
 
@@ -77,6 +80,12 @@ class Level:
                             
                             elif style == 'doorways':
                                 Tiles((x, y), [self.visible_sprites], 'door', surf)
+                            
+                            elif style == 'decorations':
+                                Tiles((x, y), [self.visible_sprites], 'decoration', surf)
+                            
+                            elif style == 'background1':
+                                Tiles((x, y), [self.visible_sprites], 'surface', surf)
 
                         else:
                             print(f"Warning: '{style}' index {index} out of range at row {row_index}, col {col_index}") #debugging thingy to check if the csv files are correct
@@ -84,7 +93,7 @@ class Level:
 
         # Create the player
         self.player = Player(
-            (150, 1000),
+            (200, 1400),
             [self.visible_sprites],
             self.obstacle_sprites,
             self.equip_weapon,
@@ -93,7 +102,7 @@ class Level:
         )
 
         # Spawn enemies
-        positions = [(400, 1000), (1000, 1100), (1600, 600)]
+        positions = [(500, 1400), (1000, 1450), (2200, 1100)]
         for pos in positions:
             FlyingEnemy(pos, [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
 
@@ -129,7 +138,11 @@ class Level:
         self.ui.display(self.player)
         for enemy in self.attackable_sprites:
             enemy.draw_health_bar(self.display_surface, self.visible_sprites.offset)
+
         if self.player.dead:
+            if not self.weapon_destroyed_on_death:
+                self.destroy_weapon()
+                self.weapon_destroyed_on_death = True
             font = pygame.font.Font(None, 74)
             text = font.render("Game Over", True, (255, 255, 255))
             self.display_surface.blit(text, (BASE_SCREEN_WIDTH // 2 - text.get_width() // 2, BASE_SCREEN_HEIGHT // 2 - text.get_height() // 2))
@@ -145,18 +158,20 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.offset = pygame.math.Vector2()
         
 
-        bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /'deepcave_background'
+        bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /'castle_single_tiles' /'background'
 
         #Loading a background (Temporary, needs to be a function (maybe))
-        self.bg_layer_0 = pygame.image.load(bg_path / 'DeepCaveBG-Base.png').convert()
-        self.bg_layer_1 = pygame.image.load(bg_path / 'DeepCaveBG-Layer1.png').convert_alpha()
-        self.bg_layer_2 = pygame.image.load(bg_path / 'DeepCaveBG-Layer2.png').convert_alpha()
-        self.bg_layer_3 = pygame.image.load(bg_path / 'DeepCaveBG-Layer3.png').convert_alpha()
+        self.bg_layer_0 = pygame.image.load(bg_path / 'DarkCaveBG-Base.png').convert()
+        self.bg_layer_1 = pygame.image.load(bg_path / 'DarkCaveBG-Layer1.png').convert_alpha()
+        self.bg_layer_2 = pygame.image.load(bg_path / 'DarkCaveBG-Layer2.png').convert_alpha()
+        self.bg_layer_3 = pygame.image.load(bg_path / 'DarkCaveBG-Layer3.png').convert_alpha()
+        self.bg_layer_4 = pygame.image.load(bg_path / 'DarkCaveBG-Layer4.png').convert_alpha()
 
         self.bg_layer_00 = pygame.transform.scale_by(self.bg_layer_0, 3)
         self.bg_layer_01 = pygame.transform.scale_by(self.bg_layer_1, 3)
         self.bg_layer_02 = pygame.transform.scale_by(self.bg_layer_2, 3)
         self.bg_layer_03 = pygame.transform.scale_by(self.bg_layer_3, 3)
+        self.bg_layer_04 = pygame.transform.scale_by(self.bg_layer_4, 3)
 
 
     def draw_parallax_layer(self, image, factor):
@@ -175,22 +190,22 @@ class YSortCameraGroup(pygame.sprite.Group):
     def custom_draw(self, player):
 
         #Offset (camera)
-        # Camera (float)
         self.offset.x = player.rect.centerx - self.half_screen_width
         self.offset.x = max(0, min(self.offset.x, WORLD_WIDTH - BASE_SCREEN_WIDTH))
         self.offset.y = player.rect.centery - self.half_screen_height
         self.offset.y = max(0, min(self.offset.y, WORLD_HEIGHT - BASE_SCREEN_HEIGHT))
 
-        # Integer camera for rendering
+        #Integer camera for rendering
         render_offset_x = int(self.offset.x)
         render_offset_y = int(self.offset.y)
 
         # Parallax layers
-        if getattr(self, 'use_parallax', True):
+        if getattr(self, 'use_parallax', False):
             self.draw_parallax_layer(self.bg_layer_00, 1)
             self.draw_parallax_layer(self.bg_layer_01, 0.1)
             self.draw_parallax_layer(self.bg_layer_02, 0.3)
             self.draw_parallax_layer(self.bg_layer_03, 0.6)
+            self.draw_parallax_layer(self.bg_layer_04, 0.9)
         else:
             self.display_surface.fill((15,15,0))
 
