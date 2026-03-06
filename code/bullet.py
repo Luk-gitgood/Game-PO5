@@ -22,7 +22,7 @@ class Bullet(pygame.sprite.Sprite):
         self.obstacle_sprites = obstacle_sprites
         self.attackable_sprites = attackable_sprites
 
-        #covement
+        #movement
         #convert angle to a direction vector
         rad = math.radians(angle)
         self.direction = pygame.math.Vector2(math.cos(rad), math.sin(rad))

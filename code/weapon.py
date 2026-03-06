@@ -50,9 +50,9 @@ class Weapon(pygame.sprite.Sprite):
         self.frame_index = 0
         self.frames = {}
 
-        self.weapon_sizes = {'revolver': [38, 20], 'shotgun': [52, 14]} #sets weapon size at amount of pixels in spritesheet for animations
-        self.animation_steps = {'revolver': 7, 'shotgun': 16}
-        self.animation_speeds = {'revolver': 0.5, 'shotgun': 0.7}
+        self.weapon_sizes = {'revolver': [38, 20], 'shotgun': [52, 14], 'sniper': [74, 22]} #sets weapon size at amount of pixels in spritesheet for animations
+        self.animation_steps = {'revolver': 7, 'shotgun': 16, 'sniper': 10}
+        self.animation_speeds = {'revolver': 0.5, 'shotgun': 0.7, 'sniper': 0.6}
 
         #Load frames immediately
         self.load_animation_frames(graphics_path)
@@ -86,7 +86,7 @@ class Weapon(pygame.sprite.Sprite):
             if self.player.weapon == 'shotgun':
                 #Knockback
                 if self.direction.length() != 0:
-                    self.player.direction += self.direction.normalize() * -5
+                    self.player.direction += self.direction.normalize() * -2
 
                 #Sound
                 shotgun_shot = pygame.mixer.Sound(SOUNDS_PATH / 'shotgun_shot2.ogg')

@@ -123,6 +123,7 @@ class Player(Entity):
                 self.direction.x = 0
             elif self.direction.x < 2:
                 self.direction.x += 0.3
+                
         elif keys[pygame.K_a]:
             self.facing_left = True
             if self.direction.x > 0:

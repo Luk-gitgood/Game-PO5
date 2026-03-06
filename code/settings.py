@@ -48,5 +48,14 @@ weapon_data = {
         'lifetime': 400,
         'damage': 6,
         'cooldown': 800
+    },
+    'sniper': {
+        'speed': 20,
+        'bullet_count': 1,
+        'spread': 0,
+        'lifetime': 1500,
+        'damage': 50,
+        'cooldown': 1200
     }
+
 }

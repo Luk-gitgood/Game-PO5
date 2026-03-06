@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="poop_collision_surface_bad" tilewidth="32" tileheight="32" tilecount="20" columns="0">
+<tileset version="1.10" tiledversion="1.11.2" name="collision_surfaces" tilewidth="32" tileheight="32" tilecount="20" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
-  <image source="../../../graphics/level_graphics/castle_single_tiles/collision_surface/crate.png" width="32" height="32"/>
+  <image source="../../../graphics/level_graphics/castle_single_tiles/collision_surface/crate_long.png" width="32" height="32"/>
  </tile>
  <tile id="1">
-  <image source="../../../graphics/level_graphics/castle_single_tiles/collision_surface/crate_long.png" width="32" height="32"/>
+  <image source="../../../graphics/level_graphics/castle_single_tiles/collision_surface/crate.png" width="32" height="32"/>
  </tile>
  <tile id="2">
   <image source="../../../graphics/level_graphics/castle_single_tiles/collision_surface/tile000.png" width="32" height="32"/>
@@ -46,19 +46,19 @@
  <tile id="14">
   <image source="../../../graphics/level_graphics/castle_single_tiles/collision_surface/tile024.png" width="32" height="32"/>
  </tile>
- <tile id="16">
+ <tile id="15">
   <image source="../../../graphics/level_graphics/castle_single_tiles/collision_surface/tile026.png" width="32" height="32"/>
  </tile>
- <tile id="19">
+ <tile id="16">
   <image source="../../../graphics/level_graphics/castle_single_tiles/collision_surface/tile040.png" width="32" height="32"/>
  </tile>
- <tile id="21">
+ <tile id="17">
   <image source="../../../graphics/level_graphics/castle_single_tiles/collision_surface/tile042.png" width="32" height="32"/>
  </tile>
- <tile id="22">
+ <tile id="18">
   <image source="../../../graphics/level_graphics/castle_single_tiles/collision_surface/tile043.png" width="32" height="32"/>
  </tile>
- <tile id="23">
+ <tile id="19">
   <image source="../../../graphics/level_graphics/castle_single_tiles/collision_surface/tile051.png" width="32" height="32"/>
  </tile>
 </tileset>
