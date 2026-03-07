@@ -34,15 +34,15 @@ class Level:
         self.ui = UI(self.display_surface)
 
     def create_map(self):
-        layouts_path = BASE_DIR.parent / 'levels' / '1'
+        layouts_path = BASE_DIR.parent / 'levels' /'1'/ 'boss_room'
 
         layouts = {
-            'collision_surface': import_csv_layout(layouts_path / 'lvl_1_finalroom_collision_surface.csv'),
-            'platform_top': import_csv_layout(layouts_path / 'lvl_1_finalroom_platform_top.csv'),
-            'damage_tiles': import_csv_layout(layouts_path / 'lvl_1_finalroom_damage_tiles.csv'),
-            'background1': import_csv_layout(layouts_path / 'lvl_1_finalroom_background1.csv'),
-            'doorways': import_csv_layout(layouts_path / 'lvl_1_finalroom_doorways.csv'),
-            'decorations': import_csv_layout(layouts_path / 'lvl_1_finalroom_decorations.csv')
+            'collision_surface': import_csv_layout(layouts_path / 'boss_room_collision_surface.csv'),
+            'platform_top': import_csv_layout(layouts_path / 'boss_room_platform_top.csv'),
+            'damage_tiles': import_csv_layout(layouts_path / 'boss_room_damage_tiles.csv'),
+            'background1': import_csv_layout(layouts_path / 'boss_room_background1.csv'),
+            'doorways': import_csv_layout(layouts_path / 'boss_room_doorways.csv'),
+            'decorations': import_csv_layout(layouts_path / 'boss_room_decorations.csv')
         }
         
         graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'castle_single_tiles'
@@ -93,7 +93,7 @@ class Level:
 
         # Create the player
         self.player = Player(
-            (200, 1400),
+            (200, 2000),
             [self.visible_sprites],
             self.obstacle_sprites,
             self.equip_weapon,

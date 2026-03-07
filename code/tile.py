@@ -18,7 +18,7 @@ class Tiles(pygame.sprite.Sprite):
             self.hitbox = self.rect.inflate(0, 0)
         
         elif self.sprite_type == 'damage':
-            self.hitbox = pygame.Rect(self.rect.left, self.rect.bottom - 12, 32, 16)
+            self.hitbox = pygame.Rect(self.rect.left, self.rect.bottom - 16, 32, 16)
 
         else:
             self.hitbox = self.rect

@@ -10,8 +10,8 @@ BASE_SCREEN_WIDTH = 1280
 
 TILE_SIZE = 32
 
-WORLD_WIDTH = 147*32
-WORLD_HEIGHT = 84 * 32
+WORLD_WIDTH = 254*32
+WORLD_HEIGHT = 94 * 32
 BOTTOM_LAYER = 32*3 + 16
 
 IMAGE_WIDTH = 32
@@ -38,8 +38,8 @@ weapon_data = {
         'bullet_count': 1,
         'spread': 0,
         'lifetime': 1000,
-        'damage': 20,
-        'cooldown': 400
+        'damage': 15,
+        'cooldown': 350
     },
     'shotgun': {
         'speed': 10,
@@ -55,7 +55,7 @@ weapon_data = {
         'spread': 0,
         'lifetime': 1500,
         'damage': 50,
-        'cooldown': 1200
+        'cooldown': 2000
     }
 
 }

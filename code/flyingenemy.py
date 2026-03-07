@@ -13,8 +13,7 @@ class FlyingEnemy(Entity):
         # Animations
         graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / 'bat_character'
         self.enemy_scale = 1.5
-        self.animation_steps = {'idle': 4, 'fly_left': 4, 'fly_up': 4, 'fly_right': 4,
-                                'death': 11}  # amount of frames in each animation
+        self.animation_steps = {'idle': 4, 'fly_left': 4, 'fly_up': 4, 'fly_right': 4,'death': 11}  # amount of frames in each animation
         self.animation_speeds = {'idle': 0.15, 'fly_left': 0.15, 'fly_up': 0.15, 'fly_right': 0.15, 'death': 0.25}
 
         # Load frames immediately

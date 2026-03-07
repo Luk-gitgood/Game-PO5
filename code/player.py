@@ -123,7 +123,7 @@ class Player(Entity):
                 self.direction.x = 0
             elif self.direction.x < 2:
                 self.direction.x += 0.3
-                
+
         elif keys[pygame.K_a]:
             self.facing_left = True
             if self.direction.x > 0:
@@ -165,6 +165,15 @@ class Player(Entity):
             if self.weapon_index != 1:
                 self.destroy_weapon()
             self.weapon_index = 1
+            self.weapon = list(weapon_data.keys())[self.weapon_index]
+            self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
+            self.equip_weapon()
+            self.weapon_equipped = True
+
+        if keys[pygame.K_4]: 
+            if self.weapon_index != 2:
+                self.destroy_weapon()
+            self.weapon_index = 2
             self.weapon = list(weapon_data.keys())[self.weapon_index]
             self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
             self.equip_weapon()
