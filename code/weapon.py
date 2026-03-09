@@ -1,5 +1,6 @@
 import pygame
 import math
+from audio import AudioManager
 from spritesheets import SpriteSheet
 from settings import *
 from bullet import Bullet
@@ -15,6 +16,13 @@ class Weapon(pygame.sprite.Sprite):
         self.player = player
         self.obstacle_sprites = obstacle_sprites
         self.attackable_sprites = attackable_sprites
+
+        #SFX
+        self.sfx = AudioManager(
+            {
+            'revolver': SFX_PATH / 'revolver_shot.ogg',
+            'shotgun': SFX_PATH / 'shotgun_shot.ogg'
+            })
 
         #Static Setup
         full_path = f"{graphics_path}/{self.player.weapon}.png"
@@ -89,15 +97,12 @@ class Weapon(pygame.sprite.Sprite):
                     self.player.direction = self.direction.normalize() * -7
 
                 #Sound
-                shotgun_shot = pygame.mixer.Sound(SOUNDS_PATH / 'shotgun_shot.ogg')
-                pygame.mixer.Sound.set_volume(shotgun_shot, 0.5)
-                pygame.mixer.Sound.play(shotgun_shot)
+                self.sfx.play_sfx('shotgun', volume=0.5)
 
             elif self.player.weapon == 'revolver':
                 #Sound
-                revolver_shot = pygame.mixer.Sound(SOUNDS_PATH / 'revolver_shot.ogg')
-                pygame.mixer.Sound.set_volume(revolver_shot, 0.1)
-                pygame.mixer.Sound.play(revolver_shot)
+                self.sfx.play_sfx('revolver')
+
 
     def animate(self):
         # Only use if in a shooting state

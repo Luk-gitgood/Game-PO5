@@ -2,6 +2,7 @@ import pygame
 from settings import *
 from level import Level
 from menu import *
+from audio import AudioManager
 
 
 class Game:
@@ -24,7 +25,7 @@ class Game:
         #Display state
         self.is_fullscreen = True
         self.screen = pygame.display.set_mode(
-            (self.MONITOR_WIDTH, self.MONITOR_HEIGHT),pygame.NOFRAME)
+            (self.MONITOR_WIDTH, self.MONITOR_HEIGHT),pygame.FULLSCREEN)
 
         #Internal game surface (fixed resolution)
         self.game_surface = pygame.Surface((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT))
@@ -34,7 +35,8 @@ class Game:
         self.running = True
 
         # Game state
-        self.state = "menu"
+        self.state = None
+        self.previous_state = None
 
         # Create systems
         self.menu = MainMenu(self)
@@ -43,12 +45,36 @@ class Game:
         #Game objects
         self.level = Level(self.game_surface)
 
+        #Audio objects
+        self.audio_dict = {
+            "menu" : MUSIC_PATH / "mainmenu_music.ogg",
+            "level1": MUSIC_PATH / "Insolitum_music1.ogg",
+            "settings": MUSIC_PATH / "elevator_bossanova.ogg"
+        }
+        self.audio = AudioManager(self.audio_dict)
+
+        self.set_state("menu")
+
+    def set_state(self, new_state):
+        self.previous_state = self.state
+        self.state = new_state
+    
+        if new_state == "menu":
+            self.audio.play("menu")
+
+        elif new_state == "game":
+            self.audio.play("level1")
+
+        elif new_state == "settings":
+            self.audio.play("settings")
+        #Later meer opties met andere muziek
+
 
     def toggle_fullscreen(self):
         self.is_fullscreen = not self.is_fullscreen
 
         if self.is_fullscreen:
-            self.screen = pygame.display.set_mode((self.MONITOR_WIDTH, self.MONITOR_HEIGHT),pygame.NOFRAME)
+            self.screen = pygame.display.set_mode((self.MONITOR_WIDTH, self.MONITOR_HEIGHT),pygame.FULLSCREEN)
         else:
             self.screen = pygame.display.set_mode((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT),pygame.RESIZABLE)
 
@@ -68,16 +94,17 @@ class Game:
                 self.settings.handle_events(event)
     
             elif self.state == "game":
-    
+            
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_F11:
                         self.toggle_fullscreen()
+                    if event.key == pygame.K_ESCAPE:
+                        self.set_state('settings')
     
                 if event.type == pygame.VIDEORESIZE and not self.is_fullscreen:
                     self.screen = pygame.display.set_mode(
                         (event.w, event.h), pygame.RESIZABLE
                     )
-    
 
 
     def update(self):
@@ -93,19 +120,18 @@ class Game:
 
 
     def draw(self):
+        scaled_surface = pygame.transform.scale(
+            self.game_surface,
+            self.screen.get_size()
+        )
+        self.screen.blit(scaled_surface, (0, 0))
+
         if self.state == "menu":
             self.menu.draw()
     
         elif self.state == "settings":
             self.settings.draw()
-    
-        elif self.state == "game":
-            scaled_surface = pygame.transform.scale(
-                self.game_surface,
-                self.screen.get_size()
-            )
-            self.screen.blit(scaled_surface, (0, 0))
-    
+
         pygame.display.update()
 
 
@@ -117,6 +143,10 @@ class Game:
             self.clock.tick(60)
 
         pygame.quit()
+
+    def restart_level(self):
+        self.level = Level(self.game_surface)
+        self.audio.stop()
 
 
 if __name__ == "__main__":

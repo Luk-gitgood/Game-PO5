@@ -19,3 +19,4 @@ class Entity(pygame.sprite.Sprite):
             self.frame_index = 0
         self.image = self.frames[self.action][int(self.frame_index)]
 
+    

@@ -5,17 +5,16 @@ from settings import *
 from random import uniform
 
 
-class FlyingEnemy(Entity):
+class Walkingenemy(Entity):
 
     def __init__(self, pos, groups, player, obstacle_sprites, attackable_sprites):
         super().__init__(groups)
 
         # Animations
-        graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / 'bat_character'
-        self.enemy_scale = 1.5
-        self.animation_steps = {'idle': 4, 'fly_left': 4, 'fly_up': 4, 'fly_right': 4,
-                                'death': 11}  # amount of frames in each animation
-        self.animation_speeds = {'idle': 0.15, 'fly_left': 0.15, 'fly_up': 0.15, 'fly_right': 0.15, 'death': 0.25}
+        graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / 'igor'
+        self.enemy_scale = 1
+        self.animation_steps = {'idle': 1, 'walk_left': 1, 'walk_right': 1, 'jump':1, 'death': 6}  # amount of frames in each animation
+        self.animation_speeds = {'idle': 0.15, 'walk_left': 0.15, 'jump': 0.15, 'walk_right': 0.15, 'death': 0.25}
 
         # Load frames immediately
         self.load_animation_frames(graphics_path)
@@ -23,19 +22,23 @@ class FlyingEnemy(Entity):
         self.image = self.frames[self.action][0]
         self.rect = self.frames[self.action][0].get_rect(topleft = pos)
         self.player = player
-        self.speed = uniform(1.5,2.5)
-                
+        self.speed = uniform(2.5,3.5)
+        self.gravity = 0.4
+        self.on_ground = False
+        self.is_jumping = False
 
         # collision
         self.obstacle_sprites = obstacle_sprites
         self.attackable_sprites = attackable_sprites
         self.hitbox = self.rect.inflate(0,0)
         self.dying = False
+        self.horizontal_collision = False
 
         #enemy stats
-        self.stats = {"health": 50, 'damage': 10, 'attack_cooldown': 500}
+        self.stats = {"health": 100, 'damage': 10, 'attack_cooldown': 500, 'jump_height': -12}
         self.health = self.stats['health']
         self.damage = self.stats['damage']
+        self.jump_height = self.stats['jump_height']
         self.attack_cooldown = self.stats['attack_cooldown']
         self.last_attack_time = 0
 
@@ -49,40 +52,48 @@ class FlyingEnemy(Entity):
     def load_animation_frames(self, graphics_path):
         # Preload all animations so they are ready when player shoots
         sheets = {
-            'idle': SpriteSheet(pygame.image.load(graphics_path / 'bat_idle.png').convert_alpha()),
-            'fly_left': SpriteSheet(pygame.image.load(graphics_path / 'flying_left.png').convert_alpha()),
-            'fly_up': SpriteSheet(pygame.image.load(graphics_path / 'flying_up.png').convert_alpha()),
-            'fly_right': SpriteSheet(pygame.image.load(graphics_path / 'flying_right.png').convert_alpha()),
-            'death': SpriteSheet(pygame.image.load(graphics_path / 'bat_death.png').convert_alpha())
+            'idle': SpriteSheet(pygame.image.load(graphics_path / 'Jump.png').convert_alpha()),
+            'walk_left': SpriteSheet(pygame.image.load(graphics_path / 'Jump.png').convert_alpha()),
+            'jump': SpriteSheet(pygame.image.load(graphics_path / 'Jump.png').convert_alpha()),
+            'walk_right': SpriteSheet(pygame.image.load(graphics_path / 'Jump.png').convert_alpha()),
+            'death': SpriteSheet(pygame.image.load(graphics_path / 'Jump.png').convert_alpha())
 
         }
 
         for action, sheet in sheets.items():
-            self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, self.enemy_scale) for i in range(self.animation_steps[action])]
+            self.frames[action] = [sheet.get_image(i, 64, 64, self.enemy_scale) for i in range(self.animation_steps[action])]
+
+    def apply_gravity(self):
+        self.on_ground = False
+        self.direction.y += self.gravity * 1.3
+        self.hitbox.y += self.direction.y
+        self.check_collision('vertical')
+        self.rect.center = self.hitbox.center
 
     def move_towards_player(self):
-        self.direction.x = self.player.rect.centerx - self.rect.centerx
-        self.direction.y = self.player.rect.centery - self.rect.centery
+        dx = self.player.rect.centerx - self.rect.centerx
 
-        if self.direction.length() != 0:
-            self.direction = self.direction.normalize()
+        if abs(dx) > 5:
+            self.direction.x = 1 if dx > 0 else -1
+        else:
+            self.direction.x = 0
 
         self.hitbox.x += self.direction.x * self.speed
+
         self.check_collision('horizontal')
 
-        self.hitbox.y += self.direction.y * self.speed
-        self.check_collision('vertical')
-
         self.rect.center = self.hitbox.center
-        
-    def detect_player(self):
-        distance = pygame.math.Vector2(self.player.rect.center).distance_to(self.rect.center)
-        if not self.player_detected:
-            if distance <= self.detection_radius:
-                self.player_detected = True
-        else:
-            if distance >= self.disengage_radius:
-                self.player_detected = False
+
+        #jump if player is above
+        if self.player.rect.centery < self.rect.centery - 40 and self.horizontal_collision == True:
+            self.jump()
+
+    def jump(self):        
+        if self.on_ground == True:  
+            self.direction.y = self.jump_height
+            self.on_ground = False
+            self.is_jumping = True
+            self.horizontal_collision = False
 
     def update_action(self):
         if self.dying:
@@ -90,22 +101,27 @@ class FlyingEnemy(Entity):
 
         if self.direction.length() == 0:
             self.action = 'idle'
-        elif abs(self.direction.x) > abs(self.direction.y):
-            if self.direction.x > 0:
-                self.action = 'fly_left'
-            else:
-                self.action = 'fly_right'
-        else:
-            self.action = 'fly_up'
+
+        elif self.direction.x > 0:
+            self.action = 'walk_left'
+
+        elif self.direction.x < 0:
+            self.action = 'walk_right'
+
+        if self.is_jumping:
+            self.action = 'jump'
 
     def check_collision(self, direction):
         if direction == 'horizontal':
             for obstacle in self.obstacle_sprites:
                 if obstacle.hitbox.colliderect(self.hitbox):
+                    self.horizontal_collision = True
+
                     if self.direction.x > 0:  # moving right
                         self.hitbox.right = obstacle.hitbox.left
                     if self.direction.x < 0:  # moving left
                         self.hitbox.left = obstacle.hitbox.right
+
 
         if direction == 'vertical':
             for obstacle in self.obstacle_sprites:
@@ -113,6 +129,8 @@ class FlyingEnemy(Entity):
                     if self.direction.y > 0:
                         self.hitbox.bottom = obstacle.hitbox.top
                         self.direction.y = 0
+                        self.on_ground = True
+                        self.is_jumping = False
 
                     if self.direction.y < 0:
                         self.hitbox.top = obstacle.hitbox.bottom
@@ -125,6 +143,15 @@ class FlyingEnemy(Entity):
             if current_time - self.last_attack_time >= self.attack_cooldown:
                 self.player.take_damage(self.damage)
                 self.last_attack_time = current_time
+
+    def detect_player(self):
+        distance = pygame.math.Vector2(self.player.rect.center).distance_to(self.rect.center)
+        if not self.player_detected:
+            if distance <= self.detection_radius:
+                self.player_detected = True
+        else:
+            if distance >= self.disengage_radius:
+                self.player_detected = False
 
     def take_damage(self, amount):
         if self.dying:
@@ -165,10 +192,9 @@ class FlyingEnemy(Entity):
 
             if self.player_detected:
                 self.move_towards_player()
-                self.attack_player()
-            else:
-                self.direction.update(0, 0)
-
+                self.attack_player()                
+            
+            self.apply_gravity()
             self.update_action()
 
         self.animate()
