@@ -84,12 +84,12 @@ class Level:
                     if style == 'enemy_spawns': 
                         if col in ENEMY_TYPES:
                             enemy_type = ENEMY_TYPES.get(col) #everywhere there is a 0 in the csv an enemy gets spawned
-                            FlyingEnemy((x, y), 
+                            WalkingEnemy((x, y), 
                                 [self.visible_sprites, self.attackable_sprites], 
                                 self.player, 
                                 self.obstacle_sprites, 
                                 self.attackable_sprites,
-                                enemy_type,
+                                'orc',
                                  ) 
                             continue
 

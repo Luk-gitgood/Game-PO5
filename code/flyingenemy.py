@@ -10,17 +10,17 @@ from enemy_data import ENEMY_DATA
 class FlyingEnemy(Entity):
 
     def __init__(self, pos, groups, player, obstacle_sprites, attackable_sprites, enemy_type):
-        super().__init__(groups)
-
+        super().__init__(groups) 
         self.enemy_type = enemy_type
+        self.data = ENEMY_DATA[self.enemy_type]
+        self.stats = self.data['stats']
 
         # Animations
-        data = ENEMY_DATA[self.enemy_type]
-        graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / data["path"]
+        graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / self.data["path"]
 
-        self.enemy_scale = data["scale"]
-        self.animation_steps = data["animation_steps"]  # amount of frames in each animation
-        self.animation_speeds = data["animation_speeds"]
+        self.enemy_scale = self.data["scale"]
+        self.animation_steps = self.data["animation_steps"]  # amount of frames in each animation
+        self.animation_speeds = self.data["animation_speeds"]
 
         # Load frames immediately
         self.load_animation_frames(graphics_path)
@@ -28,7 +28,6 @@ class FlyingEnemy(Entity):
         self.image = self.frames[self.action][0]
         self.rect = self.frames[self.action][0].get_rect(topleft = pos)
         self.player = player
-        self.speed = uniform(*data["speed"]) #this makes the speed randomized between 2&3 to prevent enemies from getting stuck in eachother
 
 
         # collision
@@ -38,28 +37,23 @@ class FlyingEnemy(Entity):
         self.dying = False
 
         #enemy stats
-        self.stats = {"health": 50, 'damage': 10, 'attack_cooldown': 500}
         self.health = self.stats['health']
         self.damage = self.stats['damage']
         self.attack_cooldown = self.stats['attack_cooldown']
         self.last_attack_time = 0
+        self.speed = uniform(*self.stats["speed"]) #this makes the speed randomized between 2&3 to prevent enemies from getting stuck in eachother
 
         #player detection
-        self.detection_radius = 350
-        self.disengage_radius = 450
+        self.detection_radius = self.stats['detection_radius']
+        self.disengage_radius = self.stats['disengage_radius']
         self.player_detected = False
 
 
     def load_animation_frames(self, graphics_path):
-        #preload all animations (TODO make this dynamic and read from the enemy_data dict)
-        sheets = {
-            'idle': SpriteSheet(pygame.image.load(graphics_path / 'bat_idle.png').convert_alpha()),
-            'fly_left': SpriteSheet(pygame.image.load(graphics_path / 'flying_left.png').convert_alpha()),
-            'fly_up': SpriteSheet(pygame.image.load(graphics_path / 'flying_up.png').convert_alpha()),
-            'fly_right': SpriteSheet(pygame.image.load(graphics_path / 'flying_right.png').convert_alpha()),
-            'death': SpriteSheet(pygame.image.load(graphics_path / 'bat_death.png').convert_alpha())
-
-        }
+        #preload all animations
+        sheets = {}
+        for key,value in self.data['sheets'].items():
+            sheets[key] = SpriteSheet(pygame.image.load(graphics_path / value).convert_alpha())
 
         for action, sheet in sheets.items():
             self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, self.enemy_scale) for i in range(self.animation_steps[action])]
