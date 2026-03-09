@@ -48,7 +48,7 @@ class Player(Entity):
 
         self.image = self.frames[self.action][0]
         self.rect = self.image.get_rect(topleft = pos)
-        self.hitbox = self.rect.inflate(-16, 0)
+        self.hitbox = self.rect.inflate(0, 0)
 
         #Weapons
         self.equip_weapon = equip_weapon

@@ -12,8 +12,8 @@ class Walkingenemy(Entity):
 
         # Animations
         graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / 'igor'
-        self.enemy_scale = 1
-        self.animation_steps = {'idle': 1, 'walk_left': 1, 'walk_right': 1, 'jump':1, 'death': 6}  # amount of frames in each animation
+        self.enemy_scale = 2
+        self.animation_steps = {'idle': 8, 'walk_left': 8, 'walk_right': 8, 'jump':8, 'death': 6}  # amount of frames in each animation
         self.animation_speeds = {'idle': 0.15, 'walk_left': 0.15, 'jump': 0.15, 'walk_right': 0.15, 'death': 0.25}
 
         # Load frames immediately
@@ -30,7 +30,7 @@ class Walkingenemy(Entity):
         # collision
         self.obstacle_sprites = obstacle_sprites
         self.attackable_sprites = attackable_sprites
-        self.hitbox = self.rect.inflate(0,0)
+        self.hitbox = self.rect.inflate(-10 * self.enemy_scale, -5 * self.enemy_scale)
         self.dying = False
         self.horizontal_collision = False
 
@@ -52,16 +52,16 @@ class Walkingenemy(Entity):
     def load_animation_frames(self, graphics_path):
         # Preload all animations so they are ready when player shoots
         sheets = {
-            'idle': SpriteSheet(pygame.image.load(graphics_path / 'Jump.png').convert_alpha()),
-            'walk_left': SpriteSheet(pygame.image.load(graphics_path / 'Jump.png').convert_alpha()),
-            'jump': SpriteSheet(pygame.image.load(graphics_path / 'Jump.png').convert_alpha()),
-            'walk_right': SpriteSheet(pygame.image.load(graphics_path / 'Jump.png').convert_alpha()),
-            'death': SpriteSheet(pygame.image.load(graphics_path / 'Jump.png').convert_alpha())
+            'idle': SpriteSheet(pygame.image.load(graphics_path / 'Orc-Walk.png').convert_alpha()),
+            'walk_left': SpriteSheet(pygame.image.load(graphics_path / 'Orc-Walk.png').convert_alpha()),
+            'jump': SpriteSheet(pygame.image.load(graphics_path / 'Orc-Walk.png').convert_alpha()),
+            'walk_right': SpriteSheet(pygame.image.load(graphics_path / 'Orc-Walk.png').convert_alpha()),
+            'death': SpriteSheet(pygame.image.load(graphics_path / 'Orc-Walk.png').convert_alpha())
 
         }
 
         for action, sheet in sheets.items():
-            self.frames[action] = [sheet.get_image(i, 64, 64, self.enemy_scale) for i in range(self.animation_steps[action])]
+            self.frames[action] = [sheet.get_image(i, 100, 100, self.enemy_scale) for i in range(self.animation_steps[action])]
 
     def apply_gravity(self):
         self.on_ground = False
