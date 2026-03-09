@@ -2,19 +2,24 @@ import pygame
 from spritesheets import SpriteSheet
 from entity import Entity
 from settings import *
+from enemy_data import ENEMY_DATA
 import random
 
 
 class FlyingEnemy(Entity):
 
-    def __init__(self, pos, groups, player, obstacle_sprites, attackable_sprites):
+    def __init__(self, pos, groups, player, obstacle_sprites, attackable_sprites, enemy_type):
         super().__init__(groups)
 
+        self.enemy_type = enemy_type
+
         # Animations
-        graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / 'bat_character'
-        self.enemy_scale = 1.5
-        self.animation_steps = {'idle': 4, 'fly_left': 4, 'fly_up': 4, 'fly_right': 4,'death': 11}  # amount of frames in each animation
-        self.animation_speeds = {'idle': 0.15, 'fly_left': 0.15, 'fly_up': 0.15, 'fly_right': 0.15, 'death': 0.25}
+        data = ENEMY_DATA[self.enemy_type]
+        graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / data["path"]
+
+        self.enemy_scale = data["scale"]
+        self.animation_steps = data["animation_steps"]  # amount of frames in each animation
+        self.animation_speeds = data["animation_speeds"]
 
         # Load frames immediately
         self.load_animation_frames(graphics_path)
@@ -22,7 +27,7 @@ class FlyingEnemy(Entity):
         self.image = self.frames[self.action][0]
         self.rect = self.frames[self.action][0].get_rect(topleft = pos)
         self.player = player
-        self.speed = random.uniform(2,3) #this makes the speed randomized between 2&3 to prevent enemies from getting stuck in eachother
+        self.speed = random.uniform(*data["speed"]) #this makes the speed randomized between 2&3 to prevent enemies from getting stuck in eachother
                 
 
         # collision
@@ -45,7 +50,7 @@ class FlyingEnemy(Entity):
 
 
     def load_animation_frames(self, graphics_path):
-        # Preload all animations so they are ready when player shoots
+        #preload all animations (TODO make this dynamic and read from the enemy_data dict)
         sheets = {
             'idle': SpriteSheet(pygame.image.load(graphics_path / 'bat_idle.png').convert_alpha()),
             'fly_left': SpriteSheet(pygame.image.load(graphics_path / 'flying_left.png').convert_alpha()),

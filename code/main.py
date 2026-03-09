@@ -13,9 +13,7 @@ pygame.mouse.set_cursor(pygame.cursors.diamond)
 
 info = pygame.display.Info()
 MONITOR_WIDTH = info.current_w
-MONITOR_HEIGHT = info.current_h
-
-#Start in fullscreen (Maybe replace NOFRAME with FULLSCREEN later)
+MONITOR_HEIGHT = info.current_h #start in fullscreen (Maybe replace NOFRAME with FULLSCREEN later, because weird issue on bigger screens)
 is_fullscreen = True
 screen = pygame.display.set_mode((MONITOR_WIDTH, MONITOR_HEIGHT), pygame.NOFRAME)
 game_surface = pygame.Surface((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT))
@@ -50,4 +48,6 @@ while running:
     pygame.display.update()
     dt = clock.tick(60) / 1000
 pygame.quit()
+
+
 

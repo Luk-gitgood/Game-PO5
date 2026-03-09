@@ -6,6 +6,7 @@ from flyingenemy import FlyingEnemy
 from weapon import *
 from settings import *
 from ui import UI
+from enemy_data import ENEMY_TYPES, ENEMY_DATA
 
 
 class Level:
@@ -19,7 +20,6 @@ class Level:
         self.obstacle_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
     
-
         #Weapon
         self.current_weapon = None
         self.weapon_destroyed_on_death = False
@@ -34,6 +34,18 @@ class Level:
         self.ui = UI(self.display_surface)
 
     def create_map(self):
+
+        #create player first, as spawning enemies requires self.player as argument
+        self.player = Player(
+        (200, 2060),
+        [self.visible_sprites],
+        self.obstacle_sprites,
+        self.equip_weapon,
+        self.destroy_weapon,
+        self.fire_weapon
+        )
+
+    
         layouts_path = BASE_DIR.parent / 'levels' /'1'/ 'boss_room'
 
         layouts = {
@@ -42,8 +54,9 @@ class Level:
             'damage_tiles': import_csv_layout(layouts_path / 'boss_room_damage_tiles.csv'),
             'background1': import_csv_layout(layouts_path / 'boss_room_background1.csv'),
             'doorways': import_csv_layout(layouts_path / 'boss_room_doorways.csv'),
-            'decorations': import_csv_layout(layouts_path / 'boss_room_decorations.csv')
-        }
+            'decorations': import_csv_layout(layouts_path / 'boss_room_decorations.csv'),
+            'enemy_spawns': import_csv_layout(layouts_path / 'boss_room_enemy_spawns.csv'),
+            }
         
         graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'castle_single_tiles'
 
@@ -53,59 +66,65 @@ class Level:
             'background1': import_folder(graphics_path / 'non_collision_surface'),
             'platform_top': import_folder(graphics_path / 'platform_top'),
             'doorways': import_folder(graphics_path / 'doorways'),
-            'decorations': import_folder(graphics_path / 'decorations')
+            'decorations': import_folder(graphics_path / 'decorations'),
         }
 
-        # Loop over all styles
+        #loop over all styles
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout):
                 for col_index, col in enumerate(row):
-                    if col != '-1':
-                        index = int(col) 
-                        x = col_index * TILE_SIZE
-                        y = row_index * TILE_SIZE
 
-                        # Check if the index is valid
-                        if 0 <= index < len(graphics[style]):
-                            surf = graphics[style][index]
+                    if col == '-1':
+                        continue
 
-                            if style == 'collision_surface':
-                                Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'solid', surf)
-                            
-                            elif style == 'platform_top':
-                                Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'platform_top', surf)
+                    x = col_index * TILE_SIZE
+                    y = row_index * TILE_SIZE
 
-                            elif style == 'damage_tiles':
-                                Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'damage', surf)
-                            
-                            elif style == 'doorways':
-                                Tiles((x, y), [self.visible_sprites], 'door', surf)
-                            
-                            elif style == 'decorations':
-                                Tiles((x, y), [self.visible_sprites], 'decoration', surf)
-                            
-                            elif style == 'background1':
-                                Tiles((x, y), [self.visible_sprites], 'surface', surf)
+                    #enemy spawn layer (no graphics)
+                    if style == 'enemy_spawns': 
+                        if col in ENEMY_TYPES:
+                            enemy_type = ENEMY_TYPES.get(col) #everywhere there is a 0 in the csv an enemy gets spawned
+                            FlyingEnemy((x, y), 
+                                [self.visible_sprites, self.attackable_sprites], 
+                                self.player, 
+                                self.obstacle_sprites, 
+                                self.attackable_sprites,
+                                enemy_type,
+                                 ) 
+                            continue
 
+                    index = int(col)
+
+                    if 0 <= index < len(graphics[style]):
+                        surf = graphics[style][index]
+
+                        if style == 'collision_surface':
+                            Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'solid', surf)
+
+                        elif style == 'platform_top':
+                            Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'platform_top', surf)
+
+                        elif style == 'damage_tiles':
+                            Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'damage', surf)
+
+                        elif style == 'doorways':
+                            Tiles((x, y), [self.visible_sprites], 'door', surf)
+
+                        elif style == 'decorations':
+                            Tiles((x, y), [self.visible_sprites], 'decoration', surf)
+
+                        elif style == 'background1':
+                            Tiles((x, y), [self.visible_sprites], 'surface', surf)
+                                    
+                                                                
                         else:
                             print(f"Warning: '{style}' index {index} out of range at row {row_index}, col {col_index}") #debugging thingy to check if the csv files are correct
                             print("collision_surface tiles:", len(graphics['collision_surface']))
 
-        # Create the player
-        self.player = Player(
-            (200, 2000),
-            [self.visible_sprites],
-            self.obstacle_sprites,
-            self.equip_weapon,
-            self.destroy_weapon,
-            self.fire_weapon
-        )
+                        
 
-        # Spawn enemies
-        positions = [(500, 1400), (1000, 1450), (2200, 1100)]
-        for pos in positions:
-            FlyingEnemy(pos, [self.visible_sprites, self.attackable_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
-
+   
+        #start the song (banger)
         self.play_song()
 
     def equip_weapon(self):
@@ -124,7 +143,7 @@ class Level:
 
     def play_song(self):
 
-        # initializes the mixer, which is used to play sounds and music
+        #initializes the mixer, which is used to play sounds and music
         pygame.mixer.init()
         pygame.mixer.music.set_volume(0.1)
         #loads the background music to the mixer on level start
@@ -213,3 +232,5 @@ class YSortCameraGroup(pygame.sprite.Group):
             draw_x = sprite.rect.left - render_offset_x
             draw_y = sprite.rect.top  - render_offset_y
             self.display_surface.blit(sprite.image, (draw_x, draw_y))
+
+            

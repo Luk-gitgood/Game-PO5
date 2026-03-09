@@ -50,9 +50,9 @@ class Weapon(pygame.sprite.Sprite):
         self.frame_index = 0
         self.frames = {}
 
-        self.weapon_sizes = {'revolver': [38, 20], 'shotgun': [52, 14], 'sniper': [65, 21]} #sets weapon size at amount of pixels in spritesheet for animations
-        self.animation_steps = {'revolver': 7, 'shotgun': 16,}
-        self.animation_speeds = {'revolver': 0.5, 'shotgun': 0.7}
+        self.weapon_sizes = {'revolver': [38, 20], 'shotgun': [52, 14], 'sniper': [85, 21]} #sets weapon size at amount of pixels in spritesheet for animations
+        self.animation_steps = {'revolver': 7, 'shotgun': 16, 'sniper': 21}
+        self.animation_speeds = {'revolver': 0.5, 'shotgun': 0.7, 'sniper': 0.5}
 
         #Load frames immediately
         self.load_animation_frames(graphics_path)
@@ -62,7 +62,8 @@ class Weapon(pygame.sprite.Sprite):
         # Preload all animations so they are ready when player shoots
         sheets = {
             'revolver': SpriteSheet(pygame.image.load(path / 'revolver_animation.png').convert_alpha()),
-            'shotgun': SpriteSheet(pygame.image.load(path / 'shotgun_animation.png').convert_alpha())
+            'shotgun': SpriteSheet(pygame.image.load(path / 'shotgun_animation.png').convert_alpha()),
+            'sniper': SpriteSheet(pygame.image.load(path / 'sniper_animation.png').convert_alpha())
         }
 
         for name, sheet in sheets.items():
@@ -86,7 +87,7 @@ class Weapon(pygame.sprite.Sprite):
             if self.player.weapon == 'shotgun':
                 #Knockback
                 if self.direction.length() != 0:
-                    self.player.direction += self.direction.normalize() * -2
+                    self.player.direction += self.direction.normalize() * -0.5 #determines amount of recoil / knockback
 
                 #Sound
                 shotgun_shot = pygame.mixer.Sound(SOUNDS_PATH / 'shotgun_shot2.ogg')
@@ -98,11 +99,17 @@ class Weapon(pygame.sprite.Sprite):
                 revolver_shot = pygame.mixer.Sound(SOUNDS_PATH / 'revolver_shot.ogg')
                 pygame.mixer.Sound.set_volume(revolver_shot, 0.1)
                 pygame.mixer.Sound.play(revolver_shot)
+            
+            elif self.player.weapon =='sniper':
+                sniper_shot = pygame.mixer.Sound(SOUNDS_PATH / 'sniper_shot.ogg')
+                pygame.mixer.Sound.set_volume(sniper_shot, 0.1)
+                pygame.mixer.Sound.play(sniper_shot)
 
     def animate(self):
         #Only use if in a shooting state
         if self.action != 'idle':
             self.frame_index += self.animation_speeds[self.action]
+            
 
             if self.frame_index >= len(self.frames[self.action]): #back to starting frame (index 0) after animation finishes
                 self.frame_index = 0
