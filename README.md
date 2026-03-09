@@ -7,7 +7,9 @@ Group 4: Luka, Ingmar, Igor, Mika
 
 Instructions:
 -Use f11 for fullscreen
+
 -Use WASD controls for moving
+
 -Use LMB for attacking
 
 

@@ -3,19 +3,24 @@ from spritesheets import SpriteSheet
 from entity import Entity
 from settings import *
 from random import uniform
+from enemy_data import ENEMY_DATA
+
 
 
 class FlyingEnemy(Entity):
 
-    def __init__(self, pos, groups, player, obstacle_sprites, attackable_sprites):
+    def __init__(self, pos, groups, player, obstacle_sprites, attackable_sprites, enemy_type):
         super().__init__(groups)
 
+        self.enemy_type = enemy_type
+
         # Animations
-        graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / 'bat_character'
-        self.enemy_scale = 1.5
-        self.animation_steps = {'idle': 4, 'fly_left': 4, 'fly_up': 4, 'fly_right': 4,
-                                'death': 11}  # amount of frames in each animation
-        self.animation_speeds = {'idle': 0.15, 'fly_left': 0.15, 'fly_up': 0.15, 'fly_right': 0.15, 'death': 0.25}
+        data = ENEMY_DATA[self.enemy_type]
+        graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / data["path"]
+
+        self.enemy_scale = data["scale"]
+        self.animation_steps = data["animation_steps"]  # amount of frames in each animation
+        self.animation_speeds = data["animation_speeds"]
 
         # Load frames immediately
         self.load_animation_frames(graphics_path)
@@ -23,8 +28,8 @@ class FlyingEnemy(Entity):
         self.image = self.frames[self.action][0]
         self.rect = self.frames[self.action][0].get_rect(topleft = pos)
         self.player = player
-        self.speed = uniform(1.5,2.5)
-                
+        self.speed = uniform(*data["speed"]) #this makes the speed randomized between 2&3 to prevent enemies from getting stuck in eachother
+
 
         # collision
         self.obstacle_sprites = obstacle_sprites
@@ -45,9 +50,8 @@ class FlyingEnemy(Entity):
         self.player_detected = False
 
 
-
     def load_animation_frames(self, graphics_path):
-        # Preload all animations so they are ready when player shoots
+        #preload all animations (TODO make this dynamic and read from the enemy_data dict)
         sheets = {
             'idle': SpriteSheet(pygame.image.load(graphics_path / 'bat_idle.png').convert_alpha()),
             'fly_left': SpriteSheet(pygame.image.load(graphics_path / 'flying_left.png').convert_alpha()),
@@ -91,7 +95,7 @@ class FlyingEnemy(Entity):
         if self.direction.length() == 0:
             self.action = 'idle'
         elif abs(self.direction.x) > abs(self.direction.y):
-            if self.direction.x > 0:
+            if self.direction.x < 0:
                 self.action = 'fly_left'
             else:
                 self.action = 'fly_right'
@@ -117,6 +121,15 @@ class FlyingEnemy(Entity):
                     if self.direction.y < 0:
                         self.hitbox.top = obstacle.hitbox.bottom
                         self.direction.y = 0
+
+    def detect_player(self):
+        distance = pygame.math.Vector2(self.player.rect.center).distance_to(self.rect.center)
+        if not self.player_detected:
+            if distance <= self.detection_radius:
+                self.player_detected = True
+        else:
+            if distance >= self.disengage_radius:
+                self.player_detected = False
     
     def attack_player(self):
         current_time = pygame.time.get_ticks()

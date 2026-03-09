@@ -14,7 +14,10 @@ class Entity(pygame.sprite.Sprite):
         self.frame_index += speed
         if self.frame_index >= len(self.frames[self.action]):
             if self.action == 'death':
-                self.kill()
+                if hasattr(self, 'dead'):
+                    self.dead = True
+                else:
+                    self.kill()
                 return
             self.frame_index = 0
         self.image = self.frames[self.action][int(self.frame_index)]

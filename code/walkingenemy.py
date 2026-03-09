@@ -3,9 +3,10 @@ from spritesheets import SpriteSheet
 from entity import Entity
 from settings import *
 from random import uniform
+from enemy_data import ENEMY_DATA
 
 
-class Walkingenemy(Entity):
+class WalkingEnemy(Entity):
 
     def __init__(self, pos, groups, player, obstacle_sprites, attackable_sprites):
         super().__init__(groups)
@@ -89,7 +90,7 @@ class Walkingenemy(Entity):
             self.jump()
 
     def jump(self):        
-        if self.on_ground == True:  
+        if self.on_ground:
             self.direction.y = self.jump_height
             self.on_ground = False
             self.is_jumping = True

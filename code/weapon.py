@@ -21,7 +21,8 @@ class Weapon(pygame.sprite.Sprite):
         self.sfx = AudioManager(
             {
             'revolver': SFX_PATH / 'revolver_shot.ogg',
-            'shotgun': SFX_PATH / 'shotgun_shot.ogg'
+            'shotgun': SFX_PATH / 'shotgun_shot2.ogg',
+            'sniper': SFX_PATH / 'sniper_shot.ogg',
             })
 
         #Static Setup
@@ -58,9 +59,9 @@ class Weapon(pygame.sprite.Sprite):
         self.frame_index = 0
         self.frames = {}
 
-        self.weapon_sizes = {'revolver': [38, 20], 'shotgun': [52, 14]} #sets weapon size at amount of pixels in spritesheet for animations
-        self.animation_steps = {'revolver': 7, 'shotgun': 16}
-        self.animation_speeds = {'revolver': 0.5, 'shotgun': 0.7}
+        self.weapon_sizes = {'revolver': [38, 20], 'shotgun': [52, 14], 'sniper': [85, 21]} #sets weapon size at amount of pixels in spritesheet for animations
+        self.animation_steps = {'revolver': 7, 'shotgun': 16, 'sniper': 21}
+        self.animation_speeds = {'revolver': 0.5, 'shotgun': 0.7, 'sniper': 0.5}
 
         #Load frames immediately
         self.load_animation_frames(graphics_path)
@@ -70,7 +71,8 @@ class Weapon(pygame.sprite.Sprite):
         # Preload all animations so they are ready when player shoots
         sheets = {
             'revolver': SpriteSheet(pygame.image.load(path / 'revolver_animation.png').convert_alpha()),
-            'shotgun': SpriteSheet(pygame.image.load(path / 'shotgun_animation.png').convert_alpha())
+            'shotgun': SpriteSheet(pygame.image.load(path / 'shotgun_animation.png').convert_alpha()),
+            'sniper': SpriteSheet(pygame.image.load(path / 'sniper_animation.png').convert_alpha())
         }
 
         for name, sheet in sheets.items():
@@ -94,22 +96,24 @@ class Weapon(pygame.sprite.Sprite):
             if self.player.weapon == 'shotgun':
                 #Knockback
                 if self.direction.length() != 0:
-                    self.player.direction = self.direction.normalize() * -7
+                    self.player.direction += self.direction.normalize() * -0.5 #determines amount of recoil / knockback
 
                 #Sound
                 self.sfx.play_sfx('shotgun', volume=0.5)
 
             elif self.player.weapon == 'revolver':
-                #Sound
                 self.sfx.play_sfx('revolver')
 
+            elif self.player.weapon =='sniper':
+                self.sfx.play_sfx('sniper')
 
     def animate(self):
-        # Only use if in a shooting state
+        #Only use if in a shooting state
         if self.action != 'idle':
             self.frame_index += self.animation_speeds[self.action]
+            
 
-            if self.frame_index >= len(self.frames[self.action]):
+            if self.frame_index >= len(self.frames[self.action]): #back to starting frame (index 0) after animation finishes
                 self.frame_index = 0
                 self.action = 'idle'  # Back to static image
 
