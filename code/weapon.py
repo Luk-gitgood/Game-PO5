@@ -6,9 +6,8 @@ from settings import *
 from bullet import Bullet
 import random
 
-
 class Weapon(pygame.sprite.Sprite):
-    def __init__(self, groups, player, obstacle_sprites, attackable_sprites):
+    def __init__(self, groups, player, obstacle_sprites, attackable_sprites, offset):
         super().__init__(groups)
 
         graphics_path = BASE_DIR.parent / 'graphics' / 'weapons'
@@ -16,6 +15,9 @@ class Weapon(pygame.sprite.Sprite):
         self.player = player
         self.obstacle_sprites = obstacle_sprites
         self.attackable_sprites = attackable_sprites
+        self.offset = offset
+
+        self.dagger_attack_timer = 100 #used for the attack movement of the dagger
 
         #SFX
         self.sfx = AudioManager(
@@ -32,6 +34,8 @@ class Weapon(pygame.sprite.Sprite):
 
         self.image = self.original_image
         self.angle = 0
+
+        #offset = 40
 
         #User screen size
         info = pygame.display.Info()
@@ -59,9 +63,9 @@ class Weapon(pygame.sprite.Sprite):
         self.frame_index = 0
         self.frames = {}
 
-        self.weapon_sizes = {'revolver': [38, 20], 'shotgun': [52, 14], 'sniper': [85, 21]} #sets weapon size at amount of pixels in spritesheet for animations
-        self.animation_steps = {'revolver': 7, 'shotgun': 16, 'sniper': 21}
-        self.animation_speeds = {'revolver': 0.5, 'shotgun': 0.7, 'sniper': 0.5}
+        self.weapon_sizes = {'revolver': [38, 20], 'shotgun': [52, 14], 'sniper': [85, 21], 'dagger': [16,6]} #sets weapon size at amount of pixels in spritesheet for animations
+        self.animation_steps = {'revolver': 7, 'shotgun': 16, 'sniper': 21, 'dagger': 1}
+        self.animation_speeds = {'revolver': 0.5, 'shotgun': 0.7, 'sniper': 0.5, 'dagger': 1}
 
         #Load frames immediately
         self.load_animation_frames(graphics_path)
@@ -72,7 +76,8 @@ class Weapon(pygame.sprite.Sprite):
         sheets = {
             'revolver': SpriteSheet(pygame.image.load(path / 'revolver_animation.png').convert_alpha()),
             'shotgun': SpriteSheet(pygame.image.load(path / 'shotgun_animation.png').convert_alpha()),
-            'sniper': SpriteSheet(pygame.image.load(path / 'sniper_animation.png').convert_alpha())
+            'sniper': SpriteSheet(pygame.image.load(path / 'sniper_animation.png').convert_alpha()),
+            'dagger': SpriteSheet(pygame.image.load(path / 'dagger.png').convert_alpha())
         }
 
         for name, sheet in sheets.items():
@@ -87,18 +92,27 @@ class Weapon(pygame.sprite.Sprite):
             self.action = self.player.weapon
             self.frame_index = 0
 
+
+            #Shooting
             weapon_stats = weapon_data[self.player.weapon]
             for _ in range(weapon_stats['bullet_count']):
                 spread = random.uniform(-weapon_stats['spread'], weapon_stats['spread'])
                 Bullet(self.rect.center, self.angle + spread, self.groups, self.obstacle_sprites, self.attackable_sprites, weapon_stats['speed'],
                        weapon_stats['lifetime'], weapon_stats['damage'])
 
+            if self.player.weapon == 'dagger':
+                if self.dagger_attack_timer == 100:
+                    self.offset = 60
+                if self.dagger_attack_timer == 1:
+                    pass
+                self.dagger_attack_timer = 0
+
+            #Knockback
             if self.player.weapon == 'shotgun':
-                #Knockback
                 if self.direction.length() != 0:
                     self.player.direction += self.direction.normalize() * -0.5 #determines amount of recoil / knockback
 
-                #Sound
+            #Sound
                 self.sfx.play_sfx('shotgun', volume=0.5)
 
             elif self.player.weapon == 'revolver':
@@ -106,6 +120,8 @@ class Weapon(pygame.sprite.Sprite):
 
             elif self.player.weapon =='sniper':
                 self.sfx.play_sfx('sniper')
+
+
 
     def animate(self):
         #Only use if in a shooting state
@@ -140,11 +156,17 @@ class Weapon(pygame.sprite.Sprite):
 
         self.direction = pygame.math.Vector2(mouse_world) - pygame.math.Vector2(self.player.rect.center)
 
+        #offset moving for dagger animation
+        if self.dagger_attack_timer !=100:
+            self.dagger_attack_timer += 10
+            self.offset = 80
+        else: self.offset = 40
+
         if self.direction.length() != 0:
             self.direction = self.direction.normalize()
 
         self.angle = math.degrees(math.atan2(self.direction.y, self.direction.x))
-        self.weapon_pos = pygame.math.Vector2(self.player.rect.center) + self.direction * 40
+        self.weapon_pos = pygame.math.Vector2(self.player.rect.center) + self.direction * self.offset
 
         #run animation logic
         self.animate()
@@ -166,4 +188,3 @@ class Weapon(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(flipped_base, -self.angle)
 
         self.rect = self.image.get_rect(center=self.weapon_pos)
-

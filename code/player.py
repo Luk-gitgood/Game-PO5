@@ -211,6 +211,15 @@ class Player(Entity):
             self.equip_weapon()
             self.weapon_equipped = True
 
+        if keys[pygame.K_5]:
+            if self.weapon_index != 3:
+                self.destroy_weapon()
+            self.weapon_index = 3
+            self.weapon = list(weapon_data.keys())[self.weapon_index]
+            self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
+            self.equip_weapon()
+            self.weapon_equipped = True
+
 
         #mouse detection for shooting. Only shoots if weapon is equipped and cooldown is ready.
         if pygame.mouse.get_pressed()[0]:  # Left Click

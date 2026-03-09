@@ -57,6 +57,14 @@ weapon_data = {
         'lifetime': 1500,
         'damage': 50,
         'cooldown': 2000
+    },
+    'dagger': {
+        'speed': 0,
+        'bullet_count': 0,
+        'spread': 0,
+        'lifetime': 0,
+        'damage': 50,
+        'cooldown': 100
     }
 
 }

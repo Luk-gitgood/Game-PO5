@@ -124,7 +124,7 @@ class Level:
 
     def equip_weapon(self):
         if self.current_weapon is None:
-            self.current_weapon = Weapon([self.visible_sprites], self.player, self.obstacle_sprites, self.attackable_sprites)
+            self.current_weapon = Weapon([self.visible_sprites], self.player, self.obstacle_sprites, self.attackable_sprites, 40)
 
     def destroy_weapon(self):
         if self.current_weapon:
