@@ -64,7 +64,7 @@ weapon_data = {
         'spread': 0,
         'lifetime': 0,
         'damage': 50,
-        'cooldown': 100
+        'cooldown': 300
     }
 
 }

@@ -101,10 +101,6 @@ class Weapon(pygame.sprite.Sprite):
                        weapon_stats['lifetime'], weapon_stats['damage'])
 
             if self.player.weapon == 'dagger':
-                if self.dagger_attack_timer == 100:
-                    self.offset = 60
-                if self.dagger_attack_timer == 1:
-                    pass
                 self.dagger_attack_timer = 0
 
             #Knockback
@@ -120,6 +116,22 @@ class Weapon(pygame.sprite.Sprite):
 
             elif self.player.weapon =='sniper':
                 self.sfx.play_sfx('sniper')
+
+    def stab(self):
+        #offset moving for dagger animation
+        if self.dagger_attack_timer == 100:
+            self.offset = 20
+        elif self.dagger_attack_timer == 50:
+            self.offset = 30
+        elif self.dagger_attack_timer == 0:
+            self.offset = 40
+            # dagger damage hitboxes
+            for sprite in self.attackable_sprites:
+                if sprite.hitbox.colliderect(self.rect):
+                    sprite.take_damage(20)
+
+        if self.dagger_attack_timer !=100:
+            self.dagger_attack_timer += 5
 
 
 
@@ -156,11 +168,6 @@ class Weapon(pygame.sprite.Sprite):
 
         self.direction = pygame.math.Vector2(mouse_world) - pygame.math.Vector2(self.player.rect.center)
 
-        #offset moving for dagger animation
-        if self.dagger_attack_timer !=100:
-            self.dagger_attack_timer += 10
-            self.offset = 80
-        else: self.offset = 40
 
         if self.direction.length() != 0:
             self.direction = self.direction.normalize()
@@ -188,3 +195,6 @@ class Weapon(pygame.sprite.Sprite):
             self.image = pygame.transform.rotate(flipped_base, -self.angle)
 
         self.rect = self.image.get_rect(center=self.weapon_pos)
+
+        if self.player.weapon == 'dagger':
+            self.stab()
