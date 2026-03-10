@@ -25,7 +25,7 @@ class Game:
         #Display state
         self.is_fullscreen = True
         self.screen = pygame.display.set_mode(
-            (self.MONITOR_WIDTH, self.MONITOR_HEIGHT),pygame.NOFRAME)
+            (self.MONITOR_WIDTH, self.MONITOR_HEIGHT),pygame.FULLSCREEN)
 
         #Internal game surface (fixed resolution)
         self.game_surface = pygame.Surface((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT))

@@ -25,7 +25,7 @@ class Level:
         self.current_weapon = None
         self.weapon_destroyed_on_death = False
 
-        #parallax yes/no
+        #parallax yes/no (temporary, will probably be a setting in the future)
         self.use_parallax = False
 
         #create map
@@ -36,7 +36,7 @@ class Level:
 
     def create_map(self):
 
-        #create player first, as spawning enemies requires self.player as argument
+        #create player first, as spawning enemies requires self.player as argument, so that they can track the player
         self.player = Player(
         (200, 2060),
         [self.visible_sprites],
@@ -59,9 +59,9 @@ class Level:
             'enemy_spawns': import_csv_layout(layouts_path / 'boss_room_enemy_spawns.csv'),
             }
         
-        graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'castle_single_tiles'
+        graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'castle_single_tiles' #path to folder, so it runs on different machines / operating systems without needing to change the path in the code
 
-        graphics = {
+        graphics = {  
             'collision_surface': import_folder(graphics_path / 'collision_surface'),
             'damage_tiles': import_folder(graphics_path / 'damage_tiles'),
             'background1': import_folder(graphics_path / 'non_collision_surface'),
@@ -72,48 +72,67 @@ class Level:
 
         #loop over all styles
         for style, layout in layouts.items():
-            for row_index, row in enumerate(layout):
-                for col_index, col in enumerate(row):
+            for row_index, row in enumerate(layout): 
+                for col_index, col in enumerate(row): 
 
-                    if col == '-1':
+                    if col == '-1': #if the value in the CSV is -1, skip the loop because -1 in CSV means there is no tile there
                         continue
                     x = col_index * TILE_SIZE
                     y = row_index * TILE_SIZE
 
                     #enemy spawn layer (no graphics)
-                    if style == 'enemy_spawns': 
-                        if col in ENEMY_TYPES:
-                            enemy_type = ENEMY_TYPES.get(col) #everywhere there is a 0 in the csv an enemy gets spawned
-                            WalkingEnemy((x, y), 
-                                [self.visible_sprites, self.attackable_sprites], 
-                                self.player, 
-                                self.obstacle_sprites, 
-                                self.attackable_sprites,
-                                'mushroom',
-                                 ) 
+                    if style == 'enemy_spawns':
+
+                        enemy_type = ENEMY_TYPES.get(col) #get enemy type from ENEMY_TYPES dictionary using the value in the CSV
+                        
+                        if enemy_type is None: #if the value in the CSV doesn't correspond to an enemy type, skip it
                             continue
 
-                    index = int(col)
+                        enemy_data = ENEMY_DATA[enemy_type] #read out enemy data file
+                        enemy_class = enemy_data['class'] #get class of enemy from enemy_data.py
 
-                    if 0 <= index < len(graphics[style]):
-                        surf = graphics[style][index]
+                        if enemy_class == 'walking': #if it's a walking enemy, spawn a walking enemy 
+                            WalkingEnemy(
+                                (x, y),
+                                [self.visible_sprites, self.attackable_sprites],
+                                self.player,
+                                self.obstacle_sprites,
+                                self.attackable_sprites,
+                                enemy_type
+                            )
 
-                        if style == 'collision_surface':
+                        elif enemy_class == 'flying':
+                            FlyingEnemy(
+                                (x, y),
+                                [self.visible_sprites, self.attackable_sprites],
+                                self.player,
+                                self.obstacle_sprites,
+                                self.attackable_sprites,
+                                enemy_type
+                            )
+                        continue #skip the rest of the loop for enemy spawns, as the tiles dont need to be visible
+
+                    index = int(col) #convert the value from the CSV to an integer to use as index for the graphics list for this style
+
+                    if 0 <= index < len(graphics[style]): #check if the index is within the range of the graphics list for this style
+                        surf = graphics[style][index] #get correct tile surface from graphics dictionary using the index from the CSV
+
+                        if style == 'collision_surface': #collision tiles are solid and visible, so they go in both the visible_sprites and obstacle_sprites groups
                             Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'solid', surf)
 
                         elif style == 'platform_top':
                             Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'platform_top', surf)
 
-                        elif style == 'damage_tiles':
+                        elif style == 'damage_tiles': #just like collision surface but in different group so that they can have different properties (damaging the player)
                             Tiles((x, y), [self.visible_sprites, self.obstacle_sprites], 'damage', surf)
 
-                        elif style == 'doorways':
+                        elif style == 'doorways': #only visible, but not in same layer as deco, to be able to give them different properties (like blocking the player)
                             Tiles((x, y), [self.visible_sprites], 'door', surf)
 
-                        elif style == 'decorations':
+                        elif style == 'decorations': #only visible, no collisions
                             Tiles((x, y), [self.visible_sprites], 'decoration', surf)
 
-                        elif style == 'background1':
+                        elif style == 'background1':  #just background, no collisions, different layer so that it can be rendered behind the player and enemies
                             Tiles((x, y), [self.visible_sprites], 'surface', surf)
                                     
                                                                 
