@@ -33,6 +33,7 @@ class WalkingEnemy(Entity):
         self.hitbox = self.rect.inflate(0,0)
         self.dying = False
         self.horizontal_collision = False
+        self.damage_applied = False
 
         # state flags
         self.is_attacking = False
@@ -141,22 +142,33 @@ class WalkingEnemy(Entity):
 
 
     def attack_player(self):
-
-        if self.is_attacking or self.is_hurt:
+    
+        if self.is_hurt or self.dying:
             return
-
+    
         current_time = pygame.time.get_ticks()
-
-        if self.hitbox.colliderect(self.player.hitbox):
-
-            if current_time - self.last_attack_time >= self.attack_cooldown:
-
-                self.is_attacking = True
-                self.action = 'attack'
-                self.frame_index = 0
-
-                self.player.take_damage(self.damage)
-                self.last_attack_time = current_time
+    
+        # start attack
+        if not self.is_attacking:
+    
+            if self.hitbox.colliderect(self.player.hitbox):
+    
+                if current_time - self.last_attack_time >= self.attack_cooldown:
+                    self.is_attacking = True
+                    self.action = 'attack'
+                    self.frame_index = 0
+                    self.damage_applied = False
+                    self.last_attack_time = current_time
+    
+        # deal damage during attack animation
+        if self.is_attacking and not self.damage_applied:
+    
+            if int(self.frame_index) == 4:   # attack hit frame
+    
+                if self.hitbox.colliderect(self.player.hitbox):
+                    self.player.take_damage(self.damage)
+    
+                self.damage_applied = True
 
 
     def detect_player(self):
@@ -186,9 +198,10 @@ class WalkingEnemy(Entity):
             self.speed = 0
             return
 
-        self.is_hurt = True
-        self.action = 'hurt'
-        self.frame_index = 0
+        if not self.is_attacking:
+            self.is_hurt = True
+            self.action = 'hurt'
+            self.frame_index = 0
 
 
     def draw_health_bar(self,surface,offset):

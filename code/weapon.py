@@ -17,6 +17,7 @@ class Weapon(pygame.sprite.Sprite):
         self.attackable_sprites = attackable_sprites
         self.offset = offset
 
+        self.weapon_stats = weapon_data[self.player.weapon]
         self.dagger_attack_timer = 100 #used for the attack movement of the dagger
 
         #SFX
@@ -94,11 +95,10 @@ class Weapon(pygame.sprite.Sprite):
 
 
             #Shooting
-            weapon_stats = weapon_data[self.player.weapon]
-            for _ in range(weapon_stats['bullet_count']):
-                spread = random.uniform(-weapon_stats['spread'], weapon_stats['spread'])
-                Bullet(self.rect.center, self.angle + spread, self.groups, self.obstacle_sprites, self.attackable_sprites, weapon_stats['speed'],
-                       weapon_stats['lifetime'], weapon_stats['damage'])
+            for _ in range(self.weapon_stats['bullet_count']):
+                spread = random.uniform(-self.weapon_stats['spread'], self.weapon_stats['spread'])
+                Bullet(self.rect.center, self.angle + spread, self.groups, self.obstacle_sprites, self.attackable_sprites, self.weapon_stats['speed'],
+                       self.weapon_stats['lifetime'], self.weapon_stats['damage'])
 
             if self.player.weapon == 'dagger':
                 self.dagger_attack_timer = 0
@@ -128,7 +128,7 @@ class Weapon(pygame.sprite.Sprite):
             # dagger damage hitboxes
             for sprite in self.attackable_sprites:
                 if sprite.hitbox.colliderect(self.rect):
-                    sprite.take_damage(20)
+                    sprite.take_damage(self.weapon_stats['damage'])
 
         if self.dagger_attack_timer !=100:
             self.dagger_attack_timer += 5

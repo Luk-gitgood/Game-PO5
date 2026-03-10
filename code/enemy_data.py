@@ -26,7 +26,7 @@ ENEMY_DATA = {
             'death': 'Orc-Death.png'
             },
         "scale": 2,
-        "stats": {"health": 100, 'damage': 10, 'attack_cooldown': 500, 'jump_height': -12, "speed": (2.5,3.5), "detection_radius": 450, "disengage_radius": 550}
+        "stats": {"health": 100, 'damage': 10, 'attack_cooldown': 500, 'jump_height': -12, "speed": (2.5,3.5), "detection_radius": 350, "disengage_radius": 450}
         }
         }
 
