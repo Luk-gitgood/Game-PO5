@@ -89,7 +89,7 @@ class Level:
                                 self.player, 
                                 self.obstacle_sprites, 
                                 self.attackable_sprites,
-                                'orc',
+                                'mushroom',
                                  ) 
                             continue
 

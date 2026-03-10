@@ -12,6 +12,7 @@ class WalkingEnemy(Entity):
         super().__init__(groups)
         self.data = ENEMY_DATA[enemy_type]
         self.stats = self.data['stats']
+        self.player = player
 
         graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / self.data['path']
         self.enemy_scale = self.data['scale']
@@ -22,12 +23,11 @@ class WalkingEnemy(Entity):
 
         self.image = self.frames[self.action][0]
         self.rect = self.frames[self.action][0].get_rect(topleft = pos)
-        self.player = player
-        self.gravity = 0.4
-        self.on_ground = False
-        self.is_jumping = False
 
-        # collision
+        #physics
+        self.gravity = 0.4
+
+        #collision
         self.obstacle_sprites = obstacle_sprites
         self.attackable_sprites = attackable_sprites
         self.hitbox = self.rect.inflate(0,0)
@@ -35,11 +35,13 @@ class WalkingEnemy(Entity):
         self.horizontal_collision = False
         self.damage_applied = False
 
-        # state flags
+        #state flags
         self.is_attacking = False
         self.is_hurt = False
+        self.is_jumping = False
+        self.on_ground = False
 
-        # enemy stats
+        #enemy stats
         self.health = self.stats['health']
         self.damage = self.stats['damage']
         self.jump_height = self.stats['jump_height']
@@ -52,6 +54,13 @@ class WalkingEnemy(Entity):
         self.disengage_radius = self.stats['disengage_radius']
         self.player_detected = False
 
+        #Movement Variables
+        self.accel = 0.4      
+        self.friction = 0.2    
+        self.max_speed = self.speed 
+        self.direction.x = 0   
+        self.look_ahead_dist = 30 
+
 
     def load_animation_frames(self, graphics_path):
         sheets = {}
@@ -59,7 +68,7 @@ class WalkingEnemy(Entity):
             sheets[key] = SpriteSheet(pygame.image.load(graphics_path / value).convert_alpha())
 
         for action, sheet in sheets.items():
-            self.frames[action] = [sheet.get_image(i, 100, 100, self.enemy_scale) for i in range(self.animation_steps[action])]
+            self.frames[action] = [sheet.get_image(i, self.data['size']['width'], self.data['size']['height'], self.enemy_scale) for i in range(self.animation_steps[action])]
 
 
     def apply_gravity(self):
@@ -71,43 +80,70 @@ class WalkingEnemy(Entity):
 
 
     def move_towards_player(self):
-
-        if self.is_attacking:
-            return
-
-        dx = self.player.rect.centerx - self.rect.centerx
-
-        if abs(dx) > 5:
-            self.direction.x = 1 if dx > 0 else -1
-        else:
-            self.direction.x = 0
-
-        self.hitbox.x += self.direction.x * self.speed
-        self.check_collision('horizontal')
-
-        self.rect.center = self.hitbox.center
-
-        if self.player.rect.centery < self.rect.centery - 40 and self.horizontal_collision:
+            if self.is_attacking:
+                self.direction.x = 0
+                return
+    
+            dx = self.player.rect.centerx - self.rect.centerx
+            
+            #ACCELERATION LOGIC
+            if abs(dx) > 10:
+                target_vel = 1 if dx > 0 else -1
+    
+                #Gradually nudge current velocity toward target
+                self.direction.x += target_vel * self.accel
+    
+            else:
+                #FRICTION LOGIC (Slow down when close)
+                if self.direction.x > 0:
+                    self.direction.x = max(0, self.direction.x - self.friction)
+                elif self.direction.x < 0:
+                    self.direction.x = min(0, self.direction.x + self.friction)
+    
+            # Limit to max speed
+            if abs(self.direction.x) > 1: 
+                self.direction.x = 1 if self.direction.x > 0 else -1
+    
             self.jump()
+    
+            #Apply horizontal movement
+            self.hitbox.x += self.direction.x * self.max_speed
+            self.check_collision('horizontal')
+            self.rect.center = self.hitbox.center
 
 
-    def jump(self):        
-        if self.on_ground:
-            self.direction.y = self.jump_height
-            self.on_ground = False
-            self.is_jumping = True
-            self.horizontal_collision = False
+    def jump(self):
+        if not self.on_ground: return
+
+        #sensor rect in front of the enemy
+        look_dist = self.look_ahead_dist if self.direction.x >= 0 else -self.look_ahead_dist
+        sensor_rect = self.hitbox.copy()
+        sensor_rect.x += look_dist
+
+        for obstacle in self.obstacle_sprites:
+            if obstacle.hitbox.colliderect(sensor_rect):
+                #If player is higher than enemy and there is a wall ahead jump
+                if self.player.rect.centery < self.rect.centery - 20:
+                    self.direction.y = self.jump_height
+                    self.on_ground = False
+                    self.is_jumping = True
+                    self.horizontal_collision = False
+                    break
 
 
     def update_action(self):
+            if self.dying or self.is_attacking or self.is_hurt:
+                return 
     
-        if self.dying or self.is_attacking or self.is_hurt:
-            return 
+            # Using a small threshold because friction makes velocity float
+            if abs(self.direction.x) < 0.1:
+                self.action = 'idle'
+                self.direction.x = 0 
+            else:
+                self.action = 'walk'
     
-        if self.direction.length() == 0:
-            self.action = 'idle'
-        else:
-            self.action = 'walk'
+            if self.direction.x > 0: self.flip = False
+            elif self.direction.x < 0: self.flip = True
 
 
     def check_collision(self, direction):
@@ -182,6 +218,19 @@ class WalkingEnemy(Entity):
             if distance >= self.disengage_radius:
                 self.player_detected = False
 
+    def can_see_player(self):
+        #Get the start and end points of the "ray"
+        start = self.rect.center
+        end = self.player.rect.center
+    
+        #Check every obstacle to see if it "clips" (intersects) this line
+        for obstacle in self.obstacle_sprites:
+            # clipline returns a tuple of points if it hits, or an empty tuple if it doesn't
+            if obstacle.hitbox.clipline(start, end):
+                return False # View is blocked!
+                
+        return True
+
 
     def take_damage(self, amount):
 
@@ -224,19 +273,18 @@ class WalkingEnemy(Entity):
 
 
     def update(self):
-
         if not self.dying:
-
             self.detect_player()
-
-            if self.player_detected:
-
+    
+            # Only check Line of Sight if they are within range
+            if self.player_detected and self.can_see_player():
                 if not self.is_attacking:
                     self.move_towards_player()
-
                 self.attack_player()
-
+            else:
+                self.direction.x = 0
+    
             self.apply_gravity()
             self.update_action()
-
+    
         self.animate()

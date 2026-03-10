@@ -56,7 +56,7 @@ class FlyingEnemy(Entity):
             sheets[key] = SpriteSheet(pygame.image.load(graphics_path / value).convert_alpha())
 
         for action, sheet in sheets.items():
-            self.frames[action] = [sheet.get_image(i, IMAGE_WIDTH, IMAGE_HEIGHT, self.enemy_scale) for i in range(self.animation_steps[action])]
+            self.frames[action] = [sheet.get_image(i, self.data['size']['width'], self.data['size']['height'], self.enemy_scale) for i in range(self.animation_steps[action])]
 
     def move_towards_player(self):
         self.direction.x = self.player.rect.centerx - self.rect.centerx

@@ -8,6 +8,7 @@ class Entity(pygame.sprite.Sprite):
         self.action = 'idle'
         self.frame_index = 0
         self.frames = {}
+        self.flip = False
 
     def animate(self):
         speed = self.animation_speeds[self.action]
@@ -34,4 +35,9 @@ class Entity(pygame.sprite.Sprite):
     
         center = self.rect.center
         self.image = self.frames[self.action][int(self.frame_index)]
+
+        # Check if we need to flip the image horizontally
+        if self.flip:
+            self.image = pygame.transform.flip(self.image, True, False)
+
         self.rect = self.image.get_rect(center=center)
