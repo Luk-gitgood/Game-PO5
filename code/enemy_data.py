@@ -32,6 +32,7 @@ ENEMY_DATA = {
         "scale": 2,
         "stats": {"health": 70, 'damage': 8, 'attack_cooldown': 300, 'jump_height': -12, "speed": (2.5,3.5), "detection_radius": 350, "disengage_radius": 450},
         },
+
     "mushroom": { 
         "path": "Mushroom",
         "class": "walking",

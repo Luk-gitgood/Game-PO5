@@ -153,7 +153,7 @@ class SettingsMenu:
         # Render resolution text
         text = self.font.render(
             f"Resolution: {self.sizes[self.current_ratio_index]}",
-            True, (0, 0, 255)
+            True, (0, 200, 255)
         )
         self.display.blit(text, (120, 200))
 

@@ -32,7 +32,7 @@ class Player(Entity):
         self.hit_time = 0
 
         #Stats
-        self.stats = {'health': 100, 'speed': 2, 'jump_speed': -11,} #should be put in player_data.py or J'son to use upgrades
+        self.stats = {'health': 120, 'speed': 2, 'jump_speed': -11,} #should be put in player_data.py or J'son to use upgrades
         self.health = self.stats['health']
         self.speed = self.stats['speed']
         self.jump_speed = self.stats['jump_speed']
