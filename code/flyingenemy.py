@@ -72,15 +72,6 @@ class FlyingEnemy(Entity):
         self.check_collision('vertical')
 
         self.rect.center = self.hitbox.center
-        
-    def detect_player(self):
-        distance = pygame.math.Vector2(self.player.rect.center).distance_to(self.rect.center)
-        if not self.player_detected:
-            if distance <= self.detection_radius:
-                self.player_detected = True
-        else:
-            if distance >= self.disengage_radius:
-                self.player_detected = False
 
     def update_action(self):
         if self.dying:

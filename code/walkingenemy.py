@@ -199,7 +199,7 @@ class WalkingEnemy(Entity):
         # deal damage during attack animation
         if self.is_attacking and not self.damage_applied:
     
-            if int(self.frame_index) == 4:   # attack hit frame
+            if int(self.frame_index) == self.animation_steps['attack'] - 2:   # attack hit frame
     
                 if self.hitbox.colliderect(self.player.hitbox):
                     self.player.take_damage(self.damage)
@@ -225,9 +225,13 @@ class WalkingEnemy(Entity):
     
         #Check every obstacle to see if it "clips" (intersects) this line
         for obstacle in self.obstacle_sprites:
-            # clipline returns a tuple of points if it hits, or an empty tuple if it doesn't
-            if obstacle.hitbox.clipline(start, end):
-                return False # View is blocked!
+            #Skips platform_tops (so it can see through platforms tops)
+            if obstacle.sprite_type == 'platform_top':
+                continue
+            else:
+                # clipline returns a tuple of points if it hits, or an empty tuple if it doesn't
+                if obstacle.hitbox.clipline(start, end):
+                    return False # View is blocked!
                 
         return True
 

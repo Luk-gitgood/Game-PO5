@@ -13,7 +13,7 @@ ENEMY_DATA = {
             'death': 'bat_death.png'
             },
         "scale": 1.5,
-        "stats": {"health": 50, 'damage': 10, 'attack_cooldown': 500, "speed": (2,3), "detection_radius": 350, "disengage_radius": 450}
+        "stats": {"health": 50, 'damage': 7, 'attack_cooldown': 500, "speed": (2,3), "detection_radius": 350, "disengage_radius": 450}
 
     },
     "orc": { 
@@ -30,10 +30,9 @@ ENEMY_DATA = {
             'death': 'Orc-Death.png'
             },
         "scale": 2,
-        "stats": {"health": 100, 'damage': 10, 'attack_cooldown': 500, 'jump_height': -12, "speed": (2.5,3.5), "detection_radius": 350, "disengage_radius": 450},
+        "stats": {"health": 70, 'damage': 8, 'attack_cooldown': 300, 'jump_height': -12, "speed": (2.5,3.5), "detection_radius": 350, "disengage_radius": 450},
         },
-
-        "mushroom": { 
+    "mushroom": { 
         "path": "Mushroom",
         "class": "walking",
         "animation_steps": {'idle': 4, 'walk': 7, 'attack': 7, 'hurt': 4, 'death': 4},
@@ -47,12 +46,30 @@ ENEMY_DATA = {
             'death': 'Death.png',
             },
         "scale": 1.5,
-        "stats": {"health": 100, 'damage': 10, 'attack_cooldown': 500, 'jump_height': -12, "speed": (2.5,3.5), "detection_radius": 350, "disengage_radius": 450}
+        "stats": {"health": 120, 'damage': 15, 'attack_cooldown': 700, 'jump_height': -10, "speed": (2,3), "detection_radius": 350, "disengage_radius": 450}
+        },
+    "skeleton": { 
+        "path": "Skeleton",
+        "class": "walking",
+        "animation_steps": {'idle': 4, 'walk': 4, 'attack': 7, 'hurt': 4, 'death': 4},
+        "animation_speeds": {'idle': 0.15, 'walk': 0.15, 'attack': 0.15, 'hurt': 0.15, 'death': 0.10},
+        'size': {'height': 150, 'width': 150},
+        "sheets": {
+            'idle':'Idle.png',
+            'walk': 'Walk.png',
+            'attack': 'Attack.png',
+            'hurt': 'hurt.png',
+            'death': 'Death.png',
+            },
+        "scale": 1,
+        "stats": {"health": 80, 'damage': 10, 'attack_cooldown': 500, 'jump_height': -11, "speed": (2.5,3.5), "detection_radius": 350, "disengage_radius": 450}
         }
         }
 
 
 ENEMY_TYPES = {
-    '0' : 'bat',
-    '1': 'mushroom',
+    '0': 'bat',
+    '1': 'orc',
+    '2': 'mushroom',
+    '3': 'skeleton',
 }

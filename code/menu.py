@@ -72,7 +72,7 @@ class MainMenu:
         self.buttons = [
             Button(self.display, 'center', (0, 0), buttons_path / 'play01.png', buttons_path / 'play02.png'),
             Button(self.display, 'center', (0, 100), buttons_path / 'video01.png', buttons_path / 'video02.png'),
-            Button(self.display, 'center', (0, 200), buttons_path / 'back01.png', buttons_path / 'back02.png')
+            Button(self.display, 'center', (0, 200), buttons_path / 'quit01.png', buttons_path / 'quit02.png')
         ]
 
         #Name them for easy event checking
