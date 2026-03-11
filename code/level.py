@@ -38,7 +38,7 @@ class Level:
 
         #create player first, as spawning enemies requires self.player as argument, so that they can track the player
         self.player = Player(
-        (200, 2060),
+        (450, 1700),
         [self.visible_sprites],
         self.obstacle_sprites,
         self.equip_weapon,

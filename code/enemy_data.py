@@ -49,6 +49,7 @@ ENEMY_DATA = {
         "scale": 1.5,
         "stats": {"health": 120, 'damage': 15, 'attack_cooldown': 700, 'jump_height': -10, "speed": (2,3), "detection_radius": 350, "disengage_radius": 450}
         },
+        
     "skeleton": { 
         "path": "Skeleton",
         "class": "walking",
