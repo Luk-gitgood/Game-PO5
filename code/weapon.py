@@ -4,10 +4,10 @@ from audio import AudioManager
 from spritesheets import SpriteSheet
 from settings import *
 from bullet import Bullet
-import random
+from random import uniform
 
 class Weapon(pygame.sprite.Sprite):
-    def __init__(self, groups, player, obstacle_sprites, attackable_sprites, offset):
+    def __init__(self, groups, player, obstacle_sprites, attackable_sprites, offset, weapon_type):
         super().__init__(groups)
 
         graphics_path = BASE_DIR.parent / 'graphics' / 'weapons'
@@ -16,8 +16,9 @@ class Weapon(pygame.sprite.Sprite):
         self.obstacle_sprites = obstacle_sprites
         self.attackable_sprites = attackable_sprites
         self.offset = offset
+        self.weapon_type = weapon_type
 
-        self.weapon_stats = weapon_data[self.player.weapon]
+        self.weapon_data = all_weapon_data[self.weapon_type]
         self.dagger_attack_timer = 100 #used for the attack movement of the dagger
 
         #SFX
@@ -29,7 +30,7 @@ class Weapon(pygame.sprite.Sprite):
             })
 
         #Static Setup
-        full_path = f"{graphics_path}/{self.player.weapon}.png"
+        full_path = f"{graphics_path}/{self.weapon_type}.png"
         self.original_image = pygame.image.load(full_path).convert_alpha()
         self.flipped_image = pygame.transform.flip(self.original_image, False, True)
 
@@ -62,73 +63,65 @@ class Weapon(pygame.sprite.Sprite):
         #Animation Setup
         self.action = 'idle'
         self.frame_index = 0
-        self.frames = {}
+        self.frames = []
 
-        self.weapon_sizes = {'revolver': [38, 20], 'shotgun': [52, 14], 'sniper': [85, 21], 'dagger': [16,6]} #sets weapon size at amount of pixels in spritesheet for animations
-        self.animation_steps = {'revolver': 7, 'shotgun': 16, 'sniper': 21, 'dagger': 1}
-        self.animation_speeds = {'revolver': 0.5, 'shotgun': 0.7, 'sniper': 0.5, 'dagger': 1}
+        self.weapon_size = self.weapon_data['size']
+        self.animation_steps = self.weapon_data['animation_steps']
+        self.animation_speeds = self.weapon_data['animation_speeds']
 
         #Load frames immediately
-        self.load_animation_frames(graphics_path)
+        if self.animation_speeds != 1:
+            self.load_animation_frames(graphics_path)
 
 
     def load_animation_frames(self, path):
         # Preload all animations so they are ready when player shoots
-        sheets = {
-            'revolver': SpriteSheet(pygame.image.load(path / 'revolver_animation.png').convert_alpha()),
-            'shotgun': SpriteSheet(pygame.image.load(path / 'shotgun_animation.png').convert_alpha()),
-            'sniper': SpriteSheet(pygame.image.load(path / 'sniper_animation.png').convert_alpha()),
-            'dagger': SpriteSheet(pygame.image.load(path / 'dagger.png').convert_alpha())
-        }
+        sheet = SpriteSheet(pygame.image.load(path / f'{self.weapon_type}_animation.png').convert_alpha())
+        self.frames = [sheet.get_image(i, self.weapon_size[0], self.weapon_size[1], 1)for i in range(self.animation_steps)]
 
-        for name, sheet in sheets.items():
-            self.frames[name] = [
-                sheet.get_image(i, self.weapon_sizes[name][0], self.weapon_sizes[name][1], 1)
-                for i in range(self.animation_steps[name])
-            ]
 
     def shoot(self):
         #Only start animation if player isn't already shooting
         if self.action == 'idle':
-            self.action = self.player.weapon
+            self.action = self.weapon_type
             self.frame_index = 0
 
 
             #Shooting
-            for _ in range(self.weapon_stats['bullet_count']):
-                spread = random.uniform(-self.weapon_stats['spread'], self.weapon_stats['spread'])
-                Bullet(self.rect.center, self.angle + spread, self.groups, self.obstacle_sprites, self.attackable_sprites, self.weapon_stats['speed'],
-                       self.weapon_stats['lifetime'], self.weapon_stats['damage'])
+            for _ in range(self.weapon_data['bullet_count']):
+                spread = uniform(-self.weapon_data['spread'], self.weapon_data['spread'])
+                Bullet(self.rect.center, self.angle + spread, self.groups, self.obstacle_sprites, self.attackable_sprites, self.weapon_data['speed'],
+                       self.weapon_data['lifetime'], self.weapon_data['damage'])
 
-            if self.player.weapon == 'dagger':
+            if self.weapon_type == 'dagger':
                 self.dagger_attack_timer = 0
 
             #Knockback
-            if self.player.weapon == 'shotgun':
+            if self.weapon_type == 'shotgun':
                 if self.direction.length() != 0:
-                    self.player.direction += self.direction.normalize() * -0.5 #determines amount of recoil / knockback
+                    self.player.direction += self.direction.normalize() * -1 #determines amount of recoil / knockback
 
             #Sound
                 self.sfx.play_sfx('shotgun', volume=0.5)
 
-            elif self.player.weapon == 'revolver':
+            elif self.weapon_type == 'revolver':
                 self.sfx.play_sfx('revolver')
 
-            elif self.player.weapon =='sniper':
+            elif self.weapon_type =='sniper':
                 self.sfx.play_sfx('sniper')
 
     def stab(self):
         #offset moving for dagger animation
         if self.dagger_attack_timer == 100:
-            self.offset = 20
-        elif self.dagger_attack_timer == 50:
             self.offset = 30
-        elif self.dagger_attack_timer == 0:
+        elif self.dagger_attack_timer == 50:
             self.offset = 40
+        elif self.dagger_attack_timer == 0:
+            self.offset = 50
             # dagger damage hitboxes
             for sprite in self.attackable_sprites:
                 if sprite.hitbox.colliderect(self.rect):
-                    sprite.take_damage(self.weapon_stats['damage'])
+                    sprite.take_damage(self.weapon_data['damage'])
 
         if self.dagger_attack_timer !=100:
             self.dagger_attack_timer += 5
@@ -138,10 +131,10 @@ class Weapon(pygame.sprite.Sprite):
     def animate(self):
         #Only use if in a shooting state
         if self.action != 'idle':
-            self.frame_index += self.animation_speeds[self.action]
+            self.frame_index += self.animation_speeds
             
 
-            if self.frame_index >= len(self.frames[self.action]): #back to starting frame (index 0) after animation finishes
+            if self.frame_index >= len(self.frames): #back to starting frame (index 0) after animation finishes
                 self.frame_index = 0
                 self.action = 'idle'  # Back to static image
 
@@ -185,7 +178,7 @@ class Weapon(pygame.sprite.Sprite):
             flipped_base = self.flipped_image
         else:
             # Use current animation frame
-            base_img = self.frames[self.action][int(self.frame_index)]
+            base_img = self.frames[int(self.frame_index)]
             flipped_base = pygame.transform.flip(base_img, False, True)
 
         #Rotate the correct base image (animation frame / static)
@@ -196,5 +189,5 @@ class Weapon(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center=self.weapon_pos)
 
-        if self.player.weapon == 'dagger':
+        if self.weapon_type == 'dagger':
             self.stab()

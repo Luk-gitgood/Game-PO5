@@ -141,9 +141,9 @@ class Level:
                             print("collision_surface tiles:", len(graphics['collision_surface']))
 
 
-    def equip_weapon(self):
+    def equip_weapon(self, weapon_type):
         if self.current_weapon is None:
-            self.current_weapon = Weapon([self.visible_sprites], self.player, self.obstacle_sprites, self.attackable_sprites, 40)
+            self.current_weapon = Weapon([self.visible_sprites], self.player, self.obstacle_sprites, self.attackable_sprites, 40, weapon_type)
 
     def destroy_weapon(self):
         if self.current_weapon:
