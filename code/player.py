@@ -149,13 +149,17 @@ class Player(Entity):
 
         if keys[pygame.K_d]:
             self.facing_left = False
-            # Instead of resetting to 0, we accelerate
-            if self.direction.x < 2: 
+            if self.direction.x < 0:
+                self.direction.x = 0
+            elif self.direction.x < 2:
                 self.direction.x += 0.3
+
         elif keys[pygame.K_a]:
-            self.facing_left = True
-            if self.direction.x > -2:
-                self.direction.x -= 0.3
+            self.facing_left = True #flag to flip the image
+            if self.direction.x > 0:
+                self.direction.x = 0
+            elif self.direction.x > -2:
+                self.direction.x += -0.3
         else:
             self.direction.x *= 0.8 #don't stop moving abrubtly
             if abs(self.direction.x) < 0.1:
