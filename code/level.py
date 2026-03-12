@@ -12,13 +12,11 @@ from enemy_data import ENEMY_TYPES, ENEMY_DATA
 
 class Level:
 
-    def __init__(self,game, surface, world, room, spawn_pos =(450, 1700)):
+    def __init__(self, surface):
         #Get the display surface
-        self.game = game
         self.display_surface = surface
-        self.world = world
-        self.room = room
-        self.spawn_pos = spawn_pos
+        self.room = 'boss_room'
+        self.spawn_pos = (450, 1700)
 
         #Sprite group setup
         #   **visible sprites are created in create_map()**
@@ -41,7 +39,7 @@ class Level:
 
     def create_map(self):
 
-        layouts_path = BASE_DIR.parent / 'levels' / self.world / self.room
+        layouts_path = BASE_DIR.parent / 'levels' / '1' / self.room
 
         layouts = {
             'collision_surface': import_csv_layout(layouts_path / f'{self.room}_collision_surface.csv'),
@@ -57,10 +55,7 @@ class Level:
         tileset_name = f"{self.room}_single_tiles"  # or self.world + "_" + self.room
         graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / tileset_name
 
-        # Fallback if folder doesn't exist
-        if not graphics_path.exists():
-            graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'castle_room_single_tiles'
-
+        
         graphics = {  
             'collision_surface': import_folder(graphics_path / 'collision_surface'),
             'damage_tiles': import_folder(graphics_path / 'damage_tiles'),
@@ -70,8 +65,8 @@ class Level:
             'decorations': import_folder(graphics_path / 'decorations'),
         }
 
+        #Map size
         layout_reference = layouts['collision_surface']
-
         self.map_rows = len(layout_reference) 
         self.map_cols = len(layout_reference[0]) 
 
@@ -180,14 +175,14 @@ class Level:
         if self.current_weapon:
             self.current_weapon.shoot()
 
-    def change_room(self, world, room, spawn_pos):
-        #let game.py load the new level
-        self.game.load_level(world, room, spawn_pos)
+    def change_room(self,room, spawn_pos):
+        #let load the new level
+        self.room = room
+        self.spawn_pos = spawn_pos
+        self.create_map()
 
     # Render
     def run(self):
-        if self.game.level is not self:  # stale level, skip
-            return
 
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
@@ -197,7 +192,7 @@ class Level:
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_t]:
-            self.change_room("1", "sewers_room", (450, 1700))
+            self.change_room("sewers_room", (450, 1400))
 
         if self.player.dead:
             if not self.weapon_destroyed_on_death:
@@ -222,7 +217,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.world_height = world_height
         
 
-        bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /'castle_room_single_tiles' /'background'
+        bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /'boss_room_single_tiles' /'background'
 
         #Loading a background (Temporary, needs to be a function (maybe))
         self.bg_layer_0 = pygame.image.load(bg_path / 'DarkCaveBG-Base.png').convert()
@@ -243,7 +238,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         layer_height = image.get_height()
 
         x = -self.offset.x * factor
-        y = WORLD_HEIGHT - layer_height - self.offset.y - BOTTOM_LAYER
+        y = self.world_height - layer_height - self.offset.y - BOTTOM_LAYER
 
         #Clamp horizontally
         max_x = layer_width - BASE_SCREEN_WIDTH
