@@ -13,8 +13,23 @@ ENEMY_DATA = {
             'death': 'bat_death.png'
             },
         "scale": 1.5,
-        "stats": {"health": 50, 'damage': 7, 'attack_cooldown': 500, "speed": (2,3), "detection_radius": 350, "disengage_radius": 450}
-
+        "stats": {"health": 50, 'damage': 7, 'attack_cooldown': 500, "speed": (2,3), "detection_radius": 350, "disengage_radius": 450},
+    },
+    "eye": {
+        "path": "Flying_eye",
+        "class": "flying",
+        "animation_steps": {'idle': 8, 'fly_left': 8, 'attack': 8, 'hurt': 4, 'death': 4},
+        "animation_speeds": {'idle': 0.15, 'fly_left': 0.15, 'attack': 0.15, 'hurt': 0.15, 'death': 0.15},
+        'size': {'height': 150, 'width': 150},
+        "sheets": {
+            'idle':'Flight.png',
+            'fly_left': 'Flight.png',
+            'attack': 'Attack.png',
+            'hurt': 'Hurt.png',
+            'death': 'Death.png'
+            },
+        "scale": 1.5,
+        "stats": {"health": 50, 'damage': 7, 'attack_cooldown': 500, "speed": (2,3), "detection_radius": 350, "disengage_radius": 450},
     },
     "orc": { 
         "path": "Orc",
