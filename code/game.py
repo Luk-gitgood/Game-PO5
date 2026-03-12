@@ -42,8 +42,7 @@ class Game:
         self.menu = MainMenu(self)
         self.settings = SettingsMenu(self)
 
-        #Game objects
-        self.level = Level(self.game_surface)
+      
 
         #Audio objects
         self.audio_dict = {
@@ -54,6 +53,7 @@ class Game:
         self.audio = AudioManager(self.audio_dict)
 
         self.set_state("menu")
+        self.load_level("1", "boss_room", (450, 1700))
 
     def set_state(self, new_state):
         self.previous_state = self.state
@@ -78,6 +78,10 @@ class Game:
         else:
             self.screen = pygame.display.set_mode((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT),pygame.RESIZABLE)
 
+    def load_level(self, world, room, spawn_pos):
+        self.level = Level(self, self.game_surface, world, room, spawn_pos)
+        
+        
 
     def handle_events(self):
         for event in pygame.event.get():

@@ -12,15 +12,20 @@ from enemy_data import ENEMY_TYPES, ENEMY_DATA
 
 class Level:
 
-    def __init__(self,surface):
+    def __init__(self,game, surface, world, room, spawn_pos =(450, 1700)):
         #Get the display surface
+        self.game = game
         self.display_surface = surface
+        self.world = world
+        self.room = room
+        self.spawn_pos = spawn_pos
 
         #Sprite group setup
-        self.visible_sprites = YSortCameraGroup(self.display_surface)
+        #   **visible sprites are created in create_map()**
+
         self.obstacle_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
-    
+        
         #Weapon
         self.current_weapon = None
         self.weapon_destroyed_on_death = False
@@ -36,30 +41,25 @@ class Level:
 
     def create_map(self):
 
-        #create player first, as spawning enemies requires self.player as argument, so that they can track the player
-        self.player = Player(
-        (450, 1700),
-        [self.visible_sprites],
-        self.obstacle_sprites,
-        self.equip_weapon,
-        self.destroy_weapon,
-        self.fire_weapon
-        )
-
-    
-        layouts_path = BASE_DIR.parent / 'levels' /'1'/ 'boss_room'
+        layouts_path = BASE_DIR.parent / 'levels' / self.world / self.room
 
         layouts = {
-            'collision_surface': import_csv_layout(layouts_path / 'boss_room_collision_surface.csv'),
-            'platform_top': import_csv_layout(layouts_path / 'boss_room_platform_top.csv'),
-            'damage_tiles': import_csv_layout(layouts_path / 'boss_room_damage_tiles.csv'),
-            'background1': import_csv_layout(layouts_path / 'boss_room_background1.csv'),
-            'doorways': import_csv_layout(layouts_path / 'boss_room_doorways.csv'),
-            'decorations': import_csv_layout(layouts_path / 'boss_room_decorations.csv'),
-            'enemy_spawns': import_csv_layout(layouts_path / 'boss_room_enemy_spawns.csv'),
-            }
-        
-        graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'castle_single_tiles' #path to folder, so it runs on different machines / operating systems without needing to change the path in the code
+            'collision_surface': import_csv_layout(layouts_path / f'{self.room}_collision_surface.csv'),
+            'platform_top': import_csv_layout(layouts_path / f'{self.room}_platform_top.csv'),
+            'damage_tiles': import_csv_layout(layouts_path / f'{self.room}_damage_tiles.csv'),
+            'background1': import_csv_layout(layouts_path / f'{self.room}_background1.csv'),
+            'doorways': import_csv_layout(layouts_path / f'{self.room}_doorways.csv'),
+            'decorations': import_csv_layout(layouts_path / f'{self.room}_decorations.csv'),
+            'enemy_spawns': import_csv_layout(layouts_path / f'{self.room}_enemy_spawns.csv'),
+        }
+                    
+        # Dynamically select tileset folder based on room or world
+        tileset_name = f"{self.room}_single_tiles"  # or self.world + "_" + self.room
+        graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / tileset_name
+
+        # Fallback if folder doesn't exist
+        if not graphics_path.exists():
+            graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / 'castle_room_single_tiles'
 
         graphics = {  
             'collision_surface': import_folder(graphics_path / 'collision_surface'),
@@ -69,6 +69,31 @@ class Level:
             'doorways': import_folder(graphics_path / 'doorways'),
             'decorations': import_folder(graphics_path / 'decorations'),
         }
+
+        layout_reference = layouts['collision_surface']
+
+        self.map_rows = len(layout_reference) 
+        self.map_cols = len(layout_reference[0]) 
+
+        self.world_height = self.map_rows * TILE_SIZE #determines world height based on amount of rows in tilemap
+        self.world_width = self.map_cols * TILE_SIZE #determines world width (dont have to hardcode it in settings anymore)
+
+        self.visible_sprites = YSortCameraGroup(
+                self.display_surface,
+                self.world_width,
+                self.world_height  
+            )
+
+        #create player before everything else, as spawning enemies requires self.player as argument, so that they can track the player
+        self.player = Player(
+        self.spawn_pos,
+        [self.visible_sprites],
+        self.obstacle_sprites,
+        self.equip_weapon,
+        self.destroy_weapon,
+        self.fire_weapon
+        )
+
 
         #loop over all styles
         for style, layout in layouts.items():
@@ -155,13 +180,24 @@ class Level:
         if self.current_weapon:
             self.current_weapon.shoot()
 
+    def change_room(self, world, room, spawn_pos):
+        #let game.py load the new level
+        self.game.load_level(world, room, spawn_pos)
+
     # Render
     def run(self):
+        if self.game.level is not self:  # stale level, skip
+            return
+
         self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
         self.ui.display(self.player)
         for enemy in self.attackable_sprites:
             enemy.draw_health_bar(self.display_surface, self.visible_sprites.offset)
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_t]:
+            self.change_room("1", "sewers_room", (450, 1700))
 
         if self.player.dead:
             if not self.weapon_destroyed_on_death:
@@ -173,16 +209,20 @@ class Level:
 
 class YSortCameraGroup(pygame.sprite.Group):
 
-    def __init__(self, surface):
+    def __init__(self, surface, world_width, world_height):
+
         # General
         super().__init__()
         self.display_surface = surface
         self.half_screen_width = BASE_SCREEN_WIDTH // 2
         self.half_screen_height = BASE_SCREEN_HEIGHT // 2
         self.offset = pygame.math.Vector2()
+
+        self.world_width = world_width
+        self.world_height = world_height
         
 
-        bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /'castle_single_tiles' /'background'
+        bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /'castle_room_single_tiles' /'background'
 
         #Loading a background (Temporary, needs to be a function (maybe))
         self.bg_layer_0 = pygame.image.load(bg_path / 'DarkCaveBG-Base.png').convert()
@@ -215,9 +255,9 @@ class YSortCameraGroup(pygame.sprite.Group):
 
         #Offset (camera)
         self.offset.x = player.rect.centerx - self.half_screen_width
-        self.offset.x = max(0, min(self.offset.x, WORLD_WIDTH - BASE_SCREEN_WIDTH))
+        self.offset.x = max(0, min(self.offset.x, self.world_width - BASE_SCREEN_WIDTH))
         self.offset.y = player.rect.centery - self.half_screen_height
-        self.offset.y = max(0, min(self.offset.y, WORLD_HEIGHT - BASE_SCREEN_HEIGHT))
+        self.offset.y = max(0, min(self.offset.y, self.world_height - BASE_SCREEN_HEIGHT))
 
         #Integer camera for rendering
         render_offset_x = int(self.offset.x)

@@ -10,9 +10,6 @@ BASE_SCREEN_HEIGHT = 720
 BASE_SCREEN_WIDTH = 1280
 
 TILE_SIZE = 32
-
-WORLD_WIDTH = 254*32 #needs to change when loading in different maps of different sizes
-WORLD_HEIGHT = 94 * 32
 BOTTOM_LAYER = 32*3 + 16
 
 IMAGE_WIDTH = 32

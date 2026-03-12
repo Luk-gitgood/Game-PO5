@@ -20,7 +20,7 @@ class Player(Entity):
         #States
         self.facing_left = False
         self.is_jumping = False
-        self.on_ground = False
+        self.on_ground = True
         self.jump_held = False
         self.prev_hitbox = None
         self.dying = False
@@ -46,11 +46,11 @@ class Player(Entity):
         self.dash_last_time = -1000
 
         #dash tuning
-        self.ground_dash_speed = 4
+        self.ground_dash_speed = 5
         self.ground_dash_duration = 0.3 #determines length of dash
 
         self.air_dash_speed = 5
-        self.air_dash_duration = 0.01 #very small to basically disable dashing in the air. 
+        self.air_dash_duration = 0.3 #very small to basically disable dashing in the air. 
 
         #TODO Air dash should be an unlockable / upgrade
 
