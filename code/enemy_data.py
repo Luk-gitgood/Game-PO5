@@ -1,13 +1,16 @@
+"""
+ENEMY DATA voor de game
+"""
+
 ENEMY_DATA = {
     "bat": {
         "path": "bat_character",
         "class": "flying",
-        "animation_steps": {'idle': 4, 'fly_left': 4, 'fly_up': 4, 'fly_right': 4, 'death': 11},
-        "animation_speeds": {'idle': 0.15, 'fly_left': 0.15, 'fly_up': 0.15, 'fly_right': 0.15, 'death': 0.15},
+        "animation_steps": {'idle': 4, 'fly_up': 4, 'fly_right': 4, 'death': 11},
+        "animation_speeds": {'idle': 0.15, 'fly_up': 0.15, 'fly_right': 0.15, 'death': 0.15},
         'size': {'height': 32, 'width': 32},
         "sheets": {
             'idle':'bat_idle.png',
-            'fly_left': 'flying_left.png',
             'fly_up': 'flying_up.png',
             'fly_right': 'flying_right.png',
             'death': 'bat_death.png'
@@ -18,12 +21,12 @@ ENEMY_DATA = {
     "eye": {
         "path": "Flying_eye",
         "class": "flying",
-        "animation_steps": {'idle': 8, 'fly_left': 8, 'attack': 8, 'hurt': 4, 'death': 4},
-        "animation_speeds": {'idle': 0.15, 'fly_left': 0.15, 'attack': 0.15, 'hurt': 0.15, 'death': 0.15},
+        "animation_steps": {'idle': 8, 'fly_right': 8, 'attack': 8, 'hurt': 4, 'death': 4},
+        "animation_speeds": {'idle': 0.15, 'fly_right': 0.15, 'attack': 0.15, 'hurt': 0.15, 'death': 0.15},
         'size': {'height': 150, 'width': 150},
         "sheets": {
             'idle':'Flight.png',
-            'fly_left': 'Flight.png',
+            'fly_right': 'Flight.png',
             'attack': 'Attack.png',
             'hurt': 'Hurt.png',
             'death': 'Death.png'
@@ -81,7 +84,7 @@ ENEMY_DATA = {
         "scale": 1,
         "stats": {"health": 80, 'damage': 10, 'attack_cooldown': 500, 'jump_height': -11, "speed": (2.5,3.5), "detection_radius": 350, "disengage_radius": 450}
         },
-        "skeleton_sewer": { 
+    "skeleton_sewer": { 
         "path": "skeleton_sewer",
         "class": "walking",
         "animation_steps": {'idle': 4, 'walk': 12, 'attack': 7, 'hurt': 3, 'death': 13},
@@ -96,14 +99,35 @@ ENEMY_DATA = {
             },
         "scale": 1.5,
         "stats": {"health": 80, 'damage': 15, 'attack_cooldown': 500, 'jump_height': -11, "speed": (2.5,3.5), "detection_radius": 350, "disengage_radius": 450}
+        },
+    "hell_boss": { 
+        "path": "hell_boss",
+        "class": "walking",
+        "animation_steps": {'idle': 8, 'walk': 8, 'attack': 8, 'hurt': 4, 'death': 5},
+        "animation_speeds": {'idle': 0.15, 'walk': 0.15, 'attack': 0.15, 'hurt': 0.15, 'death': 0.10},
+        'size': {'height': 150, 'width': 150},
+        "sheets": {
+            'idle':'Idle.png',
+            'walk': 'Move.png',
+            'attack': 'Attack.png',
+            'hurt': 'hurt.png',
+            'death': 'Death.png',
+            },
+        "scale": 2,
+        "stats": {"health": 800, 'damage': 20, 'attack_cooldown': 100, 'jump_height': -16, "speed": (3.5,4.5), "detection_radius": 850, "disengage_radius": 950}
         }
         }
 
 
+"""
+ENEMY TYPES voor de game
+"""
 ENEMY_TYPES = {
     '0': 'bat',
     '1': 'orc',
-    '2': 'mushroom',
+    '2': 'hell_boss',
     '3': 'skeleton',
     '4': 'skeleton_sewer',
+    '5': 'eye',
+    '6': 'hell_boss',
 }

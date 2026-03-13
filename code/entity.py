@@ -1,8 +1,15 @@
 import pygame
 
+
 class Entity(pygame.sprite.Sprite):
+    """
+    Basisklasse voor alle bewegende objecten met animaties.
+    """
     
     def __init__(self, groups):
+        """
+        Initialiseert een entity.
+        """
         super().__init__(groups)
         self.direction = pygame.math.Vector2()
         self.action = 'idle'
@@ -11,6 +18,9 @@ class Entity(pygame.sprite.Sprite):
         self.flip = False
 
     def animate(self):
+        """
+        Werkt de animatie van de entity bij.
+        """
         speed = self.animation_speeds[self.action]
         self.frame_index += speed
     
@@ -36,7 +46,6 @@ class Entity(pygame.sprite.Sprite):
         center = self.rect.center
         self.image = self.frames[self.action][int(self.frame_index)]
 
-        # Check if we need to flip the image horizontally
         if self.flip:
             self.image = pygame.transform.flip(self.image, True, False)
 

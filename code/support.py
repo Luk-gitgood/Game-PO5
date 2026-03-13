@@ -3,9 +3,19 @@ import pygame
 from settings import *
 from os import walk
 
-
-#Importing maps from Tiled (exported as csv file)
 def import_csv_layout(path):
+    """
+    Importeert een CSV-bestand (meestal geëxporteerd vanuit Tiled) en zet dit om naar een Python list.
+
+    Deze lijst fungeert als een matrix (grid) waarin elk getal een specifiek tile-type 
+    of sprite-ID vertegenwoordigt op een specifieke locatie in het level.
+
+    Args:
+        path (str/Path): Het pad naar het .csv-bestand.
+
+    Returns:
+        list: een geneste lijst (matrix) van strings die het level-ontwerp bevatten.
+    """
     terrain_map = []
     with open(path, mode='r') as level_map:
         layout = reader(level_map, delimiter=',')
@@ -14,35 +24,27 @@ def import_csv_layout(path):
         return terrain_map
 
 
-#Betere functie om graphics te renderen
 def import_folder(path):
+    """
+    Laadt automatisch alle afbeeldingen uit een specifieke map in als Pygame Surfaces.
+
+    Dit is ideaal voor animaties waarbij de frames als losse bestanden zijn opgeslagen. 
+    De functie sorteert de bestanden op naam, zodat animaties in de juiste volgorde worden geladen.
+
+    Args:
+        path (str/Path): Het pad naar de map met afbeeldingen.
+
+    Returns:
+        list: Een lijst met pygame.Surface objecten (inclusief convert_alpha voor performance).
+    """
     surface_list = []
 
-    for _,_,img_files in walk(path):
+    # walk(path) kijkt in de map en geeft de mapnaam, submappen en bestandsnamen terug
+    for _, _, img_files in walk(path):
+        # Sorteren is cruciaal voor animatievolgorde (bijv. frame_01, frame_02)
         for image in sorted(img_files):
             full_path = str(path) + '/' + image
             image_surf = pygame.image.load(full_path).convert_alpha()
             surface_list.append(image_surf)
 
     return surface_list
-
-
-#DON'T USE UNLESS ABSOLUTELY NECESSARY (terrible for performance)
-#(Use import_folder)
-def import_cut_graphic(path):
-    surface = pygame.image.load(path).convert_alpha()
-    tile_num_x = int(surface.get_width() / TILE_SIZE)
-    tile_num_y = int(surface.get_height() / TILE_SIZE)
-
-    cut_tiles = []
-    for row in range(tile_num_y):
-        for col in range(tile_num_x):
-            x = col * TILE_SIZE
-            y = row * TILE_SIZE
-            new_surface = pygame.Surface((TILE_SIZE,TILE_SIZE))
-            new_surface.blit(surface,(0,0), pygame.Rect(x,y,TILE_SIZE,TILE_SIZE))
-            cut_tiles.append(new_surface)
-
-    return cut_tiles
-
-

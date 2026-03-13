@@ -7,7 +7,26 @@ from bullet import Bullet
 from random import uniform
 
 class Weapon(pygame.sprite.Sprite):
+    """
+    Beheert het gedrag van wapens in het spel, inclusief rotatie, schieten en animatie.
+
+    Deze klasse berekent de hoek van het wapen ten opzichte van de muispositie,
+    handelt munitie-spreiding (spread) af en past logica toe voor verschillende
+    wapentypes (bijv. knockback voor shotguns).
+    """
+
     def __init__(self, groups, player, obstacle_sprites, attackable_sprites, offset, weapon_type):
+        """
+        Initialiseert het wapen en laadt de bijbehorende graphics en geluiden.
+
+        Args:
+            groups (list): De groepen waaraan het wapen behoort.
+            player (Player): Referentie naar de speler om positie te bepalen.
+            obstacle_sprites (pygame.sprite.Group): Voor collision-checks van kogels.
+            attackable_sprites (pygame.sprite.Group): Vijanden die schade kunnen ontvangen.
+            offset (int): De afstand van het wapen tot het centrum van de speler.
+            weapon_type (str): Type wapen (bepaalt stats uit 'all_weapon_data').
+        """
         super().__init__(groups)
 
         graphics_path = BASE_DIR.parent / 'graphics' / 'weapons'
@@ -37,15 +56,11 @@ class Weapon(pygame.sprite.Sprite):
         self.image = self.original_image
         self.angle = 0
 
-        #offset = 40
-
         #User screen size
         info = pygame.display.Info()
         MONITOR_WIDTH = info.current_w
         MONITOR_HEIGHT = info.current_h
 
-
-        #Changed weapon spawn so that it spawns with correct direction (moved parts of update to init)
         #Position and direction logic
         scale_x = BASE_SCREEN_WIDTH / MONITOR_WIDTH
         scale_y = BASE_SCREEN_HEIGHT / MONITOR_HEIGHT
@@ -73,19 +88,25 @@ class Weapon(pygame.sprite.Sprite):
         if self.animation_speeds != 1:
             self.load_animation_frames(graphics_path)
 
-
     def load_animation_frames(self, path):
+        """
+        Laadt alle animatieframes voor de schiet- of steekactie uit een spritesheet.
+        """
         # Preload all animations so they are ready when player shoots
         sheet = SpriteSheet(pygame.image.load(path / f'{self.weapon_type}_animation.png').convert_alpha())
         self.frames = [sheet.get_image(i, self.weapon_size[0], self.weapon_size[1], 1)for i in range(self.animation_steps)]
 
-
     def shoot(self):
+        """
+        Vuurt het wapen af.
+        
+        Berekent kogels, past willekeurige spreiding toe, activeert geluidseffecten 
+        en voert eventuele recoil (knockback) op de speler uit.
+        """
         #Only start animation if player isn't already shooting
         if self.action == 'idle':
             self.action = self.weapon_type
             self.frame_index = 0
-
 
             #Shooting
             for _ in range(self.weapon_data['bullet_count']):
@@ -111,13 +132,19 @@ class Weapon(pygame.sprite.Sprite):
                 self.sfx.play_sfx('sniper')
 
     def stab(self):
+        """
+        Beheert de visuele offset en de hitboxes voor de 'dagger' aanval.
+        
+        De offset wijzigt tijdens de timer om de 'steek'-beweging te simuleren.
+        """
         #offset moving for dagger animation
         if self.dagger_attack_timer == 100:
             self.offset = 30
         elif self.dagger_attack_timer == 50:
             self.offset = 40
-        elif self.dagger_attack_timer == 0:
+        elif self.dagger_attack_timer == 5:
             self.offset = 50
+        elif self.dagger_attack_timer == 0:
             # dagger damage hitboxes
             for sprite in self.attackable_sprites:
                 if sprite.hitbox.colliderect(self.rect):
@@ -126,9 +153,10 @@ class Weapon(pygame.sprite.Sprite):
         if self.dagger_attack_timer !=100:
             self.dagger_attack_timer += 5
 
-
-
     def animate(self):
+        """
+        Update het frame voor de wapenanimatie en reset naar 'idle' na afloop.
+        """
         #Only use if in a shooting state
         if self.action != 'idle':
             self.frame_index += self.animation_speeds
@@ -139,6 +167,13 @@ class Weapon(pygame.sprite.Sprite):
                 self.action = 'idle'  # Back to static image
 
     def update(self):
+        """
+        Berekent elke frame de positie, hoek en rotatie van het wapen t.o.v. de muis.
+        
+        
+        Hier wordt ook de 'flip'-logica toegepast zodat het wapen niet 
+        ondersteboven wordt geroteerd als je naar links richt.
+        """
         #User screen size
         info = pygame.display.Info()
         MONITOR_WIDTH = info.current_w
