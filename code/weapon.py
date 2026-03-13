@@ -116,8 +116,9 @@ class Weapon(pygame.sprite.Sprite):
             self.offset = 30
         elif self.dagger_attack_timer == 50:
             self.offset = 40
-        elif self.dagger_attack_timer == 0:
+        elif self.dagger_attack_timer == 1:
             self.offset = 50
+        elif self.dagger_attack_timer == 0:
             # dagger damage hitboxes
             for sprite in self.attackable_sprites:
                 if sprite.hitbox.colliderect(self.rect):
