@@ -35,7 +35,7 @@ class Game:
 
         pygame.mouse.set_cursor(pygame.cursors.diamond)
 
-        # Monitor informatie ophalen
+        #monitor info
         info = pygame.display.Info()
         self.MONITOR_WIDTH = info.current_w
         self.MONITOR_HEIGHT = info.current_h
@@ -90,6 +90,7 @@ class Game:
         elif new_state == "settings":
             self.audio.play("settings")
 
+
     def toggle_fullscreen(self):
         """
         Schakelt tussen de volledige schermweergave en de venstermodus.
@@ -100,6 +101,7 @@ class Game:
             self.screen = pygame.display.set_mode((self.MONITOR_WIDTH, self.MONITOR_HEIGHT), pygame.FULLSCREEN)
         else:
             self.screen = pygame.display.set_mode((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT), pygame.RESIZABLE)
+
 
     def handle_events(self):
         """

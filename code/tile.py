@@ -5,7 +5,7 @@ class Tiles(pygame.sprite.Sprite):
     """
     Representeert een individueel object of blok in de spelwereld.
 
-    Deze klasse gebruikt een sprite-type om te bepalen hoe de speler met de tegel 
+    Deze klasse gebruikt een sprite-type om te bepalen hoe de speler met de tile 
     moet interageren (bijv. als vast object of als gevaarlijk element).
 
     Attributes:
@@ -13,19 +13,22 @@ class Tiles(pygame.sprite.Sprite):
         hitbox (pygame.Rect): De collision-zone die kleiner of groter kan zijn dan de visuele sprite.
     """
 
-    def __init__(self, pos, groups, sprite_type, surface=pygame.Surface((TILE_SIZE, TILE_SIZE))):
+
+    def __init__(self, pos, groups, sprite_type, surface=pygame.Surface((TILE_SIZE, TILE_SIZE)), target_room = None, spawn_pos = None):
         """
-        Initialiseert de tegel op de kaart.
+        Initialiseert de tile op de kaart.
 
         Args:
             pos (tuple): De positie (x, y) op het scherm.
             groups (list): Groepen waaraan de sprite moet worden toegevoegd.
-            sprite_type (str): Bepaalt de fysieke eigenschappen van de tegel.
-            surface (pygame.Surface, optional): De visuele afbeelding van de tegel. 
+            sprite_type (str): Bepaalt de fysieke eigenschappen van de tile.
+            surface (pygame.Surface, optional): De visuele afbeelding van de tile. 
                                                 Standaard een leeg vierkant.
         """
         super().__init__(groups)
         self.sprite_type = sprite_type
+        self.target_room = target_room
+        self.spawn_pos = spawn_pos
         self.image = surface
         self.rect = self.image.get_rect(topleft=pos)
 

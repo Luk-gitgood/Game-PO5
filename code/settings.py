@@ -1,6 +1,4 @@
 from pathlib import Path
-from spritesheets import SpriteSheet
-import pygame
 
 BASE_DIR = Path(__file__).resolve().parent
 MUSIC_PATH = BASE_DIR.parent / 'sounds' / 'music'
@@ -12,16 +10,13 @@ BASE_SCREEN_HEIGHT = 720
 BASE_SCREEN_WIDTH = 1280
 
 TILE_SIZE = 32
-
-WORLD_WIDTH = 334*32 #needs to change when loading in different maps of different sizes
-WORLD_HEIGHT = 94 * 32
 BOTTOM_LAYER = 32*3 + 16
 
 IMAGE_WIDTH = 32
 IMAGE_HEIGHT = 32
 
 #UI
-PLAYER_BAR_HEIGHT = 20
+PLAYER_BAR_HEIGHT = 25
 PLAYER_HEALTH_BAR_WIDTH = 250
 UI_FONT_SIZE = 18
 UI_FONT = None
@@ -33,6 +28,12 @@ BAR_OFFSET_Y = 10
 UI_BG_COLOR = '#222222'
 UI_BORDER_COLOR = "#f9c577"
 HEALTH_COLOR = "#da0606"
+
+DOOR_DATA = {
+    "0": {"target_room": "boss_room", "spawn_pos": (550, 1200)},
+    "2": {"target_room": "hell_room", "spawn_pos": (600, 750)},
+    "1": {"target_room": "sewers_room", "spawn_pos": (500, 800)}
+}
 
 #Weapons
 all_weapon_data = {

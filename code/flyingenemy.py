@@ -239,7 +239,7 @@ class FlyingEnemy(Entity):
         if not self.dying:
             self.detect_player()
 
-            if self.player_detected and self.can_see_player():
+            if self.player_detected:
                 self.move_towards_player()
                 self.attack_player()
             else:

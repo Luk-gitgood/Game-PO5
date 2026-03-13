@@ -48,7 +48,7 @@ class Player(Entity):
         # Toestanden (States)
         self.facing_left = False
         self.is_jumping = False
-        self.on_ground = False
+        self.on_ground = True
         self.jump_held = False
         self.prev_hitbox = None         # Gebruikt voor betrouwbare platform-collision
         self.dying = False
@@ -78,6 +78,13 @@ class Player(Entity):
 
         self.spike_damage = 10
 
+        #dash tuning
+        self.ground_dash_speed = 5
+        self.ground_dash_duration = 0.3 #determines length of dash
+
+        self.air_dash_speed = 5
+        self.air_dash_duration = 0.3 
+
         # Grafische configuratie
         graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / 'rogue_character'
         self.player_scale = 1.5
@@ -104,6 +111,9 @@ class Player(Entity):
         self.key_3 = 'revolver'
         self.key_4 = 'shotgun'
         self.key_5 = 'sniper'
+        #Attacking
+        self.attacking = False
+
 
     def load_animation_frames(self, graphics_path):
         """Laadt alle spritesheets in en knipt ze op in individuele frames per actie."""
@@ -166,6 +176,7 @@ class Player(Entity):
             self.facing_left = True
             if self.direction.x > 0: self.direction.x = 0
             elif self.direction.x > -2: self.direction.x += -0.3
+
         else:
             self.direction.x *= 0.8 # Uitvloeien van beweging
             if abs(self.direction.x) < 0.1: self.direction.x = 0
@@ -295,21 +306,32 @@ class Player(Entity):
         """
         if direction == 'horizontal':
             for obstacle in self.obstacle_sprites:
-                if obstacle.sprite_type == 'platform_top': continue
+                #pass through platforms horizontally
+                if obstacle.sprite_type == 'platform_top':
+                    continue
+
                 if obstacle.hitbox.colliderect(self.hitbox):
-                    if obstacle.sprite_type == 'damage': self.take_damage(self.spike_damage)
-                    if self.direction.x > 0: self.hitbox.right = obstacle.hitbox.left
-                    elif self.direction.x < 0: self.hitbox.left = obstacle.hitbox.right
+                    if obstacle.sprite_type == 'damage':
+                        self.take_damage(self.spike_damage)
+                        continue  #damage tiles hurt but don't block movement
+
+                    if self.direction.x > 0:  # moving right
+                        self.hitbox.right = obstacle.hitbox.left
+                    if self.direction.x < 0:  # moving left
+                        self.hitbox.left = obstacle.hitbox.right
 
         if direction == 'vertical':
             for obstacle in self.obstacle_sprites:
                 if obstacle.hitbox.colliderect(self.hitbox):
-                    if obstacle.sprite_type == 'damage': self.take_damage(10) 
+                    if obstacle.sprite_type == 'damage':
+                        self.take_damage(self.spike_damage)
+                        continue  #damage tiles hurt but don't block movement
 
-                    if self.direction.y > 0: # Vallen
+                    if self.direction.y > 0:
                         if obstacle.sprite_type == 'platform_top':
-                            if self.drop_timer > 0: continue
-                            if self.prev_hitbox.bottom <= obstacle.hitbox.top:
+                            if self.drop_timer > 0:
+                                continue
+                            elif self.prev_hitbox.bottom <= obstacle.hitbox.top:
                                 self.hitbox.bottom = obstacle.hitbox.top
                                 self.direction.y = 0
                                 self.on_ground = True
@@ -324,7 +346,7 @@ class Player(Entity):
                         if obstacle.sprite_type != 'platform_top':
                             self.hitbox.top = obstacle.hitbox.bottom
                             self.direction.y = 0
-
+        
     def take_damage(self, amount):
         """Vermindert health en start i-frames of dood-animatie."""
         if self.dying or self.invincible: return

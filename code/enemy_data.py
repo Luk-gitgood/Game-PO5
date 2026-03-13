@@ -128,6 +128,6 @@ ENEMY_TYPES = {
     '2': 'mushroom',
     '3': 'skeleton',
     '4': 'skeleton_sewer',
-    '5': 'eye',
-    '6': 'hell_boss',
+    '5': 'hell_boss',
+    '6': 'eye',
 }
