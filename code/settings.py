@@ -31,8 +31,8 @@ HEALTH_COLOR = "#da0606"
 
 DOOR_DATA = {
     "0": {"target_room": "boss_room", "spawn_pos": (550, 1200)},
-    "2": {"target_room": "hell_room", "spawn_pos": (510, 850)},
-    "1": {"target_room": "sewers_room", "spawn_pos": (200, 600)}
+    "2": {"target_room": "hell_room", "spawn_pos": (600, 750)},
+    "1": {"target_room": "sewers_room", "spawn_pos": (500, 800)}
 }
 
 #Weapons

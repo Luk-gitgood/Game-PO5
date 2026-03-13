@@ -32,7 +32,7 @@ class Player(Entity):
         self.hit_time = 0
 
         #Stats
-        self.stats = {'health': 200, 'speed': 2, 'jump_speed': -11,} #should be put in player_data.py or J'son to use upgrades
+        self.stats = {'health': 120, 'speed': 2, 'jump_speed': -11,} #should be put in player_data.py or J'son to use upgrades
         self.health = self.stats['health']
         self.speed = self.stats['speed']
         self.jump_speed = self.stats['jump_speed']
@@ -50,7 +50,7 @@ class Player(Entity):
         self.ground_dash_duration = 0.3 #determines length of dash
 
         self.air_dash_speed = 5
-        self.air_dash_duration = 0.3 #very small to basically disable dashing in the air. 
+        self.air_dash_duration = 0.3 
 
         #TODO Air dash should be an unlockable / upgrade
 
