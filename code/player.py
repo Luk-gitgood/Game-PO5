@@ -20,7 +20,7 @@ class Player(Entity):
         #States
         self.facing_left = False
         self.is_jumping = False
-        self.on_ground = False
+        self.on_ground = True
         self.jump_held = False
         self.prev_hitbox = None
         self.dying = False
@@ -32,7 +32,7 @@ class Player(Entity):
         self.hit_time = 0
 
         #Stats
-        self.stats = {'health': 120, 'speed': 2, 'jump_speed': -11,} #should be put in player_data.py or J'son to use upgrades
+        self.stats = {'health': 200, 'speed': 2, 'jump_speed': -11,} #should be put in player_data.py or J'son to use upgrades
         self.health = self.stats['health']
         self.speed = self.stats['speed']
         self.jump_speed = self.stats['jump_speed']
@@ -46,13 +46,13 @@ class Player(Entity):
         self.dash_last_time = -1000
 
         #dash tuning
-        self.ground_dash_speed = 4
+        self.ground_dash_speed = 5
         self.ground_dash_duration = 0.3 #determines length of dash
 
         self.air_dash_speed = 5
-        self.air_dash_duration = 0.01 #very small to basically disable dashing in the air. 
+        self.air_dash_duration = 0.3 #very small to basically disable dashing in the air. 
 
-        #Air dash should be an unlockable / upgrade
+        #TODO Air dash should be an unlockable / upgrade
 
         self.spike_damage = 10 #damage spikes do to player
 
@@ -75,20 +75,18 @@ class Player(Entity):
         self.equip_weapon = equip_weapon
         self.destroy_weapon = destroy_weapon
         self.fire_weapon = fire_weapon
+        self.weapon_equipped = False
 
-        self.weapon = 'no_weapon'
+        self.weapon_index = 0 #starts with no weapon in hand
+        self.weapon = list(weapon_data.keys())[self.weapon_index]
+
         self.can_shoot = True
         self.shoot_time = None
-        self.shoot_cooldown = None
+        self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
 
         #Attacking
         self.attacking = False
 
-        #Keys for weapons
-        self.key_2 = 'dagger'
-        self.key_3 = 'revolver'
-        self.key_4 = 'shotgun'
-        self.key_5 = 'sniper'
 
     def load_animation_frames(self, graphics_path):
         #preload all animations so they are ready when player shoots
@@ -149,13 +147,17 @@ class Player(Entity):
 
         if keys[pygame.K_d]:
             self.facing_left = False
-            # Instead of resetting to 0, we accelerate
-            if self.direction.x < 2: 
+            if self.direction.x < 0:
+                self.direction.x = 0
+            elif self.direction.x < 2:
                 self.direction.x += 0.3
+
         elif keys[pygame.K_a]:
-            self.facing_left = True
-            if self.direction.x > -2:
-                self.direction.x -= 0.3
+            self.facing_left = True #flag to flip the image
+            if self.direction.x > 0:
+                self.direction.x = 0
+            elif self.direction.x > -2:
+                self.direction.x += -0.3
         else:
             self.direction.x *= 0.8 #don't stop moving abrubtly
             if abs(self.direction.x) < 0.1:
@@ -181,37 +183,50 @@ class Player(Entity):
         if keys[pygame.K_1]:
             self.destroy_weapon()
             self.weapon_equipped = False
-            self.weapon = 'no_weapon'
 
         if keys[pygame.K_2]:
-            if self.weapon != self.key_2:
-                self.switch_weapon(self.key_2)
+            if self.weapon_index != 0:
+                self.destroy_weapon()
+            self.weapon_index = 0
+            self.weapon = list(weapon_data.keys())[self.weapon_index]
+            self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
+            self.equip_weapon()
+            self.weapon_equipped = True
 
         if keys[pygame.K_3]:
-            if self.weapon != self.key_3:
-                self.switch_weapon(self.key_3)
+            if self.weapon_index != 1:
+                self.destroy_weapon()
+            self.weapon_index = 1
+            self.weapon = list(weapon_data.keys())[self.weapon_index]
+            self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
+            self.equip_weapon()
+            self.weapon_equipped = True
 
         if keys[pygame.K_4]: 
-            if self.weapon != self.key_4:
-                self.switch_weapon(self.key_4)
+            if self.weapon_index != 2:
+                self.destroy_weapon()
+            self.weapon_index = 2
+            self.weapon = list(weapon_data.keys())[self.weapon_index]
+            self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
+            self.equip_weapon()
+            self.weapon_equipped = True
 
         if keys[pygame.K_5]:
-            if self.weapon != self.key_5:
-                self.switch_weapon(self.key_5)
+            if self.weapon_index != 3:
+                self.destroy_weapon()
+            self.weapon_index = 3
+            self.weapon = list(weapon_data.keys())[self.weapon_index]
+            self.shoot_cooldown = weapon_data[self.weapon]['cooldown']
+            self.equip_weapon()
+            self.weapon_equipped = True
 
 
         #mouse detection for shooting. Only shoots if weapon is equipped and cooldown is ready.
         if pygame.mouse.get_pressed()[0]:  # Left Click
-            if self.weapon != 'no_weapon' and self.can_shoot:
+            if self.weapon_equipped and self.can_shoot:
                 self.fire_weapon()
                 self.can_shoot = False
                 self.shoot_time = pygame.time.get_ticks()
-
-    def switch_weapon(self, weapon):
-        self.destroy_weapon()
-        self.weapon = weapon
-        self.shoot_cooldown = all_weapon_data[self.weapon]['cooldown']
-        self.equip_weapon(self.weapon)
 
     def move_horizontal(self, speed):
         self.hitbox.x += self.direction.x * speed
@@ -313,32 +328,31 @@ class Player(Entity):
         if direction == 'horizontal':
             for obstacle in self.obstacle_sprites:
 
-                #Pass through platforms horizontally
+                #pass through platforms horizontally
                 if obstacle.sprite_type == 'platform_top':
                     continue
 
                 if obstacle.hitbox.colliderect(self.hitbox):
                     if obstacle.sprite_type == 'damage':
                         self.take_damage(self.spike_damage)
-                        
-                    if self.direction.x > 0 : #moving right
+                        continue  #damage tiles hurt but don't block movement
+
+                    if self.direction.x > 0:  # moving right
                         self.hitbox.right = obstacle.hitbox.left
-                    if self.direction.x < 0: #moving left
+                    if self.direction.x < 0:  # moving left
                         self.hitbox.left = obstacle.hitbox.right
 
         if direction == 'vertical':
             for obstacle in self.obstacle_sprites:
                 if obstacle.hitbox.colliderect(self.hitbox):
                     if obstacle.sprite_type == 'damage':
-                        self.take_damage(10) 
+                        self.take_damage(self.spike_damage)
+                        continue  #damage tiles hurt but don't block movement
 
                     if self.direction.y > 0:
-
                         if obstacle.sprite_type == 'platform_top':
-
                             if self.drop_timer > 0:
                                 continue
-
                             elif self.prev_hitbox.bottom <= obstacle.hitbox.top:
                                 self.hitbox.bottom = obstacle.hitbox.top
                                 self.direction.y = 0
@@ -354,9 +368,7 @@ class Player(Entity):
                         if obstacle.sprite_type != 'platform_top':
                             self.hitbox.top = obstacle.hitbox.bottom
                             self.direction.y = 0
-
-                   
-    
+        
     def take_damage(self, amount):
         if self.dying or self.invincible:
             return

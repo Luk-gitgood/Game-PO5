@@ -17,35 +17,37 @@ class Game:
 
         pygame.mouse.set_cursor(pygame.cursors.diamond)
 
-        #Monitor info
+        #monitor info
         info = pygame.display.Info()
         self.MONITOR_WIDTH = info.current_w
         self.MONITOR_HEIGHT = info.current_h
 
-        #Display state
+        #display state
         self.is_fullscreen = True
         self.screen = pygame.display.set_mode(
             (self.MONITOR_WIDTH, self.MONITOR_HEIGHT),pygame.FULLSCREEN)
 
-        #Internal game surface (fixed resolution)
+        #internal game surface (fixed resolution)
         self.game_surface = pygame.Surface((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT))
 
-        #Clock
+        #clock
         self.clock = pygame.time.Clock()
         self.running = True
 
-        # Game state
+        #game state
         self.state = None
         self.previous_state = None
 
-        # Create systems
+
+
+        #create systems
         self.menu = MainMenu(self)
         self.settings = SettingsMenu(self)
 
-        #Game objects
+        #game objects
         self.level = Level(self.game_surface)
 
-        #Audio objects
+        #audio objects
         self.audio_dict = {
             "menu" : MUSIC_PATH / "mainmenu_music.ogg",
             "level1": MUSIC_PATH / "Insolitum_music1.ogg",
@@ -67,7 +69,7 @@ class Game:
 
         elif new_state == "settings":
             self.audio.play("settings")
-        #Later meer opties met andere muziek
+        #later more options for different music
 
 
     def toggle_fullscreen(self):
@@ -78,11 +80,10 @@ class Game:
         else:
             self.screen = pygame.display.set_mode((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT),pygame.RESIZABLE)
 
-
     def handle_events(self):
         for event in pygame.event.get():
     
-            #Always handle quit
+            #always handle quit
             if event.type == pygame.QUIT:
                 self.running = False
     

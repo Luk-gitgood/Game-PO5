@@ -2,12 +2,12 @@
 <tileset version="1.10" tiledversion="1.11.2" name="platform_top" tilewidth="32" tileheight="32" tilecount="3" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
-  <image source="../../../graphics/level_graphics/castle_single_tiles/platform_top/tile035.png" width="32" height="32"/>
+  <image source="../../../graphics/level_graphics/boss_room_single_tiles/platform_top/tile035.png" width="32" height="32"/>
  </tile>
  <tile id="1">
-  <image source="../../../graphics/level_graphics/castle_single_tiles/platform_top/tile036.png" width="32" height="32"/>
+  <image source="../../../graphics/level_graphics/boss_room_single_tiles/platform_top/tile036.png" width="32" height="32"/>
  </tile>
  <tile id="2">
-  <image source="../../../graphics/level_graphics/castle_single_tiles/platform_top/tile037.png" width="32" height="32"/>
+  <image source="../../../graphics/level_graphics/boss_room_single_tiles/platform_top/tile037.png" width="32" height="32"/>
  </tile>
 </tileset>

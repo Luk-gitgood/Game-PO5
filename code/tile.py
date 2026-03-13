@@ -4,9 +4,11 @@ from settings import *
 
 class Tiles(pygame.sprite.Sprite):
 
-    def __init__(self, pos, groups, sprite_type, surface=pygame.Surface((TILE_SIZE, TILE_SIZE))):
+    def __init__(self, pos, groups, sprite_type, surface=pygame.Surface((TILE_SIZE, TILE_SIZE)), target_room = None, spawn_pos = None):
         super().__init__(groups)
         self.sprite_type = sprite_type
+        self.target_room = target_room
+        self.spawn_pos = spawn_pos
         self.image = surface
         self.rect = self.image.get_rect(topleft = pos)
 

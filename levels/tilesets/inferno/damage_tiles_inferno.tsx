@@ -2,6 +2,6 @@
 <tileset version="1.10" tiledversion="1.11.2" name="damage_tiles_inferno" tilewidth="32" tileheight="32" tilecount="1" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
-  <image source="../../../../../../../Downloads/inferno_single_tiles/damage_tiles/tile31.png" width="32" height="32"/>
+  <image source="../../../graphics/level_graphics/hell_room_single_tiles/damage_tiles/tile31.png" width="32" height="32"/>
  </tile>
 </tileset>

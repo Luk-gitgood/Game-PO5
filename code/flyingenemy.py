@@ -124,22 +124,6 @@ class FlyingEnemy(Entity):
                 self.player.take_damage(self.damage)
                 self.last_attack_time = current_time
 
-    def can_see_player(self):
-        #Get the start and end points of the "ray"
-        start = self.rect.center
-        end = self.player.rect.center
-    
-        #Check every obstacle to see if it "clips" (intersects) this line
-        for obstacle in self.obstacle_sprites:
-            #Skips platform_tops (so it can see through platforms tops)
-            if obstacle.sprite_type == 'platform_top':
-                continue
-            else:
-                # clipline returns a tuple of points if it hits, or an empty tuple if it doesn't
-                if obstacle.hitbox.clipline(start, end):
-                    return False # View is blocked!
-        return True
-
     def take_damage(self, amount):
         if self.dying:
             return
@@ -177,7 +161,7 @@ class FlyingEnemy(Entity):
         if not self.dying:
             self.detect_player()
 
-            if self.player_detected and self.can_see_player():
+            if self.player_detected:
                 self.move_towards_player()
                 self.attack_player()
             else:
