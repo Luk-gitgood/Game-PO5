@@ -125,7 +125,7 @@ ENEMY TYPES voor de game
 ENEMY_TYPES = {
     '0': 'bat',
     '1': 'orc',
-    '2': 'hell_boss',
+    '2': 'mushroom',
     '3': 'skeleton',
     '4': 'skeleton_sewer',
     '5': 'eye',
