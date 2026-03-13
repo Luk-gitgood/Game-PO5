@@ -15,7 +15,7 @@ class Level:
     def __init__(self, surface):
         #Get the display surface
         self.display_surface = surface
-        self.room = 'boss_room' #start room is the boss room for testing, but will be the outside world
+        self.room = 'woods_room' #start room is the boss room for testing, but will be the outside world
         self.spawn_pos = (550, 1150)
 
         #Sprite group setup
