@@ -43,7 +43,7 @@ all_weapon_data = {
         'spread': 0,
         'lifetime': 1000,
         'damage': 15,
-        'cooldown': 350,
+        'cooldown': 400,
         'size': [38, 20],
         'animation_steps': 7,
         'animation_speeds': 0.5,

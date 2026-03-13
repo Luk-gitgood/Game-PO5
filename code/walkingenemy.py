@@ -13,7 +13,7 @@ class WalkingEnemy(Entity):
     gecombineerd met raycasting-logica om te bepalen of de speler zichtbaar is.
     """
 
-    def __init__(self, pos, groups, player, obstacle_sprites, attackable_sprites, enemy_type):
+    def __init__(self, pos, groups, player, obstacle_sprites, attackable_sprites, enemy_type, surface):
         """
         Initialiseert de vijand op basis van data uit ENEMY_DATA.
 
@@ -30,6 +30,7 @@ class WalkingEnemy(Entity):
         self.enemy_type = enemy_type
         self.stats = self.data['stats']
         self.player = player
+        self.surface = surface
 
         graphics_path = BASE_DIR.parent / 'graphics' / 'character_animations' / self.data['path']
         self.enemy_scale = self.data['scale']
@@ -313,6 +314,13 @@ class WalkingEnemy(Entity):
 
     def update(self):
         """Hoofdfunctie: voert detectie, gedrag, fysica en animatie elke frame uit."""
+        if self.dying:
+            if self.enemy_type == 'hell_boss':
+                image = pygame.image.load(BASE_DIR.parent / 'graphics' / 'other_images' /'victory_screen.png').convert_alpha()
+                image = pygame.transform.scale(image, (244, 100))
+                self.surface.blit(image,self.surface.get_rect().center)
+                return
+
         if not self.dying:
             self.detect_player()
             if self.player_detected and self.can_see_player():

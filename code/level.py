@@ -130,7 +130,8 @@ class Level:
                                 self.player,
                                 self.obstacle_sprites,
                                 self.attackable_sprites,
-                                enemy_type
+                                enemy_type,
+                                self.display_surface
                             )
 
                         elif enemy_class == 'flying':
