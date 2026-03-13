@@ -96,7 +96,24 @@ ENEMY_DATA = {
             },
         "scale": 1.5,
         "stats": {"health": 80, 'damage': 15, 'attack_cooldown': 500, 'jump_height': -11, "speed": (2.5,3.5), "detection_radius": 350, "disengage_radius": 450}
-        }
+        },
+    "hell_boss": {
+        "path": "hell_boss",
+        "class": "walking",
+        "animation_steps": {'idle': 6, 'walk': 12, 'attack': 15, 'hurt': 5, 'death': 22},
+        "animation_speeds": {'idle': 0.15, 'walk': 0.15, 'attack': 0.15, 'hurt': 0.15, 'death': 0.10},
+        'size': {'height': 150, 'width': 150},
+        "sheets": {
+            'idle': 'Idle.png',
+            'walk': 'Walk.png',
+            'attack': 'Attack.png',
+            'hurt': 'hurt.png',
+            'death': 'Death.png',
+        },
+        "scale": 1,
+        "stats": {"health": 80, 'damage': 10, 'attack_cooldown': 500, 'jump_height': -11, "speed": (2.5, 3.5),
+                  "detection_radius": 350, "disengage_radius": 450}
+    },
         }
 
 
@@ -106,4 +123,5 @@ ENEMY_TYPES = {
     '2': 'mushroom',
     '3': 'skeleton',
     '4': 'skeleton_sewer',
+    '9':'hell_boss',
 }
