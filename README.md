@@ -11,7 +11,7 @@
 
 - Use LMB for attacking
   
-## weapons
+## Weapons
 - 1 = empty
 - 2 = dagger
 - 3 = revolver
