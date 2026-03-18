@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.11.2" name="background_inferno" tilewidth="32" tileheight="32" tilecount="11" columns="0">
+<tileset version="1.10" tiledversion="1.11.2" name="background_inferno" tilewidth="32" tileheight="32" tilecount="12" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0">
   <image source="../../../graphics/level_graphics/hell_room_single_tiles/non_collision_surface/tile9.png" width="32" height="32"/>
@@ -33,5 +33,8 @@
  </tile>
  <tile id="10">
   <image source="../../../graphics/level_graphics/hell_room_single_tiles/non_collision_surface/tile12.png" width="32" height="32"/>
+ </tile>
+ <tile id="11">
+  <image source="../../../graphics/level_graphics/hell_room_single_tiles/non_collision_surface/tile51.png" width="32" height="32"/>
  </tile>
 </tileset>
