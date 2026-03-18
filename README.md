@@ -7,7 +7,7 @@
 - Group 4: Luka, Ingmar, Igor, Mika
 
 ## How to play
-🎮 To play the game, download the latest version from the [Releases](https://github.com/Luk-gitgood/Game-PO5/releases) page.
+🎮 To play the game, download the latest version from the [Releases](https://github.com/Luk-gitgood/Game-PO5/releases) page, unzip and run the executable! 
 
 ## Instructions:
 - Use f11 for fullscreen
