@@ -17,7 +17,7 @@ IMAGE_WIDTH = 32
 IMAGE_HEIGHT = 32
 
 #Volume
-with open("data.json", "r") as f:
+with open(BASE_DIR / "data.json", "r") as f:
     loaded_data = load(f)
 
 volume_value = loaded_data["volume"]

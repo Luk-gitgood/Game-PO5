@@ -1,9 +1,9 @@
 import pygame
-from spritesheets import SpriteSheet
-from entity import Entity
-from settings import *
+from .spritesheets import SpriteSheet
+from .entity import Entity
+from .settings import *
 from random import uniform
-from enemy_data import ENEMY_DATA
+from .enemy_data import ENEMY_DATA
 
 class FlyingEnemy(Entity):
     """

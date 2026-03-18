@@ -1,9 +1,9 @@
 import pygame
 import math
-from audio import AudioManager
-from spritesheets import SpriteSheet
-from settings import *
-from bullet import Bullet
+from .audio import AudioManager
+from .spritesheets import SpriteSheet
+from .settings import *
+from .bullet import Bullet
 from random import uniform
 
 class Weapon(pygame.sprite.Sprite):

@@ -1,13 +1,13 @@
 import pygame
-from walkingenemy import WalkingEnemy
-from tile import Tiles
-from player import Player
-from support import *
-from flyingenemy import FlyingEnemy
-from weapon import *
-from settings import *
-from ui import UI
-from enemy_data import ENEMY_TYPES, ENEMY_DATA
+from .walkingenemy import WalkingEnemy
+from .tile import Tiles
+from .player import Player
+from .support import *
+from .flyingenemy import FlyingEnemy
+from .weapon import *
+from .settings import *
+from .ui import UI
+from .enemy_data import ENEMY_TYPES, ENEMY_DATA
 
 
 class Level:

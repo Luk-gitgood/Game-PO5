@@ -1,5 +1,5 @@
 import pygame
-from settings import *
+from .settings import *
 import json
 
 class Button:
@@ -264,7 +264,7 @@ class SettingsMenu:
         self.font = pygame.font.SysFont("arial", 28)
 
         #Open volume in a json file so that it doesnt reset every time
-        with open("data.json", "r") as f:
+        with open(BASE_DIR / "data.json", "r") as f:
             loaded_data = json.load(f)
             
         volume_value = loaded_data["volume"]
@@ -321,14 +321,14 @@ class SettingsMenu:
         """Method om de volume data in JSON file te saven"""
         try:
             #Read existing data
-            with open("data.json", "r") as f:
+            with open(BASE_DIR / "data.json", "r") as f:
                 data = json.load(f)
             
             #Update volume
             data["volume"] = volume
             
             #Write back
-            with open("data.json", "w") as f:
+            with open(BASE_DIR / "data.json", "w") as f:
                 json.dump(data, f, indent=4)
         except Exception as e:
             print(f"Error saving volume: {e}")

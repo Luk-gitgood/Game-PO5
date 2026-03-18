@@ -1,8 +1,8 @@
 import pygame
-from settings import *
-from level import Level
-from menu import *
-from audio import AudioManager
+from code.settings import *
+from code.level import Level
+from code.menu import *
+from code.audio import AudioManager
 
 class Game:
     """
