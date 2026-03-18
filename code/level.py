@@ -15,7 +15,7 @@ class Level:
     def __init__(self, surface):
         #verkrijg display oppervlak
         self.display_surface = surface
-        self.room = 'sewers_room' #de eerste kamer waarin de game start (buitenwereld)
+        self.room = 'woods_room' #de eerste kamer waarin de game start (buitenwereld)
         self.spawn_pos = (550, 1150) #hardcoded spawnpos TODO maak gebasseerd op tile ID
 
         #Sprite group setup
