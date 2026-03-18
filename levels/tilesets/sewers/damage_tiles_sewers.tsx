@@ -8,6 +8,6 @@
   <image source="../../../graphics/level_graphics/sewers_room_single_tiles/damage_tiles/tile6.png" width="32" height="32"/>
  </tile>
  <tile id="2">
-  <image source="../../../../../Downloads/tile8.png" width="32" height="32"/>
+  <image source="../../../graphics/level_graphics/sewers_room_single_tiles/damage_tiles/tile8.png" width="32" height="32"/>
  </tile>
 </tileset>
