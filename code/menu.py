@@ -288,8 +288,11 @@ class SettingsMenu:
         """Tekent de overlay, resolutie-informatie en de UI-elementen."""
         self.display.blit(self.overlay, (0, 0))
 
-        text = self.font.render(f"Resolution: {self.sizes[self.current_ratio_index]}", True, (0, 200, 255))
-        self.display.blit(text, (120, 200))
+        text1 = self.font.render(f"Resolution: {self.sizes[self.current_ratio_index]}", True, (0, 200, 255))
+        self.display.blit(text1, (120, 150))
+
+        text2 = self.font.render(f"Volume: {int(self.music_volume_slider.value * 100)}%", True, (0, 100, 255))
+        self.display.blit(text2, (580, 230))
 
         for button in self.buttons:
             button.draw()
