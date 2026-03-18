@@ -66,12 +66,13 @@ class Game:
         self.level = Level(self.game_surface)
 
         # Audio config
+        #Store volume in a json file so that it doesnt reset every time
         self.audio_dict = {
             "menu" : MUSIC_PATH / "mainmenu_music.ogg",
             "level1": MUSIC_PATH / "Insolitum_music1.ogg",
             "settings": MUSIC_PATH / "elevator_bossanova.ogg"
         }
-        self.audio = AudioManager(self.audio_dict)
+        self.audio = AudioManager(self.audio_dict, volume=volume_value)
 
         self.set_state("menu")
 

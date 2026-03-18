@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+import json
 
 class Button:
     """
@@ -94,7 +95,7 @@ class Slider:
     van de positie van de knop (knob).
     """
 
-    def __init__(self, surface, pos, width, knob_image, knob_hover):
+    def __init__(self, surface, pos, width, value, knob_image, knob_hover):
         """
         Initialiseert de slider en zijn grenzen.
 
@@ -123,7 +124,7 @@ class Slider:
         self.max_x = self.x + width // 2
 
         # Waarde tussen 0 en 1
-        self.value = 0.2
+        self.value = value
         self.update_knob_position()
 
     def update_knob_position(self):
@@ -221,6 +222,10 @@ class MainMenu:
         elif self.quit_button.is_pressed(event):
             self.game.running = False
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_F11:
+                self.game.toggle_fullscreen()
+
     def update(self):
         """Update de status van alle knoppen in het menu."""
         for button in self.buttons:
@@ -258,10 +263,16 @@ class SettingsMenu:
         self.current_ratio_index = 0
         self.font = pygame.font.SysFont("arial", 28)
 
+        #Open volume in a json file so that it doesnt reset every time
+        with open("data.json", "r") as f:
+            loaded_data = json.load(f)
+            
+        volume_value = loaded_data["volume"]
+
         self.buttons = [
             Button(self.display, 'center', (0, 200), buttons_path / 'back01.png', buttons_path / 'back02.png'),
             Button(self.display, 'center', (0, 100), buttons_path / 'restart01.png', buttons_path / 'restart02.png'),
-            Slider(self.display, (650, 300), 300, buttons_path / 'knob01.png',  buttons_path / 'knob02.png')
+            Slider(self.display, (650, 300), 300, volume_value, buttons_path / 'knob01.png',  buttons_path / 'knob02.png')
         ]
 
         self.back_button = self.buttons[0]
@@ -271,12 +282,21 @@ class SettingsMenu:
     def handle_events(self, event):
         """Verwerkt input voor de slider en de navigatieknoppen."""
         self.music_volume_slider.handle_event(event)
+        #Save in json
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                    self.save_volume(self.music_volume_slider.get_value())
 
         if self.back_button.is_pressed(event):
             self.game.set_state(self.game.previous_state)
         elif self.restart_button.is_pressed(event):
             self.game.restart_level()
             self.game.set_state('menu')
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.game.set_state(self.game.previous_state)
+            if event.key == pygame.K_F11:
+                self.game.toggle_fullscreen()
 
     def update(self):
         """Update de knoppen en synchroniseert het volume met de slider-waarde."""
@@ -296,3 +316,19 @@ class SettingsMenu:
 
         for button in self.buttons:
             button.draw()
+
+    def save_volume(self, volume):
+        """Method om de volume data in JSON file te saven"""
+        try:
+            #Read existing data
+            with open("data.json", "r") as f:
+                data = json.load(f)
+            
+            #Update volume
+            data["volume"] = volume
+            
+            #Write back
+            with open("data.json", "w") as f:
+                json.dump(data, f, indent=4)
+        except Exception as e:
+            print(f"Error saving volume: {e}")

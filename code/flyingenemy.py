@@ -204,6 +204,7 @@ class FlyingEnemy(Entity):
             self.remove(self.attackable_sprites)
             self.frame_index = 0
             self.speed = 0
+            self.player.kill_counter += 1
             return
 
         if 'hurt' in self.animation_steps.keys() and not self.dying:

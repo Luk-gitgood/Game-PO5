@@ -1,4 +1,5 @@
 from pathlib import Path
+from json import load
 
 BASE_DIR = Path(__file__).resolve().parent
 MUSIC_PATH = BASE_DIR.parent / 'sounds' / 'music'
@@ -14,6 +15,12 @@ BOTTOM_LAYER = 32*3 + 16
 
 IMAGE_WIDTH = 32
 IMAGE_HEIGHT = 32
+
+#Volume
+with open("data.json", "r") as f:
+    loaded_data = load(f)
+
+volume_value = loaded_data["volume"]
 
 #UI
 PLAYER_BAR_HEIGHT = 25
@@ -41,9 +48,9 @@ all_weapon_data = {
         'speed': 12,
         'bullet_count': 1,
         'spread': 0,
-        'lifetime': 1000,
-        'damage': 15,
-        'cooldown': 400,
+        'lifetime': 800,
+        'damage': 9,
+        'cooldown': 600,
         'size': [38, 20],
         'animation_steps': 7,
         'animation_speeds': 0.5,
@@ -52,9 +59,9 @@ all_weapon_data = {
         'speed': 10,
         'bullet_count': 5,
         'spread': 15,
-        'lifetime': 400,
-        'damage': 5,
-        'cooldown': 800,
+        'lifetime': 350,
+        'damage': 4,
+        'cooldown': 900,
         'size': [52, 14],
         'animation_steps': 16,
         'animation_speeds': 0.7,
@@ -64,8 +71,8 @@ all_weapon_data = {
         'bullet_count': 1,
         'spread': 0,
         'lifetime': 1500,
-        'damage': 50,
-        'cooldown': 2000,
+        'damage': 45,
+        'cooldown': 1700,
         'size': [85, 21],
         'animation_steps': 21,
         'animation_speeds': 0.5
@@ -75,7 +82,7 @@ all_weapon_data = {
         'bullet_count': 0,
         'spread': 0,
         'lifetime': 0,
-        'damage': 10,
+        'damage': 8,
         'cooldown': 300,
         'size': [16,6],
         'animation_steps': 1,

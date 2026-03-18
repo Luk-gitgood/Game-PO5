@@ -35,7 +35,7 @@ ENEMY_DATA = {
             'death': 'Death.png'
             },
         "scale": 1.5,
-        "stats": {"health": 50, 'damage': 7, 'attack_cooldown': 500, "speed": (2,3), "detection_radius": 350, "disengage_radius": 450},
+        "stats": {"health": 150, 'damage': 7, 'attack_cooldown': 500, "speed": (2,3), "detection_radius": 350, "disengage_radius": 450},
     },
 
     "orc": { 
@@ -93,7 +93,7 @@ ENEMY_DATA = {
         "path": "skeleton_sewer",
         "class": "walking",
         "animation_steps": {'idle': 4, 'walk': 12, 'attack': 7, 'hurt': 3, 'death': 13},
-        "animation_speeds": {'idle': 0.15, 'walk': 0.15, 'attack': 0.15, 'hurt': 0.15, 'death': 0.10},
+        "animation_speeds": {'idle': 0.15, 'walk': 0.15, 'attack': 0.15, 'hurt': 0.15, 'death': 0.15},
         'size': {'height': 64, 'width': 64},
         "sheets": {
             'idle':'idle.png',

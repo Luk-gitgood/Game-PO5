@@ -76,6 +76,9 @@ class UI:
         # De factor 0.08 bepaalt de snelheid van de animatie
         self.displayed_health += (player.health - self.displayed_health) * 0.08
 
+        #BG BAR
+        self.show_bar(player.stats['health'], player.stats['health'], self.bar_rect, (90, 0, 0))
+
         #Teken de 'lag' achtergrondbalk (vaak een lichtere kleur)
         self.show_bar(self.displayed_health, player.stats['health'], self.bar_rect, (255, 200, 200))
 

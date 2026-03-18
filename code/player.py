@@ -101,17 +101,25 @@ class Player(Entity):
         self.equip_weapon = equip_weapon
         self.destroy_weapon = destroy_weapon
         self.fire_weapon = fire_weapon
-        self.weapon = 'no_weapon'
         self.can_shoot = True
-        self.shoot_time = None
+        self.shoot_time = None 
         self.shoot_cooldown = None
 
-        self.key_2 = 'dagger'
-        self.key_3 = 'revolver'
-        self.key_4 = 'shotgun'
-        self.key_5 = 'sniper'
-        #Attacking
+        self.weapon = 'no_weapon'
+
+        self.key_1 = 'dagger'
+        self.key_2 = 'revolver'
+        self.key_3 = 'shotgun'
+        self.key_4 = 'sniper'
+
+        self.revolver_counter = 10
+        self.shotgun_counter = 20
+        self.sniper_counter = 30
+
+        #Attacking and kill counter
+        self.kill_counter = 0
         self.attacking = False
+
 
 
     def load_animation_frames(self, graphics_path):
@@ -198,16 +206,13 @@ class Player(Entity):
             
         # Wapen selectie
         if keys[pygame.K_1]:
-            self.destroy_weapon()
-            self.weapon = 'no_weapon'
-        elif keys[pygame.K_2]:
+            if self.weapon != self.key_1: self.switch_weapon(self.key_1)
+        elif keys[pygame.K_2] and self.kill_counter >= self.revolver_counter:
             if self.weapon != self.key_2: self.switch_weapon(self.key_2)
-        elif keys[pygame.K_3]:
+        elif keys[pygame.K_3] and self.kill_counter >= self.shotgun_counter: 
             if self.weapon != self.key_3: self.switch_weapon(self.key_3)
-        elif keys[pygame.K_4]: 
+        elif keys[pygame.K_4] and self.kill_counter >= self.sniper_counter:
             if self.weapon != self.key_4: self.switch_weapon(self.key_4)
-        elif keys[pygame.K_5]:
-            if self.weapon != self.key_5: self.switch_weapon(self.key_5)
 
         # Vuren
         if pygame.mouse.get_pressed()[0]:

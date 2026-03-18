@@ -274,6 +274,7 @@ class WalkingEnemy(Entity):
             self.remove(self.attackable_sprites)
             self.frame_index = 0
             self.speed = 0
+            self.player.kill_counter += 1
             return
         if not self.is_attacking:
             self.is_hurt = True
