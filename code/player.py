@@ -56,7 +56,7 @@ class Player(Entity):
 
         # Onkwetsbaarheid (i-frames)
         self.invincible = False
-        self.i_frame_time = 600         # Duur in milliseconden
+        self.i_frame_time = 400         # Duur in milliseconden
         self.hit_time = 0
 
         # Basis stats

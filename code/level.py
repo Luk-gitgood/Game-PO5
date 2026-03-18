@@ -37,7 +37,7 @@ class Level:
         #transition variables
         self.fade_alpha = 0
         self.fading = False
-        self.fade_speed = 15
+        self.fade_speed = 10
         self.fade_direction = 1  # 1 = fade out, -1 = fade in
 
         self.next_room = None
