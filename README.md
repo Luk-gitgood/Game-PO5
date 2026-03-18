@@ -12,7 +12,8 @@
 - Use WASD controls for moving
 
 - Use LMB for attacking
-  
+
+- Obtain new weapons by killing more enemies!
 ## Weapons
 - 1 = empty
 - 2 = dagger
