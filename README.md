@@ -2,7 +2,7 @@
 
 - Roguelike game for ICT PO5
 
-  
+![App Screenshot](graphics/other_images/mmenu_screenshot.png)
 
 - Group 4: Luka, Ingmar, Igor, Mika
 
