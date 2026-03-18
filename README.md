@@ -10,7 +10,7 @@
 - Use WASD controls for moving
 
 - Use LMB for attacking
-- 
+  
 ## weapons
 - 1 = empty
 - 2 = dagger
