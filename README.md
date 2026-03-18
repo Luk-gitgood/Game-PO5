@@ -10,6 +10,13 @@
 - Use WASD controls for moving
 
 - Use LMB for attacking
+- 
+## weapons
+- 1 = empty
+- 2 = dagger
+- 3 = revolver
+- 4 = shotgun
+- 5 = sniper
 
 ## Stack used for project
 - Tiled for map creation
