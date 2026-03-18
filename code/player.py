@@ -22,7 +22,7 @@ class Player(Entity):
         hitbox (pygame.Rect): De actuele collision box van de speler.
     """
 
-    def __init__(self, pos, groups, obstacle_sprites, equip_weapon, destroy_weapon, fire_weapon):
+    def __init__(self, pos, groups, obstacle_sprites, equip_weapon, destroy_weapon, fire_weapon, k_counter):
         """
         Initialiseert de speler met physics-parameters, timers, stats en animaties.
 
@@ -74,7 +74,7 @@ class Player(Entity):
         self.ground_dash_speed = 4
         self.ground_dash_duration = 0.3
         
-        
+        #Spike
         self.spike_damage = 8
 
         # dash tuning
@@ -113,11 +113,14 @@ class Player(Entity):
         self.key_4 = 'sniper'
 
         self.revolver_counter = 5
-        self.shotgun_counter = 15
-        self.sniper_counter = 25
+        self.shotgun_counter = 10
+        self.sniper_counter = 15
+
+        self.hotbar_slots = ['dagger']
+        self.hotbar_keys = ['1']
 
         #Attacking and kill counter
-        self.kill_counter = 0
+        self.kill_counter = k_counter
         self.attacking = False
 
 
@@ -376,6 +379,19 @@ class Player(Entity):
             if current_time - self.hit_time >= self.i_frame_time:
                 self.invincible = False
 
+    def hotbar_update(self):
+        if self.kill_counter >= self.revolver_counter and 'revolver' not in self.hotbar_slots:
+            self.hotbar_slots.append('revolver')
+            self.hotbar_keys.append('2')
+        elif self.kill_counter >= self.shotgun_counter and 'shotgun' not in self.hotbar_slots:
+            self.hotbar_slots.append('shotgun')
+            self.hotbar_keys.append('3')
+        elif self.kill_counter >= self.sniper_counter and 'sniper' not in self.hotbar_slots:
+            self.hotbar_slots.append('sniper')
+            self.hotbar_keys.append('4')
+        else:
+            return
+
     def update(self):
         """De frame-by-frame update van de speler."""
         if self.dead: return
@@ -388,6 +404,7 @@ class Player(Entity):
         self.animate()
         self.move_horizontal(self.speed)
         self.apply_gravity()
+        self.hotbar_update()
         self.drop_timer = max(0, self.drop_timer - dt)
 
 

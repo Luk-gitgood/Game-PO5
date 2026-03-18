@@ -66,6 +66,7 @@ class WalkingEnemy(Entity):
         self.attack_cooldown = self.stats['attack_cooldown']
         self.last_attack_time = 0
         self.speed = uniform(*self.stats['speed'])
+        self.displayed_health = self.health
 
         # Player detection
         self.detection_radius = self.stats['detection_radius']
@@ -282,21 +283,33 @@ class WalkingEnemy(Entity):
             self.frame_index = 0
 
     def draw_health_bar(self, surface, offset):
-        """Tekent de health bar boven de vijand of bovenaan voor de boss."""
-        
-        # Tekent niet de healthbar als boss nog full hp is. (om permanente healthbar te voorkomen)
         if self.health >= self.stats['health']:
             return
-
+    
         ratio = self.health / self.stats['health']
-
+    
         if self.enemy_type == 'hell_boss':
-            # Define dimensions for the boss bar
             boss_width = 800 
             boss_height = 40
-            # Center horizontally at the top of the screen (no offset needed for fixed UI)
             bar_x = (surface.get_width() - boss_width) // 2
-            bar_y = 40
+            bar_y = 60
+    
+            #Background
+            bg_rect = pygame.Rect(bar_x, bar_y, boss_width, boss_height)
+            pygame.draw.rect(surface, UI_BG_COLOR, bg_rect)
+    
+            #Lagging Bar
+            self.displayed_health += (self.health - self.displayed_health) * 0.05 
+            
+            #Calculate width based on displayed_health
+            white_width = int(boss_width * (self.displayed_health / self.stats['health']))
+            white_rect = pygame.Rect(bar_x, bar_y, white_width, boss_height)
+            pygame.draw.rect(surface, (255, 200, 200), white_rect)
+    
+            #Health Bar
+            health_rect = pygame.Rect(bar_x, bar_y, int(boss_width * ratio), boss_height)
+            pygame.draw.rect(surface, HEALTH_COLOR, health_rect)
+    
         else:
             # Normale enemy bar logic
             bar_x = self.rect.centerx - ENEMY_BAR_WIDTH // 2 - offset.x
@@ -304,22 +317,27 @@ class WalkingEnemy(Entity):
             boss_width = ENEMY_BAR_WIDTH
             boss_height = ENEMY_BAR_HEIGHT
 
-        # Draw background and health
-        bg_rect = pygame.Rect(bar_x, bar_y, boss_width, boss_height)
-        pygame.draw.rect(surface, UI_BG_COLOR, bg_rect)
-        
-        current_rect = bg_rect.copy()
-        current_rect.width = int(bg_rect.width * ratio)
-        pygame.draw.rect(surface, HEALTH_COLOR, current_rect)
+            # Draw background and health
+            bg_rect = pygame.Rect(bar_x, bar_y, boss_width, boss_height)
+            pygame.draw.rect(surface, UI_BG_COLOR, bg_rect)
+            
+            health_rect = bg_rect.copy()
+            health_rect.width = int(bg_rect.width * ratio)
+            pygame.draw.rect(surface, HEALTH_COLOR, health_rect)
 
 
     def update(self):
         """Hoofdfunctie: voert detectie, gedrag, fysica en animatie elke frame uit."""
         if self.dying:
             if self.enemy_type == 'hell_boss':
-                image = pygame.image.load(BASE_DIR.parent / 'graphics' / 'other_images' /'victory_screen.png').convert_alpha()
-                image = pygame.transform.scale(image, (244, 100))
-                self.surface.blit(image,self.surface.get_rect().center)
+                victory_img = pygame.image.load(BASE_DIR.parent / 'graphics' / 'other_images' /'victory_screen.png').convert_alpha()
+                victory_img = pygame.transform.scale(victory_img, (244, 100))
+
+                screen_rect = self.surface.get_rect()
+                victory_rect = victory_img.get_rect(center=screen_rect.center)
+
+                self.surface.blit(victory_img, victory_rect)
+
                 return
 
         if not self.dying:

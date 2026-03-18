@@ -51,6 +51,11 @@ class Level:
         self.obstacle_sprites.empty()
         self.attackable_sprites.empty()
 
+        if hasattr(self, "player"):
+            self.player_k_counter = self.player.kill_counter
+        else:
+            self.player_k_counter = 0
+
         layouts_path = BASE_DIR.parent / 'levels' / '1' / self.room
 
         layouts = {
@@ -99,7 +104,8 @@ class Level:
         self.obstacle_sprites,
         self.equip_weapon,
         self.destroy_weapon,
-        self.fire_weapon
+        self.fire_weapon,
+        self.player_k_counter,
         )
 
 

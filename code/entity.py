@@ -50,3 +50,6 @@ class Entity(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
 
         self.rect = self.image.get_rect(center=center)
+
+
+        

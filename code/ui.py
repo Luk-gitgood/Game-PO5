@@ -47,7 +47,7 @@ class UI:
 
         # Hotbar setup
         self.hotbar_slots = ['dagger', 'revolver', 'shotgun', 'sniper']
-        self.hotbar_keys = ['2', '3', '4', '5',]
+        self.hotbar_keys = ['1', '2', '3', '4',]
         
         # Laad icons
         graphics_path = BASE_DIR.parent / "graphics" / "weapons"
@@ -90,6 +90,11 @@ class UI:
         Args: 
             player : player info is nodig voor informatie welk wapen geselecteerd is
         """
+
+        # Hotbar setup
+        self.hotbar_slots = player.hotbar_slots
+        self.hotbar_keys = player.hotbar_keys
+
         screen_width = self.display_surface.get_width()
         y = self.display_surface.get_height() - 60 #y positie is 60 px van de grond
 
@@ -134,7 +139,7 @@ class UI:
         #BG BAR
         self.show_bar(player.stats['health'], player.stats['health'], self.bar_rect, (90, 0, 0))
 
-        #Teken de 'lag' achtergrondbalk (vaak een lichtere kleur)
+        #Teken de 'lag' achtergrondbalk
         self.show_bar(self.displayed_health, player.stats['health'], self.bar_rect, (255, 200, 200))
 
         #Teken de werkelijke gezondheidsbalk
