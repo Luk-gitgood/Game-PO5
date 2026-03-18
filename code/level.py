@@ -89,7 +89,7 @@ class Level:
                 self.display_surface,
                 self.world_width,
                 self.world_height,
-                self.room 
+                self.room  
             )
 
         #maak player voor alle andere sprites omdat enemies player als argument nodig hebben voor hun functies
@@ -283,11 +283,10 @@ class YSortCameraGroup(pygame.sprite.Group):
         self.room = room
         self.bg = None
         
-
         bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /f'{self.room}_single_tiles' /f'{self.room}.png'
         if bg_path.exists():
             self.bg = pygame.image.load(bg_path).convert()
-        
+
     def custom_draw(self, player):
         #calculates camera offset based on player position, but clamps it to the world boundaries so that it doesn't show anything outside of the map (which would look weird)
         self.offset.x = max(0, min(player.rect.centerx - self.half_screen_width, self.world_width - BASE_SCREEN_WIDTH))
@@ -302,7 +301,7 @@ class YSortCameraGroup(pygame.sprite.Group):
         if self.bg:
             self.display_surface.blit(self.bg, (-render_offset_x, -render_offset_y))
         else:
-            self.display_surface.fill((15,15,0))
+            self.display_surface.fill((15, 15, 0))  # fallback color
 
         for sprite in self.sprites():
             if screen_rect.colliderect(sprite.rect):  #only blit what's visible (increases performance by a lot)

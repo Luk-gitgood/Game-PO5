@@ -1,6 +1,5 @@
 import pygame
 from settings import *
-from math import ceil
 
 class Button:
     """
@@ -124,7 +123,7 @@ class Slider:
         self.max_x = self.x + width // 2
 
         # Waarde tussen 0 en 1
-        self.value = 0.5
+        self.value = 0.2
         self.update_knob_position()
 
     def update_knob_position(self):
