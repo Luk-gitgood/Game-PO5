@@ -88,7 +88,8 @@ class Level:
         self.visible_sprites = YSortCameraGroup(
                 self.display_surface,
                 self.world_width,
-                self.world_height  
+                self.world_height,
+                self.room 
             )
 
         #maak player voor alle andere sprites omdat enemies player als argument nodig hebben voor hun functies
@@ -268,7 +269,7 @@ class Level:
 
 class YSortCameraGroup(pygame.sprite.Group):
 
-    def __init__(self, surface, world_width, world_height):
+    def __init__(self, surface, world_width, world_height, room):
 
         # General
         super().__init__()
@@ -279,10 +280,13 @@ class YSortCameraGroup(pygame.sprite.Group):
 
         self.world_width = world_width
         self.world_height = world_height
+        self.room = room
+        self.bg = None
         
 
-        bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /'boss_room_single_tiles' /'background'
-
+        bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /f'{self.room}_single_tiles' /f'{self.room}.png'
+        if bg_path.exists():
+            self.bg = pygame.image.load(bg_path).convert()
         
     def custom_draw(self, player):
         #calculates camera offset based on player position, but clamps it to the world boundaries so that it doesn't show anything outside of the map (which would look weird)
@@ -295,7 +299,10 @@ class YSortCameraGroup(pygame.sprite.Group):
         #define the visible screen rect in world coordinates, so game can check whats in the players screen and only blit that (culling)
         screen_rect = pygame.Rect(render_offset_x, render_offset_y, BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT)
 
-        self.display_surface.fill((15, 15, 0))
+        if self.bg:
+            self.display_surface.blit(self.bg, (-render_offset_x, -render_offset_y))
+        else:
+            self.display_surface.fill((15,15,0))
 
         for sprite in self.sprites():
             if screen_rect.colliderect(sprite.rect):  #only blit what's visible (increases performance by a lot)
