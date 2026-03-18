@@ -113,8 +113,8 @@ class Player(Entity):
         self.key_4 = 'sniper'
 
         self.revolver_counter = 5
-        self.shotgun_counter = 10
-        self.sniper_counter = 15
+        self.shotgun_counter = 15
+        self.sniper_counter = 25
 
         self.hotbar_slots = ['dagger']
         self.hotbar_keys = ['1']

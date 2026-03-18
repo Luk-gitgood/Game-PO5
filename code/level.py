@@ -15,7 +15,7 @@ class Level:
     def __init__(self, surface):
         #verkrijg display oppervlak
         self.display_surface = surface
-        self.room = 'woods_room' #de eerste kamer waarin de game start (buitenwereld)
+        self.room = 'sewers_room' #de eerste kamer waarin de game start (buitenwereld)
         self.spawn_pos = (550, 1150) #hardcoded spawnpos TODO maak gebasseerd op tile ID
 
         #Sprite group setup
@@ -223,6 +223,12 @@ class Level:
         self.fade_direction = 1
         self.next_room = room
         self.next_spawn = spawn_pos
+
+    def room_name(self):
+        if self.room == 'hell_room':
+            return 'hell_room'
+        else:
+            return 'level'
 
     def handle_fade(self):
         if not self.fading: #alleen doorgaan als self.fading vlag true is

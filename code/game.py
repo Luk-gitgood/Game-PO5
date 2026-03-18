@@ -69,8 +69,9 @@ class Game:
         #Store volume in a json file so that it doesnt reset every time
         self.audio_dict = {
             "menu" : MUSIC_PATH / "mainmenu_music.ogg",
-            "level1": MUSIC_PATH / "Insolitum_music1.ogg",
-            "settings": MUSIC_PATH / "elevator_bossanova.ogg"
+            "level": MUSIC_PATH / "Insolitum_music1.ogg",
+            "settings": MUSIC_PATH / "elevator_bossanova.ogg",
+            "hell_room": MUSIC_PATH / "hell_room_music.ogg",
         }
         self.audio = AudioManager(self.audio_dict, volume=volume_value)
 
@@ -89,7 +90,7 @@ class Game:
         if new_state == "menu":
             self.audio.play("menu")
         elif new_state == "game":
-            self.audio.play("level1")
+            self.audio.play(self.level.room_name())
         elif new_state == "settings":
             self.audio.play("settings")
 
@@ -104,7 +105,6 @@ class Game:
             self.screen = pygame.display.set_mode((self.MONITOR_WIDTH, self.MONITOR_HEIGHT), pygame.FULLSCREEN)
         else:
             self.screen = pygame.display.set_mode((BASE_SCREEN_WIDTH, BASE_SCREEN_HEIGHT), pygame.RESIZABLE)
-
 
     def handle_events(self):
         """
@@ -149,6 +149,8 @@ class Game:
         elif self.state == "game":
             self.game_surface.fill((0, 0, 0))
             self.level.run()
+            if self.level.room == 'hell_room':
+                self.set_state('game')
 
     def draw(self):
         """
