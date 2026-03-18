@@ -13,13 +13,13 @@ from enemy_data import ENEMY_TYPES, ENEMY_DATA
 class Level:
 
     def __init__(self, surface):
-        #Get the display surface
+        #verkrijg display oppervlak
         self.display_surface = surface
-        self.room = 'woods_room' #start room is the boss room for testing, but will be the outside world
-        self.spawn_pos = (550, 1150)
+        self.room = 'woods_room' #de eerste kamer waarin de game start (buitenwereld)
+        self.spawn_pos = (550, 1150) #hardcoded spawnpos TODO maak gebasseerd op tile ID
 
         #Sprite group setup
-        #   **visible sprites are created in create_map()**
+        # visible sprite worden gemaakt in create_map aangezien deze world with en world height parameters nodig hebben
 
         self.obstacle_sprites = pygame.sprite.Group()
         self.attackable_sprites = pygame.sprite.Group()
@@ -63,11 +63,11 @@ class Level:
             'enemy_spawns': import_csv_layout(layouts_path / f'{self.room}_enemy_spawns.csv'),
         }
                     
-        # Dynamically select tileset folder based on room or world
-        tileset_name = f"{self.room}_single_tiles"  # or self.world + "_" + self.room
+        # selecteer de tileset dynamisch gebasseerd op naam van wereld (**BELANGRIJK**: benoem de tileset folders hetzelfde als de wereld folders)
+        tileset_name = f"{self.room}_single_tiles"  
         graphics_path = BASE_DIR.parent / 'graphics' / 'level_graphics' / tileset_name
 
-        
+        #laad alle graphics met gebruik van import_folder functie uit support.py
         graphics = {  
             'collision_surface': import_folder(graphics_path / 'collision_surface'),
             'damage_tiles': import_folder(graphics_path / 'damage_tiles'),
@@ -77,13 +77,13 @@ class Level:
             'decorations': import_folder(graphics_path / 'decorations'),
         }
 
-        #map size
+        #map dimensies
         layout_reference = layouts['collision_surface']
         self.map_rows = len(layout_reference) 
         self.map_cols = len(layout_reference[0]) 
 
-        self.world_height = self.map_rows * TILE_SIZE #determines world height based on amount of rows in tilemap
-        self.world_width = self.map_cols * TILE_SIZE #determines world width (dont have to hardcode it in settings anymore)
+        self.world_height = self.map_rows * TILE_SIZE #bepaalt wereld grote gebasseerd op aantal rows in csv file
+        self.world_width = self.map_cols * TILE_SIZE #bepaalt wereld width gebasseerd op aantal columns in csv file
 
         self.visible_sprites = YSortCameraGroup(
                 self.display_surface,
@@ -91,7 +91,7 @@ class Level:
                 self.world_height  
             )
 
-        #create player before everything else, as spawning enemies requires self.player as argument, so that they can track the player
+        #maak player voor alle andere sprites omdat enemies player als argument nodig hebben voor hun functies
         self.player = Player(
         self.spawn_pos,
         [self.visible_sprites],
@@ -102,28 +102,28 @@ class Level:
         )
 
 
-        #loop over all styles
+        #loop over alle styles (tile layers)
         for style, layout in layouts.items():
             for row_index, row in enumerate(layout): 
                 for col_index, col in enumerate(row): 
 
-                    if col == '-1': #if the value in the CSV is -1, skip the loop because -1 in CSV means there is no tile there
+                    if col == '-1': #als value in csv file -1, skip de loop aangezien -1 'geen tile' betekent in CSV
                         continue
                     x = col_index * TILE_SIZE
                     y = row_index * TILE_SIZE
 
-                    #enemy spawn layer (no graphics)
+                    #enemy spawn laag (no graphics)
                     if style == 'enemy_spawns':
 
-                        enemy_type = ENEMY_TYPES.get(col) #get enemy type from ENEMY_TYPES dictionary using the value in the CSV
+                        enemy_type = ENEMY_TYPES.get(col) #verkrijg enemy_typ van de enemy_data dict
                         
-                        if enemy_type is None: #if the value in the CSV doesn't correspond to an enemy type, skip it
+                        if enemy_type is None: #als de waarde in het CSV file niet met een enemy type overeenkomt, skip
                             continue
 
-                        enemy_data = ENEMY_DATA[enemy_type] #read out enemy data file
-                        enemy_class = enemy_data['class'] #get class of enemy from enemy_data.py
+                        enemy_data = ENEMY_DATA[enemy_type] #lees uit enemy_data file
+                        enemy_class = enemy_data['class'] #krijg class of enemy van enemy_data.py
 
-                        if enemy_class == 'walking': #if it's a walking enemy, spawn a walking enemy 
+                        if enemy_class == 'walking': #als het een walking enemy is, spawn een walking enemy 
                             WalkingEnemy(
                                 (x, y),
                                 [self.visible_sprites, self.attackable_sprites],
@@ -134,7 +134,7 @@ class Level:
                                 self.display_surface
                             )
 
-                        elif enemy_class == 'flying':
+                        elif enemy_class == 'flying': #dito
                             FlyingEnemy(
                                 (x, y),
                                 [self.visible_sprites, self.attackable_sprites],
@@ -143,7 +143,7 @@ class Level:
                                 self.attackable_sprites,
                                 enemy_type
                             )
-                        continue #skip the rest of the loop for enemy spawns, as the tiles dont need to be visible
+                        continue #skip de rest van de loop, aangezien enemy spawning tiles niet zichtbaar zijn
 
                     index = int(col) #convert the value from the CSV to an integer to use as index for the graphics list for this style
 
@@ -209,7 +209,7 @@ class Level:
         #let load the new level
         self.room = room
         self.spawn_pos = spawn_pos
-        self.create_map()
+        self.create_map() #maakt nieuwe map. Side effect is dat ook player nieuw word gemaakt met volledige health. Dit is duidelijk een feature en geen fout
 
     def start_transition(self, room, spawn_pos):
         self.fading = True
@@ -218,19 +218,19 @@ class Level:
         self.next_spawn = spawn_pos
 
     def handle_fade(self):
-        if not self.fading: #only continue if transition fade has started
+        if not self.fading: #alleen doorgaan als self.fading vlag true is
             return
 
-        self.fade_alpha += self.fade_speed * self.fade_direction #makes fade_alpha quickly go to 255
+        self.fade_alpha += self.fade_speed * self.fade_direction #zet fade_alpha snel op 255 (zwart scherm)
 
-        # fully black = change room
+        # volledig zwart = laad nieuwe kamer
         if self.fade_alpha >= 255:
             self.fade_alpha = 255
             self.change_room(self.next_room, self.next_spawn)
             self.fade_direction = -1 #makes the fade_alpha go down again
 
-        # fade finished
-        if self.fade_alpha <= 0: #if fade = 0, load the map
+        # fade klaar
+        if self.fade_alpha <= 0: #wanneer fade = 0, laad de map
             self.fade_alpha = 0
             self.fading = False
 
@@ -240,7 +240,7 @@ class Level:
 
         self.display_surface.blit(fade_surface, (0,0))
 
-    # Render
+    # Render en run alle functies
     def run(self):
 
         self.visible_sprites.custom_draw(self.player)
@@ -253,13 +253,13 @@ class Level:
         self.handle_fade()
 
         for sprite in self.visible_sprites:
-            if hasattr(sprite, "sprite_type") and sprite.sprite_type == "door": #checks if a sprite is a door, and if so starts transition function
+            if hasattr(sprite, "sprite_type") and sprite.sprite_type == "door": #checkt of een sprite een deur is, en als dat zo is start kamer transition
                 if self.player.rect.colliderect(sprite.rect) and not self.fading:
                     if sprite.target_room:
                         self.start_transition(sprite.target_room, sprite.spawn_pos)
 
         if self.player.dead:
-            if not self.weapon_destroyed_on_death:
+            if not self.weapon_destroyed_on_death: #zorgt dat wapen sprite ook verdwijnt op death
                 self.destroy_weapon()
                 self.weapon_destroyed_on_death = True
             font = pygame.font.Font(None, 74)
@@ -284,8 +284,6 @@ class YSortCameraGroup(pygame.sprite.Group):
         bg_path = BASE_DIR.parent / 'graphics' / 'level_graphics' /'boss_room_single_tiles' /'background'
 
         
-
-
     def custom_draw(self, player):
         #calculates camera offset based on player position, but clamps it to the world boundaries so that it doesn't show anything outside of the map (which would look weird)
         self.offset.x = max(0, min(player.rect.centerx - self.half_screen_width, self.world_width - BASE_SCREEN_WIDTH))

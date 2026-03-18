@@ -9,7 +9,7 @@ class FlyingEnemy(Entity):
     """
     Een vliegende vijand die de speler achtervolgt en aanvalt wanneer deze binnen bereik is.
 
-    Deze klasse beheert de AI, animaties, collision-detectie en stats van vliegende 
+    Deze class beheert de AI, animaties, collision-detectie en stats van vliegende 
     tegenstanders. De vijand kan door muren worden geblokkeerd, tenzij de logica 
     wordt aangepast voor volledige vrije vlucht.
 
@@ -36,7 +36,7 @@ class FlyingEnemy(Entity):
         """
         super().__init__(groups) 
         self.enemy_type = enemy_type
-        self.data = ENEMY_DATA[self.enemy_type]
+        self.data = ENEMY_DATA[self.enemy_type] #laad alle data van enemy_data.py
         self.stats = self.data['stats']
 
         # Animaties instellen
@@ -75,7 +75,8 @@ class FlyingEnemy(Entity):
         Laadt alle spritesheets in en verdeelt ze in individuele animatieframes.
 
         Args:
-            graphics_path (Path): Het bestandspad naar de map met spritesheets.
+            graphics_path (Path): Het bestandspad naar de map met spritesheets. 
+            file paths zijn belangrijk voor de code om te werken op verschillende machines
         """
         sheets = {}
         for key, value in self.data['sheets'].items():
@@ -87,7 +88,7 @@ class FlyingEnemy(Entity):
     def move_towards_player(self):
         """
         Berekent de richting naar de speler en verplaatst de vijand.
-        Inclusief normalisatie van de vector en collision-check.
+        normalisatie van de vector en collision-check.
         """
         self.direction.x = self.player.rect.centerx - self.rect.centerx
         self.direction.y = self.player.rect.centery - self.rect.centery
@@ -105,7 +106,7 @@ class FlyingEnemy(Entity):
 
     def update_action(self):
         """
-        Bepaalt welke animatie-actie moet worden afgespeeld op basis van beweging en richting.
+        Bepaalt welke animatie actie moet worden afgespeeld op basis van beweging en richting.
         """
         if self.dying:
             return
@@ -121,7 +122,7 @@ class FlyingEnemy(Entity):
 
     def check_collision(self, direction):
         """
-        Controleert op botsingen met obstakels en zet de positie terug indien nodig.
+        Checkt op botsingen met obstakels en zet de positie terug indien nodig.
 
         Args:
             direction (str): 'horizontal' of 'vertical' om de specifieke as te controleren.
@@ -145,6 +146,7 @@ class FlyingEnemy(Entity):
     def detect_player(self):
         """
         Controleert of de speler binnen de detectieradius komt of de disengage-radius verlaat.
+        Voorkomt eeuwige enemy leashing.
         """
         distance = pygame.math.Vector2(self.player.rect.center).distance_to(self.rect.center)
         if not self.player_detected:

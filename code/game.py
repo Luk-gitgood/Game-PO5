@@ -6,14 +6,16 @@ from audio import AudioManager
 
 class Game:
     """
+    Alle pydoc staat in het Nederlands, maar sommige comments staan nog in het engels. 
     De hoofdcontroller van de game 'Insolitum'.
 
-    Deze klasse beheert de core game-loop, de vensterinstellingen (inclusief fullscreen),
+
+    Deze klasse beheert de core game-loop, de window instellingen (inclusief fullscreen),
     het schakelen tussen verschillende toestanden (states) zoals menu's en gameplay,
     en het aansturen van de audio- en levelsystemen.
 
     Attributes:
-        screen (pygame.Surface): Het primaire display-oppervlak (venster).
+        screen (pygame.Surface): Het primaire display-oppervlak (window).
         game_surface (pygame.Surface): Een intern oppervlak met vaste resolutie voor schaling.
         state (str): De huidige status van de game (bijv. 'menu', 'game', 'settings').
         running (bool): Vlag die bepaalt of de game-loop actief blijft.
@@ -23,7 +25,7 @@ class Game:
 
     def __init__(self):
         """
-        Initialiseert het Pygame-framework, het venster, de audio en de spelsystemen.
+        Initialiseert het Pygame-framework, het venster, de audio en de game systemen.
         """
         pygame.init()
 
@@ -35,7 +37,7 @@ class Game:
 
         pygame.mouse.set_cursor(pygame.cursors.diamond)
 
-        #monitor info
+        # Monitor info
         info = pygame.display.Info()
         self.MONITOR_WIDTH = info.current_w
         self.MONITOR_HEIGHT = info.current_h
@@ -63,7 +65,7 @@ class Game:
         # Game objecten
         self.level = Level(self.game_surface)
 
-        # Audio configuratie
+        # Audio config
         self.audio_dict = {
             "menu" : MUSIC_PATH / "mainmenu_music.ogg",
             "level1": MUSIC_PATH / "Insolitum_music1.ogg",
@@ -93,7 +95,7 @@ class Game:
 
     def toggle_fullscreen(self):
         """
-        Schakelt tussen de volledige schermweergave en de venstermodus.
+        Schakelt tussen de volledige schermweergave en de windowed mode.
         """
         self.is_fullscreen = not self.is_fullscreen
 
@@ -106,14 +108,14 @@ class Game:
     def handle_events(self):
         """
         Verwerkt alle input-events van de gebruiker (toetsenbord, muis, afsluiten).
-        De verwerking is afhankelijk van de huidige status van de game.
+        De verwerking is afhankelijk van de huidige gamestate.
         """
         for event in pygame.event.get():
             # Algemeen: Afsluiten
             if event.type == pygame.QUIT:
                 self.running = False
     
-            # Status-specifieke afhandeling
+            # State-specifieke handeling
             if self.state == "menu":
                 self.menu.handle_events(event)
     
@@ -135,7 +137,7 @@ class Game:
     def update(self):
         """
         Update de logica van de game op basis van de huidige status.
-        Dit omvat bewegingen, AI, en spelregels in het level.
+        Bewegingen, AI, en spelregels in het level.
         """
         if self.state == "menu":
             self.menu.update()
@@ -150,7 +152,7 @@ class Game:
     def draw(self):
         """
         Tekent alle visuele elementen naar het scherm.
-        Schaalt de interne game_surface naar de huidige venstergrootte.
+        Schaald de interne game_surface naar de huidige window grootte.
         """
         scaled_surface = pygame.transform.scale(
             self.game_surface,
@@ -169,7 +171,7 @@ class Game:
     def run(self):
         """
         De hoofdloop van het programma die events, updates en rendering coördineert
-        met een constante framerate van 60 FPS.
+        met een constante framerate van 60 Ticks/ Frames Per Second.
         """
         while self.running:
             self.handle_events()
@@ -181,13 +183,13 @@ class Game:
 
     def restart_level(self):
         """
-        Reset het huidige level door een nieuwe instantie van Level aan te maken
+        Reset het huidige level door een nieuwe instance van Level aan te maken
         en stopt de huidige muziek.
         """
         self.level = Level(self.game_surface)
         self.audio.stop()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
     game = Game()
     game.run()

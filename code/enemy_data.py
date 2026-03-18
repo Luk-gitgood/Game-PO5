@@ -1,5 +1,7 @@
 """
 ENEMY DATA voor de game
+Alle data wordt uitgelezen door de verschillende functies die deze data gebruiken.
+Flexibeler dan alles hardcoden in losse files.
 """
 
 ENEMY_DATA = {
@@ -18,6 +20,7 @@ ENEMY_DATA = {
         "scale": 1.5,
         "stats": {"health": 50, 'damage': 7, 'attack_cooldown': 500, "speed": (2,3), "detection_radius": 350, "disengage_radius": 450},
     },
+
     "eye": {
         "path": "Flying_eye",
         "class": "flying",
@@ -34,6 +37,7 @@ ENEMY_DATA = {
         "scale": 1.5,
         "stats": {"health": 50, 'damage': 7, 'attack_cooldown': 500, "speed": (2,3), "detection_radius": 350, "disengage_radius": 450},
     },
+
     "orc": { 
         "path": "Orc",
         "class": "walking",
@@ -84,6 +88,7 @@ ENEMY_DATA = {
         "scale": 1,
         "stats": {"health": 80, 'damage': 10, 'attack_cooldown': 500, 'jump_height': -11, "speed": (2.5,3.5), "detection_radius": 350, "disengage_radius": 450}
         },
+
     "skeleton_sewer": { 
         "path": "skeleton_sewer",
         "class": "walking",
@@ -100,6 +105,7 @@ ENEMY_DATA = {
         "scale": 1.5,
         "stats": {"health": 80, 'damage': 15, 'attack_cooldown': 500, 'jump_height': -11, "speed": (2.5,3.5), "detection_radius": 350, "disengage_radius": 450}
         },
+
     "hell_boss": { 
         "path": "hell_boss",
         "class": "walking",
@@ -120,7 +126,7 @@ ENEMY_DATA = {
 
 
 """
-ENEMY TYPES voor de game
+ENEMY TYPES voor de game (voor dynamische spawning gebaseerd op tile ID's)
 """
 ENEMY_TYPES = {
     '0': 'bat',

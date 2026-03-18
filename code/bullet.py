@@ -14,18 +14,25 @@ class Bullet(pygame.sprite.Sprite):
         
         pos : tuple
             Startpositie van de kogel.
+
         angle : float
             Richting waarin de kogel wordt afgevuurd (in graden).
+
         groups : list
             Spritegroepen waarin de kogel wordt geplaatst.
+
         obstacle_sprites : list
             Sprites waartegen de kogel kan botsen.
+
         attackable_sprites : list
             Sprites die schade kunnen ontvangen.
+
         speed : float
             Snelheid van de kogel.
+
         lifetime : int
             Hoe lang de kogel blijft bestaan (in milliseconden).
+
         damage : int
             Hoeveel schade de kogel doet.
         """
@@ -75,7 +82,7 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         """
-        Beweegt de kogel, controleert botsingen en verwijdert hem na verloop van tijd.
+        Beweegt de kogel, controleert botsingen en killt de bullet sprite na verloop van tijd.
         """
         self.pos += self.direction * self.speed
         self.rect.center = self.pos

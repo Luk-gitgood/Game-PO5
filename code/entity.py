@@ -3,7 +3,7 @@ import pygame
 
 class Entity(pygame.sprite.Sprite):
     """
-    Basisklasse voor alle bewegende objecten met animaties.
+    Basisclass voor alle bewegende objecten met animaties.
     """
     
     def __init__(self, groups):

@@ -73,9 +73,8 @@ class Player(Entity):
         self.dash_last_time = -1000
         self.ground_dash_speed = 4
         self.ground_dash_duration = 0.3
-        self.air_dash_speed = 5
-        self.air_dash_duration = 0.01   # Momenteel nagenoeg uitgeschakeld voor balans
-
+        
+        
         self.spike_damage = 10
 
         # dash tuning
@@ -265,7 +264,7 @@ class Player(Entity):
     def start_dash(self):
         """Initialiseert de dash-beweging, inclusief cooldown en i-frames."""
         current_time = pygame.time.get_ticks() / 1000
-        if self.dashing or (current_time - self.dash_last_time < self.dash_cooldown):
+        if self.dashing or (current_time - self.dash_last_time < self.dash_cooldown): #als de huidige tijd - laatste keer dashen kleiner is dan dash cooldown, dashing niet toegestaan
             return
 
         # Directe check voor grond-collision
@@ -288,7 +287,7 @@ class Player(Entity):
         self.direction.x = -dash_speed if self.facing_left else dash_speed
 
     def dash_update(self, dt):
-        """Update de dash-timer en vertraagt de speler aan het einde van de dash."""
+        """Update de dash-timer en vertraagt de speler aan het einde van de dash (smoother)."""
         if not self.dashing: return
         self.dash_timer -= dt
         if self.dash_timer < 0.1:
@@ -302,7 +301,7 @@ class Player(Entity):
         Handelt botsingen af met muren en platforms.
         
         Speciale logica voor 'platform_top' zorgt ervoor dat de speler alleen van bovenaf
-        landt en doorheen kan zakken bij een 'drop' commando.
+        landt en doorheen kan zakken bij een 'drop' command.
         """
         if direction == 'horizontal':
             for obstacle in self.obstacle_sprites:
@@ -325,7 +324,7 @@ class Player(Entity):
                 if obstacle.hitbox.colliderect(self.hitbox):
                     if obstacle.sprite_type == 'damage':
                         self.take_damage(self.spike_damage)
-                        continue  #damage tiles hurt but don't block movement
+                        continue  #damage tiles doen damage, maar blokkeren niet de movement
 
                     if self.direction.y > 0:
                         if obstacle.sprite_type == 'platform_top':

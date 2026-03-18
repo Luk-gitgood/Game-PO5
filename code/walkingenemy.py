@@ -115,18 +115,18 @@ class WalkingEnemy(Entity):
     
         dx = self.player.rect.centerx - self.rect.centerx
         
-        # ACCELERATION LOGIC
+        # Acceleratie logic
         if abs(dx) > 10:
             target_vel = 1 if dx > 0 else -1
             self.direction.x += target_vel * self.accel
         else:
-            # FRICTION LOGIC
+            # Frictie logic
             if self.direction.x > 0:
                 self.direction.x = max(0, self.direction.x - self.friction)
             elif self.direction.x < 0:
                 self.direction.x = min(0, self.direction.x + self.friction)
     
-        # Limit to max speed
+        # Limiteer max speed
         if abs(self.direction.x) > 1: 
             self.direction.x = 1 if self.direction.x > 0 else -1
     
@@ -141,7 +141,7 @@ class WalkingEnemy(Entity):
         """
         Voert een sprong uit als er een obstakel in de weg staat.
         
-        Creëert een sensor rechthoek voor de vijand. Als deze een obstakel raakt 
+        Maakt een sensor rechthoek voor de vijand. Als deze een obstakel raakt 
         en de speler staat hoger, dan wordt de sprong geactiveerd.
         """
         if not self.on_ground: return
@@ -155,14 +155,14 @@ class WalkingEnemy(Entity):
                 if self.player.rect.centery < self.rect.centery - 20:
                     self.direction.y = self.jump_height
                     self.on_ground = False
-                    self.is_jumping = True
+                    self.is_jumping = True #starts jump when player is higher
                     self.horizontal_collision = False
                     break
 
     def update_action(self):
         """
         Bepaalt de huidige animatie-state ('idle' of 'walk') op basis van snelheid.
-        Stelt de flip-status in op basis van de looprichting.
+        Stelt de flip-state in op basis van de looprichting
         """
         if self.dying or self.is_attacking or self.is_hurt:
             return 
@@ -236,7 +236,7 @@ class WalkingEnemy(Entity):
 
     def detect_player(self):
         """Bepaalt of de speler binnen het detectie- of disengage-bereik is."""
-        distance = pygame.math.Vector2(self.player.rect.center).distance_to(self.rect.center)
+        distance = pygame.math.Vector2(self.player.rect.center).distance_to(self.rect.center) #distance_to bepaald afstand tussen 2 punten. zet deze in een vector
         if not self.player_detected:
             if distance <= self.detection_radius:
                 self.player_detected = True
@@ -246,9 +246,9 @@ class WalkingEnemy(Entity):
 
     def can_see_player(self):
         """
-        Controleert Line of Sight met raycasting (clipline).
+        Controleert Line of Sight met raycasting.
         
-        Retourneert False als er een muur (geen platform) tussen staat.
+        Returnt False als er een muur tussen staat. (platformen worden geskipt)
         """
         start = self.rect.center
         end = self.player.rect.center
@@ -257,13 +257,13 @@ class WalkingEnemy(Entity):
             if obstacle.sprite_type == 'platform_top':
                 continue
             else:
-                if obstacle.hitbox.clipline(start, end):
+                if obstacle.hitbox.clipline(start, end): #checkt eigen locatie en player locatie met clipline
                     return False 
         return True
 
     def take_damage(self, amount):
         """
-        Verwerkt inkomende schade. Bij health <= 0 start de 'death' animatie.
+        Verwerkt inkomende damage. Bij health <= 0 start de 'death' animatie.
         """
         if self.dying:
             return
@@ -283,7 +283,7 @@ class WalkingEnemy(Entity):
     def draw_health_bar(self, surface, offset):
         """Tekent de health bar boven de vijand of bovenaan voor de boss."""
         
-        # Don't draw if at full health
+        # Tekent niet de healthbar als boss nog full hp is. (om permanente healthbar te voorkomen)
         if self.health >= self.stats['health']:
             return
 
@@ -291,13 +291,13 @@ class WalkingEnemy(Entity):
 
         if self.enemy_type == 'hell_boss':
             # Define dimensions for the boss bar
-            boss_width = 800  # Adjust as needed
+            boss_width = 800 
             boss_height = 40
             # Center horizontally at the top of the screen (no offset needed for fixed UI)
             bar_x = (surface.get_width() - boss_width) // 2
             bar_y = 40
         else:
-            # Normal enemy bar logic
+            # Normale enemy bar logic
             bar_x = self.rect.centerx - ENEMY_BAR_WIDTH // 2 - offset.x
             bar_y = self.rect.top - BAR_OFFSET_Y - offset.y
             boss_width = ENEMY_BAR_WIDTH

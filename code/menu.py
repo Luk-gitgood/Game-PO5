@@ -88,7 +88,7 @@ class Button:
 
 class Slider:
     """
-    Een grafische schuifregelaar voor het aanpassen van waarden zoals volume.
+    Een grafische schuif voor het aanpassen van waarden zoals volume.
 
     De slider geeft een genormaliseerde waarde tussen 0.0 en 1.0 terug op basis 
     van de positie van de knop (knob).
@@ -109,7 +109,8 @@ class Slider:
         self.x, self.y = pos
         self.width = width
 
-        self.knob_normal = pygame.image.load(knob_image).convert_alpha()
+        #laad graphics van de slider in
+        self.knob_normal = pygame.image.load(knob_image).convert_alpha() 
         self.knob_hover = pygame.image.load(knob_hover).convert_alpha()
 
         self.knob_image = self.knob_normal
@@ -181,7 +182,7 @@ class Slider:
 
 class MainMenu:
     """
-    Het hoofdscherm van de game met navigatieknoppen.
+    Het hoofd menu van de game met navigatieknoppen.
     """
 
     def __init__(self, game):
