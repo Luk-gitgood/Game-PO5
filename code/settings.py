@@ -82,7 +82,7 @@ all_weapon_data = {
         'bullet_count': 0,
         'spread': 0,
         'lifetime': 0,
-        'damage': 8,
+        'damage': 12,
         'cooldown': 300,
         'size': [16,6],
         'animation_steps': 1,

@@ -75,7 +75,7 @@ class Player(Entity):
         self.ground_dash_duration = 0.3
         
         
-        self.spike_damage = 10
+        self.spike_damage = 8
 
         # dash tuning
         self.ground_dash_speed = 5
@@ -112,9 +112,9 @@ class Player(Entity):
         self.key_3 = 'shotgun'
         self.key_4 = 'sniper'
 
-        self.revolver_counter = 10
-        self.shotgun_counter = 20
-        self.sniper_counter = 30
+        self.revolver_counter = 5
+        self.shotgun_counter = 15
+        self.sniper_counter = 25
 
         #Attacking and kill counter
         self.kill_counter = 0
