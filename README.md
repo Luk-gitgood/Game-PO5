@@ -12,17 +12,20 @@
 ## Instructions:
 - Use f11 for fullscreen
 
+- Esc for settings in game
+
 - Use WASD controls for moving
 
 - Use LMB for attacking
 
 - Obtain new weapons by killing more enemies!
 ## Weapons
-- 1 = empty
-- 2 = dagger
-- 3 = revolver
-- 4 = shotgun
-- 5 = sniper
+Unlock weapons by killing enemies:
+
+- 1 = dagger
+- 2 = revolver
+- 3 = shotgun
+- 4 = sniper
 
 ## Stack used for project
 - Tiled for map creation
